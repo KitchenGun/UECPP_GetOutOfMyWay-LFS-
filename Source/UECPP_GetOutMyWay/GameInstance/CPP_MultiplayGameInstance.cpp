@@ -20,7 +20,8 @@ void UCPP_MultiplayGameInstance::Init()
 }
 
 void UCPP_MultiplayGameInstance::Shutdown()
-{//플레이 엄출때
+{
+	//플레이 멈출때
 	for (auto pair : ManagerClasses)
 	{
 		if(!IsValid(pair.Value))
@@ -32,7 +33,8 @@ void UCPP_MultiplayGameInstance::Shutdown()
 		pair.Value->ShutdownManagerClass();
 
 		// 객체 소멸
-		pair.Value->ConditionalBeginDestroy();
+		pair.Value->ConditionalBeginDestroy();//가비지 컬랙터가 실행될때 즉 게임을 종료할때 실행
+		//GetWorld()->ForceGarbageCollection(); //가비지 컬랙터가 즉시 작동하도록 하는 함수
 	}
 	ManagerClasses.Empty();
 	

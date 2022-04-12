@@ -19,7 +19,6 @@
 #include "Component/CPP_M1A1MainGunSystemComponent.h"
 #include "Component/CPP_ParticleControlComponent.h"
 #include "Engine/AssetManager.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "Materials/MaterialInstanceConstant.h"
 
 
@@ -162,29 +161,29 @@ void ACPP_M1A1_Pawn::CollisionSet()
 	FrontUpper->SetRelativeLocation(FVector(40,0,40));
 	FrontUpper->SetRelativeRotation(FRotator(-5,0,0));
 	FrontUpper->SetBoxExtent(FVector(350,170,10));
-	FrontUpper->SetCollisionProfileName("PhysicsActor");
+	FrontUpper->SetCollisionProfileName("TankCollider");
 	Engine->SetRelativeLocation(FVector(-310, 0, 15));
 	Engine->SetBoxExtent(FVector(32, 170, 60));
-	Engine->SetCollisionProfileName("PhysicsActor");
+	Engine->SetCollisionProfileName("TankCollider");
 	Bottom->SetRelativeLocation(FVector(-10, 0, -60));
 	Bottom->SetBoxExtent(FVector(270, 170, 35));
-	Bottom->SetCollisionProfileName("PhysicsActor");
+	Bottom->SetCollisionProfileName("TankCollider");
 	FrontUnder->SetRelativeLocation(FVector(300, 0, -35));
 	FrontUnder->SetRelativeRotation(FRotator(25, 0, 0));
 	FrontUnder->SetBoxExtent(FVector(60, 170, 25));
-	FrontUnder->SetCollisionProfileName("PhysicsActor");
+	FrontUnder->SetCollisionProfileName("TankCollider");
 	LSide->SetRelativeLocation(FVector(-20, 130, 0));
 	LSide->SetRelativeRotation(FRotator(-3, 0, 0));
-	LSide->SetBoxExtent(FVector(330, 20, 60));
-	LSide->SetCollisionProfileName("PhysicsActor");
+	LSide->SetBoxExtent(FVector(330, 30, 70));
+	LSide->SetCollisionProfileName("TankCollider");
 	RSide->SetRelativeLocation(FVector(-20, -130, 0));
 	RSide->SetRelativeRotation(FRotator(-3, 0, 0));
-	RSide->SetBoxExtent(FVector(330, 20, 60));
-	RSide->SetCollisionProfileName("PhysicsActor");
+	RSide->SetBoxExtent(FVector(330, 30, 70));
+	RSide->SetCollisionProfileName("TankCollider");
 	
 	Turret->SetRelativeLocation(FVector(0,0,110));
 	Turret->SetBoxExtent(FVector(200,160,50));
-	Turret->SetCollisionProfileName("PhysicsActor");
+	Turret->SetCollisionProfileName("TankCollider");
 }
 
 void ACPP_M1A1_Pawn::CameraSet()
