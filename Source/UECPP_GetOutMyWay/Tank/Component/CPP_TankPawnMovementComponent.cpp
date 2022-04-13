@@ -261,7 +261,7 @@ void UCPP_TankPawnMovementComponent::UpdateTurretState(float DeltaTime)
 {
 	SightRotator = Owner->GetController()->GetControlRotation().Quaternion().Rotator()+FRotator(0,180,0);
 	TurretRotator = TankMesh->GetBoneQuaternion(L"turret_jnt").Rotator()+FRotator(0,180,0);
-	if (!FMath::IsNearlyZero(SightRotator.Yaw-TurretRotator.Yaw,0.1f))
+	if (!FMath::IsNearlyZero(SightRotator.Yaw-TurretRotator.Yaw,1.0f))
 	{
 		//포탑회전 관련 사운드 함수 호출
 		if(IsTurretAngleMatch)
