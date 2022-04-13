@@ -2,6 +2,7 @@
 #include "Tank/CPP_TankAnimInstance.h"
 #include "GameFramework/Actor.h"
 #include "Animation/AnimInstance.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Math/Vector.h"
 #include "Tank/CPP_Tank_Pawn.h"
 
@@ -68,7 +69,6 @@ void UCPP_TankPawnMovementComponent::Movement(float DeltaTime)
 			Owner->SetActorRelativeLocation(NextLocation);
 		}
 		Owner->SetActorRelativeRotation(NextRotation);
-		TurretAngleOffSet=Owner->GetActorRotation().Quaternion().Rotator().Yaw;
 	}
 	NextLocation = FVector::ZeroVector;
 	NextRotation = FRotator::ZeroRotator;
@@ -259,9 +259,10 @@ void UCPP_TankPawnMovementComponent::RPMControl()
 
 void UCPP_TankPawnMovementComponent::UpdateTurretState(float DeltaTime)
 {
-	SightRotator = Owner->GetController()->GetControlRotation().Quaternion().Rotator()+FRotator(0,180,0);
-	TurretRotator = TankMesh->GetBoneQuaternion(L"turret_jnt").Rotator()+FRotator(0,180,0);
-	if (!FMath::IsNearlyZero(SightRotator.Yaw-TurretRotator.Yaw,1.0f))
+	
+	SightRotator=UKismetMathLibrary::InverseTransformRotation(TankMesh->GetComponentTransform(),SightRotator).GetDenormalized();
+	TurretRotator = TankMesh->GetBoneQuaternion(L"turret_jnt",EBoneSpaces::ComponentSpace).Rotator().GetDenormalized();
+	if (!FMath::IsNearlyZero(SightRotator.Yaw-TurretRotator.Yaw,0.01f))
 	{
 		//포탑회전 관련 사운드 함수 호출
 		if(IsTurretAngleMatch)
@@ -302,10 +303,7 @@ void UCPP_TankPawnMovementComponent::TurretMove(float DeltaTime)
 		}
 		else
 		{//회전 방향의 남은 각도와 사용자가 바라보는 각도와 보간
-			FRotator temp = FMath::RInterpTo(FRotator(0,TurretAngle,0),
-				FRotator(0,SightRotator.Yaw,0)-FRotator(0,180,0),DeltaTime,TurretTurnSpeed);
-			
-			TurretAngle=temp.Yaw;
+			TurretAngle = FMath::RInterpTo(FRotator(0,TurretAngle,0),SightRotator,DeltaTime,TurretTurnSpeed).Yaw;
 		}
 	}
 	else if(LeftAngle>RightAngle)
@@ -316,10 +314,7 @@ void UCPP_TankPawnMovementComponent::TurretMove(float DeltaTime)
 		}
 		else
 		{
-			//회전 방향의 남은 각도와 사용자가 바라보는 각도와 보간
-			FRotator temp = FMath::RInterpTo(FRotator(0,TurretAngle,0),
-				FRotator(0,SightRotator.Yaw,0)-FRotator(0,180,0),DeltaTime,TurretTurnSpeed);
-			TurretAngle=temp.Yaw;
+			TurretAngle = FMath::RInterpTo(FRotator(0,TurretAngle,0),SightRotator,DeltaTime,TurretTurnSpeed).Yaw;
 		}
 	}
 }

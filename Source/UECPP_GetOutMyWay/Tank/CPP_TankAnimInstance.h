@@ -20,8 +20,6 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Turret")
 	float CurTurretAngle =0;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Turret")
-	float CurTurretAngleOffset =0;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gun")
 	float CurGunAngle=0.0f;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gun")

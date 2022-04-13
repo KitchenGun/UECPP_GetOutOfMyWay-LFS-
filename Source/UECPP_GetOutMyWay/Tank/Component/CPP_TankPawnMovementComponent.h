@@ -33,7 +33,6 @@ public:
 	//get&set
 	FORCEINLINE float GetTrackSpeed() { return TrackSpeed; }
 	FORCEINLINE float GetTurretAngle() { return TurretAngle; }
-	FORCEINLINE float GetTurretAngleOffset() { return TurretAngleOffSet; }
 	FORCEINLINE float GetGunAngle() {return GunAngle;}
 	FORCEINLINE float GetGunAngleOffset() { return GunAngleOffSet; }
 	FORCEINLINE bool GetIsMove() {return IsAccelerating||IsTurning;}
@@ -110,7 +109,6 @@ private:
 	FVector SightDir = FVector::ZeroVector;
 	FVector TurretDir = FVector::ZeroVector;
 	float TurretAngle = 0.0f;
-	float TurretAngleOffSet=0.0f;
 	float LeftAngle=0;
 	float RightAngle=0;
 	//Turret 객체 별로 수정해야할 데이터 변수
