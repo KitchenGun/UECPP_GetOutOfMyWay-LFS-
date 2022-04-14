@@ -20,7 +20,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class UParticleSystemComponent* Particle;
 	void SetParticle(class UParticleSystem* particle);
-	void Disable();
+
+	UFUNCTION()
+	void Disable(class UParticleSystemComponent* PSystem);
 	//objectpooling 기법
 	//ID를 가지고 객체 구분에 필요한 함수
 	virtual int32 GetID() const override;
@@ -37,7 +39,4 @@ private:
 	int32 ObjectPoolID = 1;
 	bool IsCanRecycle = false;
 
-	float ParticleDuration = 2.0f; 
-
-	FTimerHandle PlayTimer;
 };

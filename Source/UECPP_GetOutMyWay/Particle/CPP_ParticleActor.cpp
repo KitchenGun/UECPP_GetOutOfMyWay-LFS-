@@ -10,21 +10,19 @@ ACPP_ParticleActor::ACPP_ParticleActor()
 void ACPP_ParticleActor::BeginPlay()
 {
 	Super::BeginPlay();
-	GetWorld()->GetTimerManager().SetTimer(PlayTimer,this,&ACPP_ParticleActor::Disable,ParticleDuration,false);
+	Particle->OnSystemFinished.AddDynamic(this,&ACPP_ParticleActor::Disable);
 }
 
 void ACPP_ParticleActor::SetParticle(class UParticleSystem* particle)
 {
-	Particle->Template = particle;
+	Particle->SetTemplate(particle);
 	Particle->Activate();
-	UE_LOG(LogTemp,Display,L"%s",*particle->GetName());
-	UE_LOG(LogTemp,Display,L"%s",*this->GetActorLocation().ToString());
 }
 
-void ACPP_ParticleActor::Disable()
+void ACPP_ParticleActor::Disable(class UParticleSystemComponent* PSystem)
 {
-	UE_LOG(LogTemp,Display,L"Disable")
-	Particle->SetVisibility(false);
+	UE_LOG(LogTemp,Display,L"temp");
+	PSystem->SetVisibility(false);
 	SetCanRecycle(true);
 }
 
@@ -53,7 +51,6 @@ void ACPP_ParticleActor::OnRecycleStart()
 	IsCanRecycle = false;
 	Particle->SetVisibility(true);
 	Particle->Activate(true);
-	GetWorld()->GetTimerManager().SetTimer(PlayTimer,this,&ACPP_ParticleActor::Disable,ParticleDuration,false);
 }
 
 void ACPP_ParticleActor::OnRecycleStart(FVector pos,class UParticleSystem* particle)
