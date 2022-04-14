@@ -1,13 +1,16 @@
 #include "Projectile/CPP_Projectile.h"
 
 #include "DrawDebugHelpers.h"
+#include "Common/UObject/Manager/ObjectPool/CPP_ObjectPoolManager.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "GameInstance/CPP_MultiplayGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Particle/CPP_ParticleActor.h"
 #include "Particles/ParticleSystemComponent.h"
-#include "Tank/CPP_Tank_Pawn.h"
+
 ACPP_Projectile::ACPP_Projectile()
 {
 	//생성
@@ -17,8 +20,8 @@ ACPP_Projectile::ACPP_Projectile()
 	WarHead = CreateDefaultSubobject<UStaticMeshComponent>(L"WarHead");
 	Effect = CreateDefaultSubobject<UStaticMeshComponent>(L"Effect");
 	
-	
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(L"ProjectileMovement");
+	SetParticle();
 
 	//상속구조 정리
 	SetRootComponent(Root);
@@ -133,14 +136,11 @@ float ACPP_Projectile::GetHitAngle(UPrimitiveComponent* OtherComp,const FHitResu
 	//이름
 	UE_LOG(LogTemp,Display,L"%s",*OtherComp->GetName());
 	//SphereTraceMulti를 사용해서 overlap에서 구할수없는 hit pos를 구함
-	FVector HitPos =FVector::ZeroVector;
 	{
 		const FVector start=StartPos;
 		const FVector end= Capsule->GetComponentLocation()+Capsule->GetUpVector()*300;
 		TArray<AActor*> ignore;
 		TArray<FHitResult> HitResults;
-		TArray<AActor*> HitArray;
-		float Range = 50;
 		
 		//충돌 위치 반환
 		//UKismetSystemLibrary::profile 충돌객체의 preset이 일치하고 있는 것만 반환함
@@ -222,5 +222,59 @@ void ACPP_Projectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	//상속 받은 다음 충돌시 결과를 다르게 보내는 것으로 여러 탄종을 구현할려고 함
+	//충돌시 이펙트 생성
+	AddParticle();
+
+	UE_LOG(LogTemp,Display,L"%s",*OtherActor->GetName());
+	
+	//비활성화
 	Disable();
+}
+
+void ACPP_Projectile::AddParticle()
+{
+	UCPP_ObjectPoolManager* ObjPoolManager = Cast<UCPP_MultiplayGameInstance>(PlayerCtrl->GetGameInstance())->GetManagerClass<UCPP_ObjectPoolManager>();
+	UParticleSystem* EffectType;
+
+	//이펙트 설정
+	switch (ProjectileHitEffect)
+	{
+	case EHitEffect::TankHit:
+		EffectType = HitArmor;
+		break;
+	case EHitEffect::TankRicochet:
+		EffectType = HitRicochet;
+		break;
+	case EHitEffect::Ground:
+		EffectType = HitGround;
+		break;
+	default:
+		EffectType = HitGround;
+		break;
+	}
+	
+	ACPP_ParticleActor* temp;
+	//game inst에 objpool매니져에 접근
+	temp=Cast<ACPP_ParticleActor>(ObjPoolManager->GetRecycledObject(1));
+	
+	if(temp!=nullptr)
+	{//초기화할 객체가 존재하는 경우
+		temp->OnRecycleStart(this->GetActorLocation(),EffectType);
+	}
+	else
+	{//없으면 새로 생성
+		temp = GetWorld()->SpawnActor<ACPP_ParticleActor>(ParticleActorClass,this->GetActorLocation(),FRotator::ZeroRotator);
+		temp->SetParticle(EffectType);
+		//매니져에 새로 생성한 객체 추가
+		ObjPoolManager->RegisterRecyclableObject<ACPP_ParticleActor>(temp);
+	}
+}
+
+void ACPP_Projectile::SetParticle()
+{
+	ParticleActorClass = ConstructorHelpers::FClassFinder<ACPP_ParticleActor>(L"Blueprint'/Game/BP/Effect/BP_ParticleActor.BP_ParticleActor_C'").Class;
+
+	HitArmor = ConstructorHelpers::FObjectFinder<UParticleSystem>(L"ParticleSystem'/Game/Realistic_Starter_VFX_Pack_Vol2/Particles/Explosion/P_Explosion_Side.P_Explosion_Side'").Object;
+	HitRicochet = ConstructorHelpers::FObjectFinder<UParticleSystem>(L"ParticleSystem'/Game/Realistic_Starter_VFX_Pack_Vol2/Particles/Sparks/P_Sparks_C.P_Sparks_C'").Object;
+	HitGround = ConstructorHelpers::FObjectFinder<UParticleSystem>(L"ParticleSystem'/Game/Realistic_Starter_VFX_Pack_Vol2/Particles/Hit/P_Brick.P_Brick'").Object;
 }

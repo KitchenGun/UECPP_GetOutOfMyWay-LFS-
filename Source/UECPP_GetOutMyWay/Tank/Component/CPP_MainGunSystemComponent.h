@@ -37,4 +37,7 @@ protected:
 	bool IsMainGunCanFire = true;
 	//mesh
 	class USkeletalMeshComponent* TankMesh;
+	//particle
+	TSubclassOf<class ACPP_ParticleActor> ParticleActorClass;
+	
 };

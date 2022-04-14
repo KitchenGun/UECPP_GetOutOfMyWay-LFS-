@@ -1,4 +1,6 @@
 #include "Tank/Component/CPP_ParticleControlComponent.h"
+
+#include "GameInstance/CPP_MultiplayGameInstance.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Particles/ParticleSystemComponent.h"
 
@@ -6,11 +8,14 @@ UCPP_ParticleControlComponent::UCPP_ParticleControlComponent()
 {
 	if(IsValid(GetOwner()))
 		OwnerTank = Cast<ACPP_Tank_Pawn>(GetOwner());
+	
+
 }
 
 void UCPP_ParticleControlComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	MuzzleFlashEffect = OwnerTank->GetMuzzleFlashEffect();
 	ShockWaveEffect = OwnerTank->GetShockWaveEffect();
 	WheelsEffect = OwnerTank->GetWheelsEffect();
@@ -51,7 +56,7 @@ void UCPP_ParticleControlComponent::OnFireParticle()
 	//포 발사에 따른 충격파 구현
 	const bool Hit =
 		UKismetSystemLibrary::SphereTraceMulti(GetWorld(),Start,End,blastRange,
-			ETraceTypeQuery::TraceTypeQuery8,false,ignore,EDrawDebugTrace::None,HitResults,true);
+			ETraceTypeQuery::TraceTypeQuery2,false,ignore,EDrawDebugTrace::None,HitResults,true);
 	if(Hit)
 	{
 		int32 index;
@@ -75,6 +80,8 @@ void UCPP_ParticleControlComponent::OnFireParticle()
 	}
 	
 }
+
+
 
 
 

@@ -5,13 +5,23 @@
 #include "CPP_Projectile.generated.h"
 
 UENUM()
-enum EHitDir
+enum class EHitDir
 {
 	Front,
 	Side,
 	Back,
 	UpSide,
 	DownSide,
+	Max
+};
+
+
+UENUM()
+enum class EHitEffect
+{
+	TankHit,
+	TankRicochet,
+	Ground,
 	Max
 };
 
@@ -35,9 +45,9 @@ public:
 	virtual void SetID(int32 id) override;
 	//재사용 가능 여부 나타내는 함수
 	virtual bool GetCanRecycle(int32 id) const override;
-	virtual void SetCanRecycle(bool value);
+	virtual void SetCanRecycle(bool value) override;
 	//재활용시 호출되는 함수
-	virtual void OnRecycleStart();
+	virtual void OnRecycleStart() override;
 	void OnRecycleStart(FVector pos,FRotator dir);
 	virtual void Disable();
 protected:
@@ -46,6 +56,15 @@ protected:
 	float GetHitAngle(UPrimitiveComponent* OtherComp, const FHitResult& Hit);
 	
 	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
+
+	void AddParticle();
+
+	void SetParticle();
+	
+	FORCEINLINE void HitEffectSet(EHitEffect value)
+	{
+		ProjectileHitEffect = value;
+	}
 protected:
 	//데미지
 	float Damage = 20.0f;
@@ -57,8 +76,9 @@ protected:
 
 	TSubclassOf<UDamageType> DamageType = nullptr;
 	//충돌
+	FVector HitPos =FVector::ZeroVector;
 	bool IsOverlap = false;
-	
+	EHitEffect ProjectileHitEffect= EHitEffect::Max; 
 private:
 	UPROPERTY(VisibleDefaultsOnly)
 	class USceneComponent* Root;
@@ -75,6 +95,12 @@ private:
 	UPROPERTY(VisibleDefaultsOnly)
 	class UProjectileMovementComponent* ProjectileMovement;
 
+	//particle
+	class UParticleSystem* HitGround;
+	class UParticleSystem* HitRicochet;
+	class UParticleSystem* HitArmor;
+	UPROPERTY(EditDefaultsOnly, Category = "Particle")
+	TSubclassOf<class ACPP_ParticleActor> ParticleActorClass;
 	//Objectpool
 	int32 ObjectPoolID = 0;
 	bool IsCanRecycle = false;
