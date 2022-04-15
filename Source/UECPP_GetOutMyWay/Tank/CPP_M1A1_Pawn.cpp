@@ -172,13 +172,13 @@ void ACPP_M1A1_Pawn::CollisionSet()
 	FrontUnder->SetRelativeRotation(FRotator(25, 0, 0));
 	FrontUnder->SetBoxExtent(FVector(60, 170, 25));
 	FrontUnder->SetCollisionProfileName("TankCollider");
-	LSide->SetRelativeLocation(FVector(-20, 130, 0));
+	LSide->SetRelativeLocation(FVector(-20, -140, 0));
 	LSide->SetRelativeRotation(FRotator(-3, 0, 0));
-	LSide->SetBoxExtent(FVector(330, 30, 70));
+	LSide->SetBoxExtent(FVector(330, 40, 60));
 	LSide->SetCollisionProfileName("TankCollider");
-	RSide->SetRelativeLocation(FVector(-20, -130, 0));
+	RSide->SetRelativeLocation(FVector(-20, 140, 0));
 	RSide->SetRelativeRotation(FRotator(-3, 0, 0));
-	RSide->SetBoxExtent(FVector(330, 30, 70));
+	RSide->SetBoxExtent(FVector(330, 40, 60));
 	RSide->SetCollisionProfileName("TankCollider");
 	
 	Turret->SetRelativeLocation(FVector(0,0,110));

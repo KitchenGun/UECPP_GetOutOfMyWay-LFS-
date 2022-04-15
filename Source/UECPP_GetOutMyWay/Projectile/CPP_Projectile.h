@@ -65,6 +65,9 @@ protected:
 	{
 		ProjectileHitEffect = value;
 	}
+
+	UFUNCTION()
+	void FlyTimeOver();
 protected:
 	//데미지
 	float Damage = 20.0f;
@@ -101,7 +104,12 @@ private:
 	class UParticleSystem* HitArmor;
 	UPROPERTY(EditDefaultsOnly, Category = "Particle")
 	TSubclassOf<class ACPP_ParticleActor> ParticleActorClass;
+	
 	//Objectpool
 	int32 ObjectPoolID = 0;
 	bool IsCanRecycle = false;
+
+	//자동 비활성화를 위한 타이머
+	FTimerHandle FlyHandler;
+	float FlyTime = 5.0f;
 };

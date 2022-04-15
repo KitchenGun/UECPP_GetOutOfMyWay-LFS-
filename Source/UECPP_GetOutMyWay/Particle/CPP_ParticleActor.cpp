@@ -5,6 +5,7 @@
 ACPP_ParticleActor::ACPP_ParticleActor()
 {
 	Particle = CreateDefaultSubobject<UParticleSystemComponent>(L"Particle");
+	SetRootComponent(Particle);
 }
 
 void ACPP_ParticleActor::BeginPlay()
@@ -21,7 +22,6 @@ void ACPP_ParticleActor::SetParticle(class UParticleSystem* particle)
 
 void ACPP_ParticleActor::Disable(class UParticleSystemComponent* PSystem)
 {
-	UE_LOG(LogTemp,Display,L"temp");
 	PSystem->SetVisibility(false);
 	SetCanRecycle(true);
 }

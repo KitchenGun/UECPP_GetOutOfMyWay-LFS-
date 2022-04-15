@@ -106,6 +106,7 @@ void ACPP_Projectile::OnRecycleStart(FVector pos, FRotator dir)
 	Transform.SetRotation(FQuat(dir));
 	SetActorTransform(Transform);
 	OnRecycleStart();
+	PlayerCtrl->GetWorld()->GetTimerManager().SetTimer(FlyHandler,this,&ACPP_Projectile::FlyTimeOver,FlyTime,false);
 }
 
 
@@ -118,6 +119,9 @@ void ACPP_Projectile::Disable()
 	Effect->SetVisibility(false);
 	ProjectileMovement->SetComponentTickEnabled(false);
 	SetCanRecycle(true);
+	//타이머 초기화
+	if (GetWorldTimerManager().IsTimerActive(FlyHandler))
+		GetWorldTimerManager().ClearTimer(FlyHandler);
 }
 
 void ACPP_Projectile::BeginPlay()
@@ -129,12 +133,12 @@ void ACPP_Projectile::BeginPlay()
 	StartPos = this->GetActorLocation();
 	ProjectileMovement->Velocity = Capsule->GetUpVector()*ProjectileMovement->InitialSpeed;
 	InitialLifeSpan = 5.0f;
+
+	GetWorldTimerManager().SetTimer(FlyHandler,this,&ACPP_Projectile::FlyTimeOver,FlyTime,false);
 }
 
 float ACPP_Projectile::GetHitAngle(UPrimitiveComponent* OtherComp,const FHitResult& Hit)
 {
-	//이름
-	UE_LOG(LogTemp,Display,L"%s",*OtherComp->GetName());
 	//SphereTraceMulti를 사용해서 overlap에서 구할수없는 hit pos를 구함
 	{
 		const FVector start=StartPos;
@@ -155,14 +159,17 @@ float ACPP_Projectile::GetHitAngle(UPrimitiveComponent* OtherComp,const FHitResu
 		{
 			for(auto temp : HitResults)
 			{
-				if(Cast<UBoxComponent>(OtherComp))
+				if(Cast<UBoxComponent>(OtherComp)&&OtherComp->GetName()==temp.GetComponent()->GetName())
 				{
-					if(HitPos==FVector::ZeroVector)
-						HitPos = temp.ImpactPoint;
-					else
-					{
-						HitPos = FVector::Distance(HitPos,start)<FVector::Distance(temp.ImpactPoint,start)?HitPos:temp.ImpactPoint;
-					}
+					HitPos = temp.ImpactPoint;
+					UE_LOG(LogTemp,Display,L"%s",*OtherComp->GetName());
+					UE_LOG(LogTemp,Display,L"%s",*temp.GetComponent()->GetName());
+					//if(HitPos==FVector::ZeroVector)
+					//	HitPos = temp.ImpactPoint;
+					//else
+					//{
+					//	HitPos = FVector::Distance(HitPos,start)<FVector::Distance(temp.ImpactPoint,start)?HitPos:temp.ImpactPoint;
+					//}
 				}
 			}
 		}
@@ -224,16 +231,18 @@ void ACPP_Projectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 	//상속 받은 다음 충돌시 결과를 다르게 보내는 것으로 여러 탄종을 구현할려고 함
 	//충돌시 이펙트 생성
 	AddParticle();
-
-	UE_LOG(LogTemp,Display,L"%s",*OtherActor->GetName());
-	
 	//비활성화
 	Disable();
 }
 
 void ACPP_Projectile::AddParticle()
 {
-	UCPP_ObjectPoolManager* ObjPoolManager = Cast<UCPP_MultiplayGameInstance>(PlayerCtrl->GetGameInstance())->GetManagerClass<UCPP_ObjectPoolManager>();
+	UCPP_ObjectPoolManager* ObjPoolManager = Cast<UCPP_MultiplayGameInstance>(GetGameInstance())->GetManagerClass<UCPP_ObjectPoolManager>();
+	if(!IsValid(ObjPoolManager))//오브젝트 풀을 가져오지 못하면 삭제
+	{
+		Destroy();
+		return;
+	}
 	UParticleSystem* EffectType;
 
 	//이펙트 설정
@@ -253,9 +262,8 @@ void ACPP_Projectile::AddParticle()
 		break;
 	}
 	
-	ACPP_ParticleActor* temp;
 	//game inst에 objpool매니져에 접근
-	temp=Cast<ACPP_ParticleActor>(ObjPoolManager->GetRecycledObject(1));
+	ACPP_ParticleActor* temp=Cast<ACPP_ParticleActor>(ObjPoolManager->GetRecycledObject(1));
 	
 	if(temp!=nullptr)
 	{//초기화할 객체가 존재하는 경우
@@ -277,4 +285,9 @@ void ACPP_Projectile::SetParticle()
 	HitArmor = ConstructorHelpers::FObjectFinder<UParticleSystem>(L"ParticleSystem'/Game/Realistic_Starter_VFX_Pack_Vol2/Particles/Explosion/P_Explosion_Side.P_Explosion_Side'").Object;
 	HitRicochet = ConstructorHelpers::FObjectFinder<UParticleSystem>(L"ParticleSystem'/Game/Realistic_Starter_VFX_Pack_Vol2/Particles/Sparks/P_Sparks_C.P_Sparks_C'").Object;
 	HitGround = ConstructorHelpers::FObjectFinder<UParticleSystem>(L"ParticleSystem'/Game/Realistic_Starter_VFX_Pack_Vol2/Particles/Hit/P_Brick.P_Brick'").Object;
+}
+
+void ACPP_Projectile::FlyTimeOver()
+{
+	Disable();
 }

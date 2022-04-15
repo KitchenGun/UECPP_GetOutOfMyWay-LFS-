@@ -12,7 +12,8 @@ void ACPP_ProjectileAP::BounceCal(float hitAngle, EHitDir hitDir)
 	const UEnum* DirEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("EHitDir"), true);
 	FString EnumToString = DirEnum->GetNameStringByValue((int64)ProjectileHitDir);
 	UE_LOG(LogTemp,Display,L"%s",*EnumToString);
-	
+	UE_LOG(LogTemp,Display,L"%s",*HitPos.ToString());
+	UE_LOG(LogTemp,Display,L"%.2f",hitAngle);
 	//AP탄으로 도탄여부 계산  데미지가 1이면 도탄
 	switch (ProjectileHitDir)
 	{
@@ -30,7 +31,7 @@ void ACPP_ProjectileAP::BounceCal(float hitAngle, EHitDir hitDir)
 		}
 		break;
 	case EHitDir::Side:
-		if(30<hitAngle&&hitAngle<150)//30도 미만의 입사각 == 도탄
+		if(45<hitAngle&&hitAngle<135)//45도 미만의 입사각 == 도탄
 		{
 			Damage=20;
 			HitEffectSet(EHitEffect::TankHit);
@@ -43,7 +44,7 @@ void ACPP_ProjectileAP::BounceCal(float hitAngle, EHitDir hitDir)
 		}
 		break;
 	case EHitDir::Back:
-		if(10<hitAngle&&hitAngle<170)//10도 미만의 입사각 == 도탄
+		if(30<hitAngle&&hitAngle<150)//30도 미만의 입사각 == 도탄
 		{
 			Damage=20;
 			HitEffectSet(EHitEffect::TankHit);
