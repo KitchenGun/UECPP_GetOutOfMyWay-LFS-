@@ -28,7 +28,7 @@ private:
 	void CameraSet();
 	void ParticleSet();
 	void SoundSet();
-
+	void UISet();
 	
 	
 };

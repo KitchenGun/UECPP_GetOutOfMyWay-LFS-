@@ -20,6 +20,8 @@
 #include "Component/CPP_ParticleControlComponent.h"
 #include "Engine/AssetManager.h"
 #include "Materials/MaterialInstanceConstant.h"
+#include "UI/Tank/CPP_UserWidgetTank.h"
+#include "UI/Tank/Sight/CPP_UserWidgetTankSight.h"
 
 
 ACPP_M1A1_Pawn::ACPP_M1A1_Pawn()
@@ -36,6 +38,9 @@ ACPP_M1A1_Pawn::ACPP_M1A1_Pawn()
 	ParticleSet();
 	//sound
 	SoundSet();
+	//ui
+	UISet();
+	
 	//actorcomp
 	TrackMovement = CreateDefaultSubobject<UCPP_TrackMovementComponent>(L"TrackMovement");
 	TankMovement = CreateDefaultSubobject<UCPP_TankPawnMovementComponent>(L"TankPawnMovement");
@@ -72,6 +77,8 @@ void ACPP_M1A1_Pawn::BeginPlay()
 	GunSystemAudio->OnAudioFinished.AddDynamic(this,&ACPP_M1A1_Pawn::GunSystemSoundStop);
 	//Damage
 	HP = MAX_HP;
+	//ui
+	
 }
 
 void ACPP_M1A1_Pawn::Tick(float DeltaTime)
@@ -343,6 +350,11 @@ void ACPP_M1A1_Pawn::SoundSet()
 	EngineAudio->VolumeMultiplier = 0.3f;
 	GunSystemAudio->VolumeMultiplier=0.5f;
 	TurretSystemAudio->VolumeMultiplier=0.3f;
+}
+
+void ACPP_M1A1_Pawn::UISet()
+{
+	
 }
 
 

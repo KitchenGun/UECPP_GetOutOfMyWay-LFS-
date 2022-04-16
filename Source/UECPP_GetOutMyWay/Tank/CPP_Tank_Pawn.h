@@ -175,6 +175,9 @@ protected:
 	class USoundAttenuation* EngineSoundAttenuation;
 	class USoundAttenuation* TurretSoundAttenuation;
 
+
+	//UI
+	
 	//Damage
 	float MAX_HP = 100;
 	float HP = MAX_HP;
