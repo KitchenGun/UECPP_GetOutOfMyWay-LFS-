@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -7,22 +5,36 @@
 #include "CPP_TankUIComponent.generated.h"
 
 
+UENUM(BlueprintType)
+enum class ETankType : uint8
+{
+	M1A1=0 UMETA(DisplayName="M1A1"),
+	T72 UMETA(DisplayName="T72"),
+	Max
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UECPP_GETOUTMYWAY_API UCPP_TankUIComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UCPP_TankUIComponent();
 
 protected:
-	// Called when the game starts
 	virtual void BeginPlay() override;
+	void SetSightUI();
+private:
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	UPROPERTY(EditAnywhere,Category="UIClass")
+	TSubclassOf<class UCPP_UserWidgetTank> TankUIClass;
+	UPROPERTY(EditAnywhere,Category="UIClass")
+	TSubclassOf<class UCPP_UserWidgetTankSight> TankSightUIClass;
 
-		
+	
+	class UCPP_UserWidgetTank* TankWidget;
+	class UCPP_UserWidgetTankSight* TankSightWidget;
+	ETankType TankUIType;
+
+	APlayerController* PlayerCtrl;
 };

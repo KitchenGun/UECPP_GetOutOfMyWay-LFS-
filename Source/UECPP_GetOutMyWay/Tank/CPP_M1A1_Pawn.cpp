@@ -38,20 +38,19 @@ ACPP_M1A1_Pawn::ACPP_M1A1_Pawn()
 	ParticleSet();
 	//sound
 	SoundSet();
-	//ui
-	UISet();
 	
 	//actorcomp
 	TrackMovement = CreateDefaultSubobject<UCPP_TrackMovementComponent>(L"TrackMovement");
 	TankMovement = CreateDefaultSubobject<UCPP_TankPawnMovementComponent>(L"TankPawnMovement");
 	GunSystem = CreateDefaultSubobject<UCPP_M1A1MainGunSystemComponent>(L"GunSystem");
 	ParticleSystem = CreateDefaultSubobject<UCPP_ParticleControlComponent>(L"ParticleController");
+	TankUI = CreateDefaultSubobject<UCPP_TankUIComponent>(L"TankUI");
+
 }
 
 void ACPP_M1A1_Pawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
 	//바인딩
 	if(IsValid(TankMovement))
 	{
@@ -64,7 +63,6 @@ void ACPP_M1A1_Pawn::BeginPlay()
 		GunSystem->GunReloadDoneFunc.BindUFunction(this,"GunSystemSoundReloadDone");
 	}
 	
-	PC = UGameplayStatics::GetPlayerController(this,0);
 	
 	//카메라
 	Camera->SetActive(true);
@@ -77,7 +75,6 @@ void ACPP_M1A1_Pawn::BeginPlay()
 	GunSystemAudio->OnAudioFinished.AddDynamic(this,&ACPP_M1A1_Pawn::GunSystemSoundStop);
 	//Damage
 	HP = MAX_HP;
-	//ui
 	
 }
 

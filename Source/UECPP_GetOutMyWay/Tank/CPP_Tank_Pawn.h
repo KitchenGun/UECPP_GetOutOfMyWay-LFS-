@@ -83,7 +83,8 @@ protected:
 	class UCPP_MainGunSystemComponent* GunSystem;
 
 	class UCPP_ParticleControlComponent* ParticleSystem;
-
+	UPROPERTY(EditDefaultsOnly)
+	class UCPP_TankUIComponent* TankUI;
 public:	
 	virtual void Tick(float DeltaTime) override;
 
@@ -95,7 +96,7 @@ public:
 	FORCEINLINE UParticleSystemComponent* GetMuzzleFlashEffect() {return MuzzleFlashEffect;}
 	FORCEINLINE UParticleSystemComponent* GetShockWaveEffect() {return ShockWaveEffect;}
 	FORCEINLINE TArray<class UParticleSystemComponent*> GetWheelsEffect() {return WheelsEffect;}
-
+	FORCEINLINE APlayerController* GetPlayerController() {return PC;}
 	FORCEINLINE float GetGunAngleOffset() {return displacementAngle;}
 
 	//Delegate
@@ -176,8 +177,6 @@ protected:
 	class USoundAttenuation* TurretSoundAttenuation;
 
 
-	//UI
-	
 	//Damage
 	float MAX_HP = 100;
 	float HP = MAX_HP;

@@ -1,34 +1,40 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Tank/Component/CPP_TankUIComponent.h"
 
-// Sets default values for this component's properties
+#include "Components/CanvasPanel.h"
+#include "Engine/StreamableManager.h"
+#include "Kismet/GameplayStatics.h"
+#include "Tank/CPP_Tank_Pawn.h"
+#include "UI/Tank/CPP_UserWidgetTank.h"
+#include "UI/Tank/Sight/CPP_UserWidgetTankSight.h"
+
 UCPP_TankUIComponent::UCPP_TankUIComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	if(GetOwner()==nullptr)
+		return;
+	if(GetOwner()->GetName().Equals("CPP_M1A1_Pawn"))
+	{
+		TankUIType = ETankType::M1A1;
+	}
 }
 
 
-// Called when the game starts
 void UCPP_TankUIComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
+	if(PlayerCtrl == nullptr)
+		PlayerCtrl =Cast<ACPP_Tank_Pawn>(GetOwner())->GetPlayerController();
 	
+	TankWidget = CreateWidget<UCPP_UserWidgetTank>(PlayerCtrl,TankUIClass);
+	SetSightUI();
+	TankWidget->AddToViewport();
 }
 
-
-// Called every frame
-void UCPP_TankUIComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UCPP_TankUIComponent::SetSightUI()
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+	TankSightWidget = CreateWidget<UCPP_UserWidgetTankSight>(PlayerCtrl,TankSightUIClass);
+	TankSightWidget->AddToViewport();
+	TankWidget->MainCanvas->AddChild(TankSightWidget);
+	TankSightWidget->SetTankType(TankUIType);
 }
+
 

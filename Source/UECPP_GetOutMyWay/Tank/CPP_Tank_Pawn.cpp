@@ -24,6 +24,7 @@ ACPP_Tank_Pawn::ACPP_Tank_Pawn()
 
 void ACPP_Tank_Pawn::BeginPlay()
 {
+	PC = UGameplayStatics::GetPlayerController(GetWorld(),0);
 	Super::BeginPlay();
 }
 
