@@ -1,6 +1,7 @@
 #include "Tank/Component/CPP_TankUIComponent.h"
 
 #include "Components/CanvasPanel.h"
+#include "Components/CanvasPanelSlot.h"
 #include "Engine/StreamableManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Tank/CPP_Tank_Pawn.h"
@@ -34,6 +35,12 @@ void UCPP_TankUIComponent::SetSightUI()
 	TankSightWidget = CreateWidget<UCPP_UserWidgetTankSight>(PlayerCtrl,TankSightUIClass);
 	TankSightWidget->AddToViewport();
 	TankWidget->MainCanvas->AddChild(TankSightWidget);
+	UCanvasPanelSlot* TankSightWidgetSlot = Cast<UCanvasPanelSlot>(TankWidget->MainCanvas->GetSlots()[0]);
+	if(TankUIType==ETankType::M1A1)
+	{
+		TankSightWidgetSlot->SetAnchors(FAnchors{0,0,1,1});
+		TankSightWidgetSlot->SetOffsets(FMargin{0,0,0,0});
+	}
 	TankSightWidget->SetTankType(TankUIType);
 }
 

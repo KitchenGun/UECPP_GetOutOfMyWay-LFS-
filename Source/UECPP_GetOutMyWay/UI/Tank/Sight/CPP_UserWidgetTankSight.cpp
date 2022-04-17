@@ -1,5 +1,7 @@
 #include "UI/Tank/Sight/CPP_UserWidgetTankSight.h"
 
+#include "Components/CanvasPanel.h"
+#include "Components/CanvasPanelSlot.h"
 #include "Components/Image.h"
 #include "Engine/AssetManager.h"
 
@@ -7,7 +9,13 @@ void UCPP_UserWidgetTankSight::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	UCanvasPanelSlot* SightSlot = Cast<UCanvasPanelSlot>(SightReticle->Slot);
+	UCanvasPanelSlot* GunSightSlot = Cast<UCanvasPanelSlot>(GunSightReticle->Slot);
 	
+	SightSlot->SetAnchors(FAnchors{0,0,1,1});
+	GunSightSlot->SetAnchors(FAnchors{0,0,1,1});
+	SightSlot->SetOffsets(FMargin{0,0,0,0});
+	GunSightSlot->SetOffsets(FMargin{0,75,0,0});
 }
 
 void UCPP_UserWidgetTankSight::SetTankType(ETankType value)
