@@ -19,7 +19,6 @@
 ACPP_Tank_Pawn::ACPP_Tank_Pawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	
 }
 
 void ACPP_Tank_Pawn::BeginPlay()
@@ -66,6 +65,8 @@ void ACPP_Tank_Pawn::CamChange()
 	?CamType=static_cast<ECameraType>((uint8)0)
 	:CamType=static_cast<ECameraType>((uint8)CamType+1);
 
+	if(FpViewToggleFunc.IsBound())
+		FpViewToggleFunc.Execute();
 	switch (CamType)
 	{
 	case ECameraType::THIRD:

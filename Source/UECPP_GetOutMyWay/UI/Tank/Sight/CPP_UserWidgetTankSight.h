@@ -14,9 +14,10 @@ public:
 	virtual void NativeConstruct() override;
 
 	void SetTankType(ETankType value);
-	
-	
 
+
+	UFUNCTION()
+	void OnFPViewEffectToggle();
 	
 protected:
 	UPROPERTY(meta=(BindWidget))
@@ -25,7 +26,9 @@ protected:
 	class UImage* SightReticle;
 	UPROPERTY(meta=(BindWidget))
 	class UImage* GunSightReticle;
-
+	UPROPERTY(meta=(BindWidget))
+	class UImage* FPViewEffect;
+	
 private:
 	ETankType TankType;
 };

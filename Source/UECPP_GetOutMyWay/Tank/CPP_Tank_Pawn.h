@@ -6,6 +6,7 @@
 
 
 DECLARE_DELEGATE(FFire);
+DECLARE_DELEGATE(FFPViewEffect);
 
 UENUM(BlueprintType)
 enum class ECameraType : uint8
@@ -101,6 +102,7 @@ public:
 
 	//Delegate
 	FFire FireFunc;
+	FFPViewEffect FpViewToggleFunc;
 protected:
 	virtual void BeginPlay() override;
 

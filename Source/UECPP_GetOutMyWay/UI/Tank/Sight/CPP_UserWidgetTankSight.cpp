@@ -30,3 +30,17 @@ void UCPP_UserWidgetTankSight::SetTankType(ETankType value)
 		GunSightReticle->SetBrushFromTexture(GunSightImg);
 	}
 }
+
+void UCPP_UserWidgetTankSight::OnFPViewEffectToggle()
+{
+	if(FMath::IsNearlyZero(FPViewEffect->ColorAndOpacity.A))
+	{
+		FPViewEffect->SetOpacity(1);
+		UE_LOG(LogTemp,Display,L"1");
+	}
+	else
+	{
+		FPViewEffect->SetOpacity(0);
+		UE_LOG(LogTemp,Display,L"0");
+	}
+}

@@ -12,10 +12,18 @@ UCPP_TankUIComponent::UCPP_TankUIComponent()
 {
 	if(GetOwner()==nullptr)
 		return;
-	if(GetOwner()->GetName().Equals("CPP_M1A1_Pawn"))
+	Owner=Cast<ACPP_Tank_Pawn>(GetOwner());
+	if(Owner->GetName().Equals("CPP_M1A1_Pawn"))
 	{
 		TankUIType = ETankType::M1A1;
 	}
+	
+}
+
+void UCPP_TankUIComponent::FPViewEffectToggle()
+{
+	
+	TankSightWidget->OnFPViewEffectToggle();
 }
 
 
@@ -24,7 +32,10 @@ void UCPP_TankUIComponent::BeginPlay()
 	Super::BeginPlay();
 	if(PlayerCtrl == nullptr)
 		PlayerCtrl =Cast<ACPP_Tank_Pawn>(GetOwner())->GetPlayerController();
-	
+	if(IsValid(Owner))
+	{
+		Owner->FpViewToggleFunc.BindUFunction(this,"FPViewEffectToggle");
+	}
 	TankWidget = CreateWidget<UCPP_UserWidgetTank>(PlayerCtrl,TankUIClass);
 	SetSightUI();
 	TankWidget->AddToViewport();

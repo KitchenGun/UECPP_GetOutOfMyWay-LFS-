@@ -4,7 +4,6 @@
 #include "CPP_Tank_Pawn.h"
 #include "CPP_M1A1_Pawn.generated.h"
 
-
 UCLASS()
 class UECPP_GETOUTMYWAY_API ACPP_M1A1_Pawn : public ACPP_Tank_Pawn
 {
@@ -28,7 +27,6 @@ private:
 	void CameraSet();
 	void ParticleSet();
 	void SoundSet();
-	void UISet();
 	
 	
 };

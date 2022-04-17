@@ -20,7 +20,6 @@
 #include "Component/CPP_ParticleControlComponent.h"
 #include "Engine/AssetManager.h"
 #include "Materials/MaterialInstanceConstant.h"
-#include "UI/Tank/CPP_UserWidgetTank.h"
 #include "UI/Tank/Sight/CPP_UserWidgetTankSight.h"
 
 
@@ -45,7 +44,6 @@ ACPP_M1A1_Pawn::ACPP_M1A1_Pawn()
 	GunSystem = CreateDefaultSubobject<UCPP_M1A1MainGunSystemComponent>(L"GunSystem");
 	ParticleSystem = CreateDefaultSubobject<UCPP_ParticleControlComponent>(L"ParticleController");
 	TankUI = CreateDefaultSubobject<UCPP_TankUIComponent>(L"TankUI");
-
 }
 
 void ACPP_M1A1_Pawn::BeginPlay()
@@ -62,7 +60,7 @@ void ACPP_M1A1_Pawn::BeginPlay()
 		GunSystem->FireEffectFunc.BindUFunction(this,"OnFireParticle");
 		GunSystem->GunReloadDoneFunc.BindUFunction(this,"GunSystemSoundReloadDone");
 	}
-	
+
 	
 	//Ä«¸Þ¶ó
 	Camera->SetActive(true);
@@ -349,10 +347,6 @@ void ACPP_M1A1_Pawn::SoundSet()
 	TurretSystemAudio->VolumeMultiplier=0.3f;
 }
 
-void ACPP_M1A1_Pawn::UISet()
-{
-	
-}
 
 
 
