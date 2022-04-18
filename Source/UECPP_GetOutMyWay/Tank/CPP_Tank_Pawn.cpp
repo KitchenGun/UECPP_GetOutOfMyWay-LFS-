@@ -26,7 +26,6 @@ void ACPP_Tank_Pawn::BeginPlay()
 {
 	if(PC==nullptr)
 	{
-		UE_LOG(LogTemp,Display,L"none");
 		PC = GetWorld()->GetFirstPlayerController();
 	}
 	Super::BeginPlay();
@@ -88,6 +87,7 @@ void ACPP_Tank_Pawn::CamChange()
 	{
 	case ECameraType::THIRD:
 		Camera->SetActive(true);
+		GunnerCam->SetFieldOfView(90);
 		GunnerCam->SetActive(false);
 		break;
 	case ECameraType::GUNNER:
@@ -131,6 +131,23 @@ void ACPP_Tank_Pawn::OnMainGunFire()
 {
 	if(FireFunc.IsBound())
 		FireFunc.Execute();
+}
+
+void ACPP_Tank_Pawn::ZoomToggle()
+{
+	if(CamType == ECameraType::GUNNER)
+	{
+		if(IsZoom)
+		{
+			IsZoom=false;
+			GunnerCam->SetFieldOfView(90);
+		}
+		else
+		{
+			IsZoom=true;
+			GunnerCam->SetFieldOfView(30);
+		}
+	}
 }
 
 void ACPP_Tank_Pawn::OnWheelParticle()
@@ -255,6 +272,8 @@ void ACPP_Tank_Pawn::Tick(float DeltaTime)
 void ACPP_Tank_Pawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PlayerInputComponent->BindAction("Zoom",IE_Pressed,this, &ACPP_Tank_Pawn::ZoomToggle);
 }
 
 float ACPP_Tank_Pawn::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
@@ -300,7 +319,7 @@ void ACPP_Tank_Pawn::GunDirPosWorldToScreen()
 	FVector2D pos = FVector2D{X*0.5f,Y*0.5f};
 	if(isHit)
 	{
-		UGameplayStatics::ProjectWorldToScreen(PC,hit.ImpactPoint,pos);
+		UGameplayStatics::ProjectWorldToScreen(PC,hit.ImpactPoint,pos,true);
 		if(FGunSightPosFunc.IsBound())
 			FGunSightPosFunc.Execute(pos);
 	}

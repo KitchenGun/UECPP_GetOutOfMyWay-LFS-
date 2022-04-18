@@ -123,6 +123,7 @@ protected:
 	void OffEngineBreak();
 	//action
 	void OnMainGunFire();
+	void ZoomToggle();
 	//particle
 	void OnWheelParticle();
 	UFUNCTION()
@@ -156,7 +157,7 @@ protected:
 	float PitchLimitMin = -10;
 	float displacementAngle =0.0f;
 	ECameraType CamType = ECameraType::THIRD;
-	
+	bool IsZoom = false;
 	//APlayerController
 	APlayerController* PC;
 

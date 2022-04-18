@@ -153,7 +153,7 @@ float ACPP_Projectile::GetHitAngle(UPrimitiveComponent* OtherComp,const FHitResu
 		//UWorld::channel 충돌객체의 channel이 일치하는 것만 반환함
 		const bool isHit =
 			UKismetSystemLibrary::LineTraceMulti(GetWorld(),start,end,
-				ETraceTypeQuery::TraceTypeQuery3,false,ignore,EDrawDebugTrace::None,HitResults,true);
+				ETraceTypeQuery::TraceTypeQuery3,false,ignore,EDrawDebugTrace::ForDuration,HitResults,true);
 		
 
 		if(isHit)

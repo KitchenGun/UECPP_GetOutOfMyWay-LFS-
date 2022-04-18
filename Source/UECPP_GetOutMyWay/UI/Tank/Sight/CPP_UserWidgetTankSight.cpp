@@ -12,13 +12,16 @@ void UCPP_UserWidgetTankSight::NativeConstruct()
 	UCanvasPanelSlot* SightSlot = Cast<UCanvasPanelSlot>(SightReticle->Slot);
 	UCanvasPanelSlot* GunSightSlot = Cast<UCanvasPanelSlot>(GunSightReticle->Slot);
 	UCanvasPanelSlot* TPSightSlot = Cast<UCanvasPanelSlot>(TPSightReticle->Slot);
+	UCanvasPanelSlot* FPViewEffectSlot = Cast<UCanvasPanelSlot>(FPViewEffect->Slot);
 	
 	SightSlot->SetAnchors(FAnchors{0,0,1,1});
 	GunSightSlot->SetAnchors(FAnchors{0,0,1,1});
 	TPSightSlot->SetAnchors(FAnchors{0,0,1,1});
+	FPViewEffectSlot->SetAnchors(FAnchors{0,0,1,1});
 	SightSlot->SetOffsets(FMargin{0,0,0,0});
 	GunSightSlot->SetOffsets(FMargin{0,75,0,0});
 	TPSightSlot->SetOffsets(FMargin{0,0,0,0});
+	FPViewEffectSlot->SetOffsets(FMargin{0,0,0,0});
 }
 
 void UCPP_UserWidgetTankSight::SetTankType(ETankType value)
@@ -28,11 +31,11 @@ void UCPP_UserWidgetTankSight::SetTankType(ETankType value)
 	{
 		UTexture2D* SightImg = Cast<UTexture2D>(UAssetManager::GetStreamableManager().LoadSynchronous(FSoftObjectPath(L"Texture2D'/Game/VigilanteContent/Vehicles/West_Tank_M1A1Abrams/Materials/UI/M1A1_SIGHT_BACKGROUND.M1A1_SIGHT_BACKGROUND'")));
 		UTexture2D* GunSightImg = Cast<UTexture2D>(UAssetManager::GetStreamableManager().LoadSynchronous(FSoftObjectPath(L"Texture2D'/Game/VigilanteContent/Vehicles/West_Tank_M1A1Abrams/Materials/UI/M1A1_Sight.M1A1_Sight'")));
-		UTexture2D* CommanderSightImg = Cast<UTexture2D>(UAssetManager::GetStreamableManager().LoadSynchronous(FSoftObjectPath(L"Texture2D'/Game/VigilanteContent/Vehicles/West_Tank_M1A1Abrams/Materials/Textures/AimMarker.AimMarker'")));
+		UTexture2D* TPSightImg = Cast<UTexture2D>(UAssetManager::GetStreamableManager().LoadSynchronous(FSoftObjectPath(L"Texture2D'/Game/VigilanteContent/Vehicles/West_Tank_M1A1Abrams/Materials/Textures/AimMarker.AimMarker'")));
 			
 		SightReticle->SetBrushFromTexture(SightImg);
 		GunSightReticle->SetBrushFromTexture(GunSightImg);
-		TPSightReticle->SetBrushFromTexture(CommanderSightImg);
+		TPSightReticle->SetBrushFromTexture(TPSightImg);
 		
 		FPViewEffect->SetVisibility(ESlateVisibility::Hidden);
 		GunSightReticle->SetVisibility(ESlateVisibility::Hidden);
