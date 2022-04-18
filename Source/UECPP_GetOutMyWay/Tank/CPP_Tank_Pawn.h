@@ -7,6 +7,7 @@
 
 DECLARE_DELEGATE(FFire);
 DECLARE_DELEGATE(FFPViewEffect);
+DECLARE_DELEGATE_OneParam(FGunSightWidgetPosFunc,FVector2D)
 
 UENUM(BlueprintType)
 enum class ECameraType : uint8
@@ -92,6 +93,9 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	UFUNCTION()
+	void GunDirPosWorldToScreen();
 	
 	//get&set
 	FORCEINLINE UParticleSystemComponent* GetMuzzleFlashEffect() {return MuzzleFlashEffect;}
@@ -99,10 +103,10 @@ public:
 	FORCEINLINE TArray<class UParticleSystemComponent*> GetWheelsEffect() {return WheelsEffect;}
 	FORCEINLINE APlayerController* GetPlayerController() {return PC;}
 	FORCEINLINE float GetGunAngleOffset() {return displacementAngle;}
-
 	//Delegate
 	FFire FireFunc;
 	FFPViewEffect FpViewToggleFunc;
+	FGunSightWidgetPosFunc FGunSightPosFunc;
 protected:
 	virtual void BeginPlay() override;
 

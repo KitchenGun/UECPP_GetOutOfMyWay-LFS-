@@ -25,6 +25,18 @@ void ACPP_Tank_Pawn::BeginPlay()
 {
 	PC = UGameplayStatics::GetPlayerController(GetWorld(),0);
 	Super::BeginPlay();
+	//바인딩
+	if(IsValid(TankMovement))
+	{
+		TankMovement->TurretMoveStartFunc.BindUFunction(this,"TurretMoveLoop");
+		TankMovement->TurretMoveEndFunc.BindUFunction(this,"TurretMoveEnd");
+	}	
+	if(IsValid(GunSystem))
+	{
+		GunSystem->FireEffectFunc.BindUFunction(this,"OnFireParticle");
+		GunSystem->GunReloadDoneFunc.BindUFunction(this,"GunSystemSoundReloadDone");
+	}
+	
 }
 
 void ACPP_Tank_Pawn::OnVerticalLook(float value)
@@ -76,6 +88,8 @@ void ACPP_Tank_Pawn::CamChange()
 	case ECameraType::GUNNER:
 		GunnerCam->SetActive(true);
 		Camera->SetActive(false);
+		break;
+	default:
 		break;
 	}
 }
@@ -229,6 +243,8 @@ void ACPP_Tank_Pawn::Tick(float DeltaTime)
 	//Turret Collider 위치 변환 탱크 포탑에 충돌체 같이 움직이기 위해서
 	Turret->SetWorldLocation(TankMesh->GetSocketLocation("turret_jntSocket"));
 	Turret->SetWorldRotation(TankMesh->GetSocketRotation("turret_jntSocket"));
+	//ui에 전달
+	GunDirPosWorldToScreen();
 }
 
 void ACPP_Tank_Pawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -248,6 +264,36 @@ float ACPP_Tank_Pawn::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	
 	UE_LOG(LogTemp,Display,L"%.2f",HP);
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+}
+
+void ACPP_Tank_Pawn::GunDirPosWorldToScreen()
+{
+
+	FVector start = TankMesh->GetSocketLocation("gun_1_jntSocket");
+	FRotator Dir = TankMesh->GetSocketRotation("gun_1_jntSocket");
+	FVector end = start+Dir.Vector()*5e+4f;
+	FHitResult hit;
+	TArray<AActor*> ignore;
+	ignore.Add(this);
+	const bool isHit =
+			UKismetSystemLibrary::LineTraceSingle(GetWorld(),start,end,
+				ETraceTypeQuery::TraceTypeQuery4,false,ignore,EDrawDebugTrace::None,hit,true);
+	int32 X,Y;
+	PC->GetViewportSize(X,Y);
+	FVector2D pos = FVector2D{X*0.5f,Y*0.5f};
+	if(isHit)
+	{
+		UGameplayStatics::ProjectWorldToScreen(PC,hit.ImpactPoint,pos);
+		if(FGunSightPosFunc.IsBound())
+			FGunSightPosFunc.Execute(pos);
+	}
+	else
+	{
+		UGameplayStatics::ProjectWorldToScreen(PC,end,pos);
+		UE_LOG(LogTemp,Display,L"%s",*pos.ToString());
+		if(FGunSightPosFunc.IsBound())
+			FGunSightPosFunc.Execute(pos);
+	}
 }
 
 

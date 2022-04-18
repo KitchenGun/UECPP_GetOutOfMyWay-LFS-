@@ -18,6 +18,8 @@ public:
 
 	UFUNCTION()
 	void OnFPViewEffectToggle();
+
+	void UpdateGunSightPos(FVector2D value);
 	
 protected:
 	UPROPERTY(meta=(BindWidget))

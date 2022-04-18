@@ -49,17 +49,7 @@ ACPP_M1A1_Pawn::ACPP_M1A1_Pawn()
 void ACPP_M1A1_Pawn::BeginPlay()
 {
 	Super::BeginPlay();
-	//바인딩
-	if(IsValid(TankMovement))
-	{
-		TankMovement->TurretMoveStartFunc.BindUFunction(this,"TurretMoveLoop");
-		TankMovement->TurretMoveEndFunc.BindUFunction(this,"TurretMoveEnd");
-	}	
-	if(IsValid(GunSystem))
-	{
-		GunSystem->FireEffectFunc.BindUFunction(this,"OnFireParticle");
-		GunSystem->GunReloadDoneFunc.BindUFunction(this,"GunSystemSoundReloadDone");
-	}
+	
 
 	
 	//카메라

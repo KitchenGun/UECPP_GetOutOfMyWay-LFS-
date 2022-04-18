@@ -11,14 +11,14 @@ void UCPP_UserWidgetTankSight::NativeConstruct()
 
 	UCanvasPanelSlot* SightSlot = Cast<UCanvasPanelSlot>(SightReticle->Slot);
 	UCanvasPanelSlot* GunSightSlot = Cast<UCanvasPanelSlot>(GunSightReticle->Slot);
-	UCanvasPanelSlot* CommandSightSlot = Cast<UCanvasPanelSlot>(TPSightReticle->Slot);
+	UCanvasPanelSlot* TPSightSlot = Cast<UCanvasPanelSlot>(TPSightReticle->Slot);
 	
 	SightSlot->SetAnchors(FAnchors{0,0,1,1});
 	GunSightSlot->SetAnchors(FAnchors{0,0,1,1});
-	CommandSightSlot->SetAnchors(FAnchors{0,0,1,1});
+	TPSightSlot->SetAnchors(FAnchors{0,0,1,1});
 	SightSlot->SetOffsets(FMargin{0,0,0,0});
 	GunSightSlot->SetOffsets(FMargin{0,75,0,0});
-	CommandSightSlot->SetOffsets(FMargin{0,0,0,0});
+	TPSightSlot->SetOffsets(FMargin{0,0,0,0});
 }
 
 void UCPP_UserWidgetTankSight::SetTankType(ETankType value)
@@ -55,4 +55,26 @@ void UCPP_UserWidgetTankSight::OnFPViewEffectToggle()
 		FPViewEffect->SetVisibility(ESlateVisibility::Hidden);
 		GunSightReticle->SetVisibility(ESlateVisibility::Hidden);
 	}
+}
+
+void UCPP_UserWidgetTankSight::UpdateGunSightPos(FVector2D value)
+{
+		int32 X,Y;
+		GetOwningPlayer()->GetViewportSize(X,Y);
+		FVector2D pos = FVector2D{X*0.5f,Y*0.5f};
+		value-=pos;
+	
+		if(IsFPView)
+		{
+			//GunSightReticle->RenderTransform.Translation = value;
+			UCanvasPanelSlot* GunSightSlot = Cast<UCanvasPanelSlot>(GunSightReticle->Slot);
+			value.Y += 75;
+			GunSightSlot->SetPosition(value);
+		}
+		else
+		{
+			//TPSightReticle->RenderTransform.Translation = value;
+			UCanvasPanelSlot* TPSightSlot = Cast<UCanvasPanelSlot>(TPSightReticle->Slot);
+			TPSightSlot->SetPosition(value);
+		}
 }

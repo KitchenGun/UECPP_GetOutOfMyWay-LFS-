@@ -22,8 +22,12 @@ UCPP_TankUIComponent::UCPP_TankUIComponent()
 
 void UCPP_TankUIComponent::FPViewEffectToggle()
 {
-	
 	TankSightWidget->OnFPViewEffectToggle();
+}
+
+void UCPP_TankUIComponent::UpdateGunSightPos(FVector2D value)
+{
+	TankSightWidget->UpdateGunSightPos(value);
 }
 
 
@@ -35,6 +39,7 @@ void UCPP_TankUIComponent::BeginPlay()
 	if(IsValid(Owner))
 	{
 		Owner->FpViewToggleFunc.BindUFunction(this,"FPViewEffectToggle");
+		Owner->FGunSightPosFunc.BindUFunction(this,"UpdateGunSightPos");
 	}
 	TankWidget = CreateWidget<UCPP_UserWidgetTank>(PlayerCtrl,TankUIClass);
 	SetSightUI();

@@ -15,6 +15,7 @@ public:
 	UCPP_M1A1MainGunSystemComponent();
 	
 	void MainGunFire() override;
+
 protected:
 	virtual void BeginPlay() override;
 private:

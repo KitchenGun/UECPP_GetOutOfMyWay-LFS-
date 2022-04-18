@@ -23,7 +23,8 @@ public:
 	UCPP_TankUIComponent();
 	UFUNCTION()
 	void FPViewEffectToggle();
-
+	UFUNCTION()
+	void UpdateGunSightPos(FVector2D value);
 protected:
 	virtual void BeginPlay() override;
 	void SetSightUI();

@@ -38,9 +38,7 @@ void UCPP_M1A1MainGunSystemComponent::MainGunFire()
 		if(ProjectileClass)
 		{
 			FVector SpawnPos	= TankMesh->GetSocketLocation("gun_1_jntSocket");
-			FRotator Direction   = Owner->GetController()->GetControlRotation();
-			FVector test;
-			Owner->GetActorEyesViewPoint(test,Direction);
+			FRotator Direction =TankMesh->GetSocketRotation("gun_1_jntSocket");
 			UCPP_ObjectPoolManager* ObjPoolManager = Cast<UCPP_MultiplayGameInstance>(Owner->GetGameInstance())->GetManagerClass<UCPP_ObjectPoolManager>();
 			ACPP_Projectile* temp;
 			//game inst 에 objpool매니져에 접근
