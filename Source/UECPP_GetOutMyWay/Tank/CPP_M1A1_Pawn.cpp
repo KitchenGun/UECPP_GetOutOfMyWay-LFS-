@@ -50,8 +50,6 @@ void ACPP_M1A1_Pawn::BeginPlay()
 {
 	Super::BeginPlay();
 	
-
-	
 	//카메라
 	Camera->SetActive(true);
 	GunnerCam->SetActive(false);
@@ -253,6 +251,8 @@ void ACPP_M1A1_Pawn::SoundSet()
 	GunSystemAudio->SetupAttachment(GunnerCam);
 	TurretSystemAudio = CreateDefaultSubobject<UAudioComponent>(L"TurretSystemAudio");
 	TurretSystemAudio->SetupAttachment(GunnerCam);
+	HitAudio = CreateDefaultSubobject<UAudioComponent>(L"HitAudio");
+	HitAudio->SetupAttachment(TankMesh);
 	
 	ConstructorHelpers::FObjectFinder<USoundAttenuation> EngineAttenuation
 	(L"SoundAttenuation'/Game/BP/Sound/Attenuation/EngineSoundAttenuation.EngineSoundAttenuation'");
@@ -267,6 +267,8 @@ void ACPP_M1A1_Pawn::SoundSet()
 	(L"SoundAttenuation'/Game/BP/Sound/Attenuation/TurretSoundAttenuation.TurretSoundAttenuation'");
 	TurretSoundAttenuation = TurretAttenuation.Object;
 	TurretSystemAudio->AttenuationSettings = TurretSoundAttenuation;
+	HitAudio->AttenuationSettings = MainGunAttenuation.Object;
+	
 	/*객체 초기화*/
 	MainGunFireSound.SetNum(6);
 	MainGunReloadDoneSound.SetNum(3);
@@ -328,6 +330,13 @@ void ACPP_M1A1_Pawn::SoundSet()
 	ConstructorHelpers::FObjectFinder<USoundWave> TurretEnd
 	(L"SoundWave'/Game/Sound/Tank/Turret/Turret_Start_Stop_Wave_0_3_0.Turret_Start_Stop_Wave_0_3_0'");
 	TurretEndSound = TurretEnd.Object;
+
+	ConstructorHelpers::FObjectFinder<USoundCue> Hit
+	(L"SoundCue'/Game/Sound/Tank/Hit/Tank_turret_impact_heavy_Cue.Tank_turret_impact_heavy_Cue'");
+	TankHitSound = Hit.Object;
+	ConstructorHelpers::FObjectFinder<USoundCue> RicochetHit
+	(L"SoundCue'/Game/Sound/Tank/Hit/Tank_turret_small_shockricos_sheetmetal_Cue.Tank_turret_small_shockricos_sheetmetal_Cue'");
+	TankRicochetHitSound = RicochetHit.Object;
 	
 	IdleAudio->Sound = IdleStartSound;
 	IdleAudio->VolumeMultiplier = 0.2f;
@@ -335,6 +344,7 @@ void ACPP_M1A1_Pawn::SoundSet()
 	EngineAudio->VolumeMultiplier = 0.3f;
 	GunSystemAudio->VolumeMultiplier=0.5f;
 	TurretSystemAudio->VolumeMultiplier=0.3f;
+	HitAudio->VolumeMultiplier=1.0f;
 }
 
 

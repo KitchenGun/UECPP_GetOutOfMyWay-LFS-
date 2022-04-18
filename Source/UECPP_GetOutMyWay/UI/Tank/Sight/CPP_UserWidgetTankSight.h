@@ -3,7 +3,6 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Tank/Component/CPP_TankUIComponent.h"
-#include "Tank/Component/CPP_TankUIComponent.h"
 #include "CPP_UserWidgetTankSight.generated.h"
 
 UCLASS()

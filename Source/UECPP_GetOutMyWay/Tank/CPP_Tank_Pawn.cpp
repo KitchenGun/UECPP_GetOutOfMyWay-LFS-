@@ -19,11 +19,16 @@
 ACPP_Tank_Pawn::ACPP_Tank_Pawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	PC = Cast<APlayerController>(GetController());
 }
 
 void ACPP_Tank_Pawn::BeginPlay()
 {
-	PC = UGameplayStatics::GetPlayerController(GetWorld(),0);
+	if(PC==nullptr)
+	{
+		UE_LOG(LogTemp,Display,L"none");
+		PC = GetWorld()->GetFirstPlayerController();
+	}
 	Super::BeginPlay();
 	//¹ÙÀÎµù
 	if(IsValid(TankMovement))
@@ -261,7 +266,19 @@ float ACPP_Tank_Pawn::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	{
 		Dead();
 	}
-	
+	else
+	{
+		if(DamageAmount>=20)
+		{
+			HitAudio->Sound = TankHitSound;
+			HitAudio->Play();
+		}
+		else
+		{
+			HitAudio->Sound = TankRicochetHitSound;
+			HitAudio->Play();
+		}
+	}
 	UE_LOG(LogTemp,Display,L"%.2f",HP);
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
@@ -290,7 +307,6 @@ void ACPP_Tank_Pawn::GunDirPosWorldToScreen()
 	else
 	{
 		UGameplayStatics::ProjectWorldToScreen(PC,end,pos);
-		UE_LOG(LogTemp,Display,L"%s",*pos.ToString());
 		if(FGunSightPosFunc.IsBound())
 			FGunSightPosFunc.Execute(pos);
 	}

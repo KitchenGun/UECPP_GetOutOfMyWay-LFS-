@@ -76,7 +76,8 @@ protected:
 	class UAudioComponent* GunSystemAudio;
 	UPROPERTY(VisibleDefaultsOnly)
 	class UAudioComponent* TurretSystemAudio;
-
+	UPROPERTY(VisibleDefaultsOnly)
+	class UAudioComponent* HitAudio;
 	//ActorComp
 	class UCPP_TrackMovementComponent* TrackMovement;
 
@@ -157,7 +158,7 @@ protected:
 	ECameraType CamType = ECameraType::THIRD;
 	
 	//APlayerController
-	APlayerController* PC = nullptr;
+	APlayerController* PC;
 
 	//sound
 	class USoundWave* EngineStartSound;
@@ -170,10 +171,14 @@ protected:
 
 	class USoundWave* TurretLoopSound;
 	class USoundWave* TurretEndSound;
-	
+
 	TArray<class USoundCue*> MainGunFireSound;
 	class USoundCue* MainGunReloadSound;
+
 	TArray<class USoundCue*> MainGunReloadDoneSound;
+	class USoundCue* TankHitSound;
+	class USoundCue* TankRicochetHitSound;
+	
 	bool IsMoveBefore=false;
 	bool IsEngineEnd = true;
 	bool IsGunReloadDone=true;
