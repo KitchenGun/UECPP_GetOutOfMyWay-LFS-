@@ -22,13 +22,19 @@ public:
 protected:
 	UPROPERTY(meta=(BindWidget))
 	class UCanvasPanel* SightCanvas;
+	
 	UPROPERTY(meta=(BindWidget))
 	class UImage* SightReticle;
+	
 	UPROPERTY(meta=(BindWidget))
 	class UImage* GunSightReticle;
+	
 	UPROPERTY(meta=(BindWidget))
 	class UImage* FPViewEffect;
 	
+	UPROPERTY(meta=(BindWidget))
+	class UImage* TPSightReticle;
 private:
 	ETankType TankType;
+	bool IsFPView = false;
 };
