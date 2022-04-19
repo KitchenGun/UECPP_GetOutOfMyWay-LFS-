@@ -10,6 +10,7 @@
 #include "Components/AudioComponent.h"
 #include "Sound/SoundCue.h"
 //actorComp
+#include "DrawDebugHelpers.h"
 #include "Component/CPP_TrackMovementComponent.h"
 #include "Component/CPP_TankPawnMovementComponent.h"
 #include "Component/CPP_M1A1MainGunSystemComponent.h"
@@ -145,7 +146,7 @@ void ACPP_Tank_Pawn::ZoomToggle()
 		else
 		{
 			IsZoom=true;
-			GunnerCam->SetFieldOfView(30);
+			GunnerCam->SetFieldOfView(45);
 		}
 	}
 }
@@ -313,10 +314,9 @@ void ACPP_Tank_Pawn::GunDirPosWorldToScreen()
 	ignore.Add(this);
 	const bool isHit =
 			UKismetSystemLibrary::LineTraceSingle(GetWorld(),start,end,
-				ETraceTypeQuery::TraceTypeQuery4,false,ignore,EDrawDebugTrace::None,hit,true);
-	int32 X,Y;
-	PC->GetViewportSize(X,Y);
-	FVector2D pos = FVector2D{X*0.5f,Y*0.5f};
+				ETraceTypeQuery::TraceTypeQuery4,false,ignore,EDrawDebugTrace::ForDuration,hit,true);
+	
+	FVector2D pos = FVector2D{0,0};
 	if(isHit)
 	{
 		UGameplayStatics::ProjectWorldToScreen(PC,hit.ImpactPoint,pos,true);
