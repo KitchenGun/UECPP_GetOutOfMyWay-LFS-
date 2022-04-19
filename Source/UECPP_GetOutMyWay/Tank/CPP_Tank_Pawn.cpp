@@ -314,7 +314,7 @@ void ACPP_Tank_Pawn::GunDirPosWorldToScreen()
 	ignore.Add(this);
 	const bool isHit =
 			UKismetSystemLibrary::LineTraceSingle(GetWorld(),start,end,
-				ETraceTypeQuery::TraceTypeQuery4,false,ignore,EDrawDebugTrace::ForDuration,hit,true);
+				ETraceTypeQuery::TraceTypeQuery4,false,ignore,EDrawDebugTrace::None,hit,true);
 	
 	FVector2D pos = FVector2D{0,0};
 	if(isHit)

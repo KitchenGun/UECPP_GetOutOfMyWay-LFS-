@@ -220,8 +220,7 @@ void UCPP_TankPawnMovementComponent::EngineControl()
 	Speed = (RPM * EngineTorque) / ((10 - EngineGear) * 100);
 
 	/*Ãâ·Â¿ë*/
-	//UE_LOG(LogTemp, Display, L"%.2f MaxWalkSpeed", GetCharacterMovement()->MaxWalkSpeed);//max 1250
-	//UE_LOG(LogTemp, Display, L"%.2f km/h", CurrentVelocity);								//max 75
+	//UE_LOG(LogTemp, Display, L"%.2f MaxWalkSpeed", GetCharacterMovement()->MaxWalkSpeed);//max 1250//max 75
 	//UE_LOG(LogTemp, Display, L"%.2f EngineTorque", EngineTorque);
 	//UE_LOG(LogTemp, Display, L"%.2f RPM", RPM);
 	//UE_LOG(LogTemp, Display, L"%d gear", EngineGear);
