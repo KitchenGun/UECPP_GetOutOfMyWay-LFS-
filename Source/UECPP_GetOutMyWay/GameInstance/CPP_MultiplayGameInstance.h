@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Interfaces/OnlineSessionInterface.h"
+#include "OnlineSubsystem.h"
 #include "Common/UObject/Manager/CPP_UManagerClass.h"
 #include "Engine/GameInstance.h"
 #include "CPP_MultiplayGameInstance.generated.h"

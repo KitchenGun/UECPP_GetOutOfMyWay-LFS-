@@ -1,6 +1,7 @@
 #include "CPP_MultiplayGameInstance.h"
-#include "GameInstance/CPP_MultiplayGameInstance.h"
-#include "OnlineSubsystem.h"
+#include "Engine/GameInstance.h"
+#include "Interfaces/OnlineSessionInterface.h"
+#include "OnlineSessionSettings.h"
 #include "Common/UObject/Manager/ObjectPool/CPP_ObjectPoolManager.h"
 
 UCPP_MultiplayGameInstance::UCPP_MultiplayGameInstance()
@@ -55,14 +56,25 @@ void UCPP_MultiplayGameInstance::Shutdown()
 void UCPP_MultiplayGameInstance::OnCreateSessionComplete(FName ServerName, bool Succeeded)
 {
 	UE_LOG(LogTemp,Display,L"OnCreateSessionComplete, Succeeded %d",Succeeded);
-	
+	if(Succeeded)
+	{
+		GetWorld()->ServerTravel("'/Game/Level/TestLevel?listen'");
+	}
 }
 
 void UCPP_MultiplayGameInstance::CreateServer()
 {
-	//FOnlineSessionSettings SessionSettings;
+	UE_LOG(LogTemp,Display,L"OnCreate Server");
+	FOnlineSessionSettings SessionSettings;
+    SessionSettings.bAllowJoinInProgress = true;
+	SessionSettings.bIsDedicated = false;
+	//테스트를 위해서 true
+	SessionSettings.bIsLANMatch = true;
+	SessionSettings.bShouldAdvertise = true;
+	SessionSettings.bUsesPresence = true;
+	SessionSettings.NumPublicConnections = 8;
 
-	SessionInterface->CreateSession(0,FName("My Session"),)
+	SessionInterface->CreateSession(0,FName("My Session"),SessionSettings);
 }
 
 void UCPP_MultiplayGameInstance::JoinServer()
