@@ -1,6 +1,6 @@
+#include "CPP_MultiplayGameInstance.h"
 #include "GameInstance/CPP_MultiplayGameInstance.h"
 #include "OnlineSubsystem.h"
-#include "OnlineSessionSettings.h"
 #include "Common/UObject/Manager/ObjectPool/CPP_ObjectPoolManager.h"
 
 UCPP_MultiplayGameInstance::UCPP_MultiplayGameInstance()
@@ -15,6 +15,17 @@ void UCPP_MultiplayGameInstance::BeginPlay()
 void UCPP_MultiplayGameInstance::Init()
 {//플레이 시작할때 
 	Super::Init();
+	//server
+	if(IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get())
+	{
+		SessionInterface = Subsystem->GetSessionInterface();
+		if(SessionInterface.IsValid())
+		{
+			//Bind Delegates
+			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this,&UCPP_MultiplayGameInstance::OnCreateSessionComplete);
+		}
+	}
+	
 	//objectpoolmanager 저장
 	RegisterManagerClass(UCPP_ObjectPoolManager::StaticClass());
 }
@@ -39,6 +50,24 @@ void UCPP_MultiplayGameInstance::Shutdown()
 	ManagerClasses.Empty();
 	
 	Super::Shutdown();
+}
+
+void UCPP_MultiplayGameInstance::OnCreateSessionComplete(FName ServerName, bool Succeeded)
+{
+	UE_LOG(LogTemp,Display,L"OnCreateSessionComplete, Succeeded %d",Succeeded);
+	
+}
+
+void UCPP_MultiplayGameInstance::CreateServer()
+{
+	//FOnlineSessionSettings SessionSettings;
+
+	SessionInterface->CreateSession(0,FName("My Session"),)
+}
+
+void UCPP_MultiplayGameInstance::JoinServer()
+{
+	
 }
 
 void UCPP_MultiplayGameInstance::RegisterManagerClass(TSubclassOf<UCPP_UManagerClass> managerClass)
