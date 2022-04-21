@@ -3,6 +3,7 @@
 #include "Interfaces/OnlineSessionInterface.h"
 #include "OnlineSessionSettings.h"
 #include "Common/UObject/Manager/ObjectPool/CPP_ObjectPoolManager.h"
+#include "Kismet/GameplayStatics.h"
 
 UCPP_MultiplayGameInstance::UCPP_MultiplayGameInstance()
 {
@@ -24,6 +25,8 @@ void UCPP_MultiplayGameInstance::Init()
 		{
 			//Bind Delegates
 			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this,&UCPP_MultiplayGameInstance::OnCreateSessionComplete);
+			SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this,&UCPP_MultiplayGameInstance::OnFindSessionComplete);
+			SessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this,&UCPP_MultiplayGameInstance::OnJoinSessionComplete);
 		}
 	}
 	
@@ -58,7 +61,34 @@ void UCPP_MultiplayGameInstance::OnCreateSessionComplete(FName ServerName, bool 
 	UE_LOG(LogTemp,Display,L"OnCreateSessionComplete, Succeeded %d",Succeeded);
 	if(Succeeded)
 	{
-		GetWorld()->ServerTravel("'/Game/Level/TestLevel?listen'");
+		GetWorld()->ServerTravel("/Game/Level/TestLevel?listen");
+	}
+}
+
+void UCPP_MultiplayGameInstance::OnFindSessionComplete(bool Succeeded)
+{
+	UE_LOG(LogTemp,Display,L"OnFindSessionComplete, Succeeded %d",Succeeded);
+	if(Succeeded)
+	{
+		TArray<FOnlineSessionSearchResult> SearchResults = SessionSearch->SearchResults;
+		UE_LOG(LogTemp,Display,L"FindSessionCount, count %d",SearchResults.Num());
+		if(SearchResults.Num())
+		{
+			UE_LOG(LogTemp,Display,L"joining Server");
+			SessionInterface->JoinSession(0,"My Session",SearchResults[0]);
+		}
+	}
+}
+
+void UCPP_MultiplayGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
+{
+	UE_LOG(LogTemp,Warning,L"OnJoinSessionComplete , sessionName %s",*SessionName.ToString());
+	if(APlayerController* PC=UGameplayStatics::GetPlayerController(GetWorld(),0))
+	{
+		FString JoinAddress = "";
+		SessionInterface->GetResolvedConnectString(SessionName,JoinAddress);
+		if(JoinAddress!="")
+			PC->ClientTravel(JoinAddress,ETravelType::TRAVEL_Absolute);
 	}
 }
 
@@ -66,20 +96,32 @@ void UCPP_MultiplayGameInstance::CreateServer()
 {
 	UE_LOG(LogTemp,Display,L"OnCreate Server");
 	FOnlineSessionSettings SessionSettings;
-    SessionSettings.bAllowJoinInProgress = true;
+    SessionSettings.bAllowJoinInProgress = false;///수정함
+	SessionSettings.bUseLobbiesIfAvailable = true;//수정함
 	SessionSettings.bIsDedicated = false;
-	//테스트를 위해서 true
-	SessionSettings.bIsLANMatch = true;
+	if(IOnlineSubsystem::Get()->GetSubsystemName()!="NULL")
+		SessionSettings.bIsLANMatch = false;
+	else
+		SessionSettings.bIsLANMatch = true;
+	
 	SessionSettings.bShouldAdvertise = true;
 	SessionSettings.bUsesPresence = true;
 	SessionSettings.NumPublicConnections = 8;
 
 	SessionInterface->CreateSession(0,FName("My Session"),SessionSettings);
-}
+}   
 
 void UCPP_MultiplayGameInstance::JoinServer()
 {
+	SessionSearch = MakeShareable(new FOnlineSessionSearch());
+	if(IOnlineSubsystem::Get()->GetSubsystemName()!="NULL")
+		SessionSearch->bIsLanQuery = false;
+	else
+		SessionSearch->bIsLanQuery = true;//isLan
+	SessionSearch->MaxSearchResults = 10000;
+	SessionSearch->QuerySettings.Set(SEARCH_PRESENCE,true,EOnlineComparisonOp::Equals);
 	
+	SessionInterface->FindSessions(0,SessionSearch.ToSharedRef());
 }
 
 void UCPP_MultiplayGameInstance::RegisterManagerClass(TSubclassOf<UCPP_UManagerClass> managerClass)

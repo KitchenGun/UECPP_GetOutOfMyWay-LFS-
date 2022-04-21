@@ -2,6 +2,7 @@
 #include "Tank/CPP_TankAnimInstance.h"
 #include "GameFramework/Actor.h"
 #include "Animation/AnimInstance.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Math/Vector.h"
 #include "Tank/CPP_Tank_Pawn.h"
@@ -258,7 +259,6 @@ void UCPP_TankPawnMovementComponent::RPMControl()
 
 void UCPP_TankPawnMovementComponent::UpdateTurretState(float DeltaTime)
 {
-	
 	SightRotator=UKismetMathLibrary::InverseTransformRotation(TankMesh->GetComponentTransform(),SightRotator).GetDenormalized();
 	TurretRotator = TankMesh->GetBoneQuaternion(L"turret_jnt",EBoneSpaces::ComponentSpace).Rotator().GetDenormalized();
 	if (!FMath::IsNearlyZero(SightRotator.Yaw-TurretRotator.Yaw,0.01f))

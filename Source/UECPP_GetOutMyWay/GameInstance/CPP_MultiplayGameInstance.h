@@ -1,9 +1,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
 #include "Common/UObject/Manager/CPP_UManagerClass.h"
 #include "Engine/GameInstance.h"
+#include "Interfaces/OnlineSessionInterface.h"
 #include "CPP_MultiplayGameInstance.generated.h"
 
 UCLASS()
@@ -29,6 +31,8 @@ protected:
 	virtual void Shutdown() override;
 	//server
 	virtual void OnCreateSessionComplete(FName ServerName, bool Succeeded);
+	virtual void OnFindSessionComplete(bool Succeeded);
+	virtual void OnJoinSessionComplete(FName SessionName,EOnJoinSessionCompleteResult::Type Result);
 	
 	//Manager °ü¸®
 	void RegisterManagerClass(TSubclassOf<UCPP_UManagerClass> managerClass);
@@ -36,7 +40,5 @@ protected:
 	TMap<FString,UCPP_UManagerClass*> ManagerClasses;
 	//server
 	IOnlineSessionPtr SessionInterface;
-
-
-	
+	TSharedPtr<FOnlineSessionSearch> SessionSearch;
 };

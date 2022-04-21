@@ -65,19 +65,14 @@ void UCPP_UserWidgetTankSight::UpdateGunSightPos(FVector2D value)
 		int32 X,Y;
 		GetOwningPlayer()->GetViewportSize(X,Y);
 		FVector2D pos = FVector2D{X*0.5f,Y*0.5f};
-		UE_LOG(LogTemp,Display,L"%s",*pos.ToString());
 		value=value-pos;
 	
 		if(IsFPView)
 		{
-			//UCanvasPanelSlot* GunSightSlot = Cast<UCanvasPanelSlot>(GunSightReticle->Slot);
-			//GunSightSlot->SetPosition(value);
 			GunSightReticle->SetRenderTranslation(value);
 		}
 		else
 		{
 			TPSightReticle->SetRenderTranslation(value);
-			//UCanvasPanelSlot* TPSightSlot = Cast<UCanvasPanelSlot>(TPSightReticle->Slot);
-			//TPSightSlot->SetPosition(value);
 		}
 }
