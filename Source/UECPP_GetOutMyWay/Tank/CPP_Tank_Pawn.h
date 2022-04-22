@@ -8,7 +8,8 @@
 DECLARE_DELEGATE(FFire);
 DECLARE_DELEGATE(FFPViewEffect);
 DECLARE_DELEGATE_OneParam(FGunSightWidgetPosFunc,FVector2D)
-
+DECLARE_DELEGATE(FZoomToggleFunc)
+DECLARE_DELEGATE_OneParam(FSetRangeText,int32)
 UENUM(BlueprintType)
 enum class ECameraType : uint8
 {
@@ -107,7 +108,10 @@ public:
 	//Delegate
 	FFire FireFunc;
 	FFPViewEffect FpViewToggleFunc;
+	FZoomToggleFunc FZoomToggleFunc;
+	FSetRangeText FSetRangeTextFunc;
 	FGunSightWidgetPosFunc FGunSightPosFunc;
+	
 protected:
 	virtual void BeginPlay() override;
 

@@ -25,6 +25,16 @@ void UCPP_TankUIComponent::FPViewEffectToggle()
 	TankSightWidget->OnFPViewEffectToggle();
 }
 
+void UCPP_TankUIComponent::ZoomToggle()
+{
+	TankSightWidget->OnOpticalChange();
+}
+
+void UCPP_TankUIComponent::SetRangeText(int Range)
+{
+	TankSightWidget->SetRangeText(Range);
+}
+
 void UCPP_TankUIComponent::UpdateGunSightPos(FVector2D value)
 {
 	TankSightWidget->UpdateGunSightPos(value);
@@ -40,6 +50,8 @@ void UCPP_TankUIComponent::BeginPlay()
 	{
 		Owner->FpViewToggleFunc.BindUFunction(this,"FPViewEffectToggle");
 		Owner->FGunSightPosFunc.BindUFunction(this,"UpdateGunSightPos");
+		Owner->FZoomToggleFunc.BindUFunction(this,"ZoomToggle");
+		Owner->FSetRangeTextFunc.BindUFunction(this,"SetRangeText");
 	}
 	TankWidget = CreateWidget<UCPP_UserWidgetTank>(PlayerCtrl,TankUIClass);
 	SetSightUI();

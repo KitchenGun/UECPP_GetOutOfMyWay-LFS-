@@ -15,9 +15,10 @@ public:
 	void SetTankType(ETankType value);
 
 
-	UFUNCTION()
 	void OnFPViewEffectToggle();
-
+	void OnOpticalChange();
+	void SetRangeText(int Range);
+	
 	void UpdateGunSightPos(FVector2D value);
 	
 protected:
@@ -35,7 +36,18 @@ protected:
 	
 	UPROPERTY(meta=(BindWidget))
 	class UImage* TPSightReticle;
+
+	UPROPERTY(meta=(BindWidget))
+	class UVerticalBox* DynamicTextBoxs;
+	
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* OpticalText;
+	
+	UPROPERTY(meta=(BindWidget))
+	class UTextBlock* RangeText;
+	
 private:
 	ETankType TankType;
 	bool IsFPView = false;
+	bool IsZoom = false;
 };

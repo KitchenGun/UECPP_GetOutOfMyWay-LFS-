@@ -24,7 +24,12 @@ public:
 	UFUNCTION()
 	void FPViewEffectToggle();
 	UFUNCTION()
+	void ZoomToggle();
+	UFUNCTION()
+	void SetRangeText(int Range);
+	UFUNCTION()
 	void UpdateGunSightPos(FVector2D value);
+	
 protected:
 	virtual void BeginPlay() override;
 	void SetSightUI();

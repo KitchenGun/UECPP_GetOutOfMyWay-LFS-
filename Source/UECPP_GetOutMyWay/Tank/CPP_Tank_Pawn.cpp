@@ -142,11 +142,17 @@ void ACPP_Tank_Pawn::ZoomToggle()
 		{
 			IsZoom=false;
 			GunnerCam->SetFieldOfView(90);
+			
+			if(FZoomToggleFunc.IsBound())
+				FZoomToggleFunc.Execute();
 		}
 		else
 		{
 			IsZoom=true;
 			GunnerCam->SetFieldOfView(45);
+			
+			if(FZoomToggleFunc.IsBound())
+				FZoomToggleFunc.Execute();
 		}
 	}
 }
@@ -322,12 +328,16 @@ void ACPP_Tank_Pawn::GunDirPosWorldToScreen()
 		UGameplayStatics::ProjectWorldToScreen(PC,hit.ImpactPoint,pos,true);
 		if(FGunSightPosFunc.IsBound())
 			FGunSightPosFunc.Execute(pos);
+		if(FSetRangeTextFunc.IsBound())
+			FSetRangeTextFunc.Execute(static_cast<int>(FVector::Dist(start,hit.ImpactPoint)/80.0f));
 	}
 	else
 	{
 		UGameplayStatics::ProjectWorldToScreen(PC,end,pos);
 		if(FGunSightPosFunc.IsBound())
 			FGunSightPosFunc.Execute(pos);
+		if(FSetRangeTextFunc.IsBound())
+			FSetRangeTextFunc.Execute(0);
 	}
 }
 
