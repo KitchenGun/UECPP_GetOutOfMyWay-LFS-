@@ -20,7 +20,6 @@ public:
 
 	//ABP에 전달할 변수 설정 함수
 	void SetWheelSpeed(float WheelSpeed);
-	void SetTurretAngleDetail();
 	//이동
 	void Movement(float DeltaTime);
 	void OnMove(float value);

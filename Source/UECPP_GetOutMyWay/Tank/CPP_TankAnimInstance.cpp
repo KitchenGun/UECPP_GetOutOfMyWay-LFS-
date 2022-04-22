@@ -27,8 +27,7 @@ void UCPP_TankAnimInstance::NativeInitializeAnimation()
 			(Owner->GetComponentByClass(UCPP_TankPawnMovementComponent::StaticClass()));
 		if (TankMovementComp != nullptr)
 		{
-			TrackSpeed = TankMovementComp->GetTrackSpeed();
-			
+			TrackSpeed = TankMovementComp->GetTrackSpeed()*3.14f;
 		}
 	}
 

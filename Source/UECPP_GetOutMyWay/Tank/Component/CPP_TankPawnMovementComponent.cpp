@@ -45,7 +45,7 @@ void UCPP_TankPawnMovementComponent::SetWheelSpeed(float WheelSpeed)
 {
 	if(IsAccelerating)
 	{
-		TrackSpeed = WheelSpeed*0.1f;
+		TrackSpeed = WheelSpeed*0.2f;
 	}
 	else
 	{
@@ -128,20 +128,31 @@ void UCPP_TankPawnMovementComponent::OnMove(float value)
 	float TankClimbingAnglePercentage = 0.0f;
 	if(TankClimbingAngle>0)
 	{//올라가는 상황
-		TankClimbingAnglePercentage=TankClimbingAngle/60;
+		TankClimbingAnglePercentage=TankClimbingAngle/30;
 	}
 	else if(TankClimbingAngle<0)
 	{//내려가는 상황
-		TankClimbingAnglePercentage=TankClimbingAngle/60;
+		TankClimbingAnglePercentage=TankClimbingAngle/30;
 	}
 	else
 	{
 		TankClimbingAnglePercentage=0;
 	}
-	NextLocation+=(dir*(VirtualForwardVal-TankClimbingAnglePercentage));
-	CurrentVelocity=(NextLocation*Speed*0.036f).Size();
-	//애니메이션에 전달
-	SetWheelSpeed(CurrentVelocity*VirtualForwardVal);
+
+	//뒤집히면 못움직이게 함
+	float TankYaw = Owner->GetActorRotation().Roll;
+	if(TankYaw<70&&TankYaw>-70)
+	{//최종 움직임 전달
+		NextLocation+=(dir*(VirtualForwardVal-TankClimbingAnglePercentage));
+		CurrentVelocity=(NextLocation*Speed*0.036f).Size();
+		//애니메이션에 전달
+		SetWheelSpeed(CurrentVelocity*VirtualForwardVal);
+	}
+	else
+	{
+		//애니메이션에 전달
+		SetWheelSpeed(10*value*VirtualForwardVal);
+	}
 }
 
 void UCPP_TankPawnMovementComponent::OnTurn(float value)
@@ -168,10 +179,14 @@ void UCPP_TankPawnMovementComponent::OnTurn(float value)
 	}
 	else if (FMath::IsNearlyZero(value))
 	{
-		 IsTurning = false;
+		IsTurning = false;
 	}
-
-	NextRotation.Yaw+=value;
+	//뒤집히면 못움직이게 함
+	float TankYaw = Owner->GetActorRotation().Roll;
+	if(TankYaw<100&&TankYaw>-100)
+	{	
+		NextRotation.Yaw+=value;
+	}
 	TurnValue = value;
 }
 
@@ -364,7 +379,7 @@ void UCPP_TankPawnMovementComponent::OnEngineBreak()
 void UCPP_TankPawnMovementComponent::OffEngineBreak()
 {
 	isBreak = false;
-	VirtualFriction = 0.01f;
+	VirtualFriction = 0.005f;
 }
 
 
