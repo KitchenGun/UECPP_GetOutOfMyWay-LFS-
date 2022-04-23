@@ -12,6 +12,7 @@ class UECPP_GETOUTMYWAY_API UCPP_UserWidget_ServerButton : public UUserWidget
 	GENERATED_BODY()
 	virtual void NativeConstruct() override;
 	void OnButtonClick();
+public:
 	FORCEINLINE void SetServerInfo(FServerInfo val)
 	{
 		Info = val;
@@ -19,7 +20,7 @@ class UECPP_GETOUTMYWAY_API UCPP_UserWidget_ServerButton : public UUserWidget
 		ServerCurPlayer->SetText(FText::AsNumber(Info.CurrentPlayers));
 		ServerMaxPlayer->SetText(FText::AsNumber(Info.MaxPlayers));
 	}
-public:
+	
 	UPROPERTY(meta=(BindWidget))
 	class UButton* ServerButton;
 	UPROPERTY(meta=(BindWidget))

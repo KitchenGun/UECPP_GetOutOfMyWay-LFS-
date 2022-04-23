@@ -88,6 +88,7 @@ void UCPP_UserWidget_Lobby::AddServerList(FServerInfo Info)
 	class UCPP_UserWidget_ServerButton* ServerButton;
 	ServerButton = CreateWidget<class UCPP_UserWidget_ServerButton>
 	(UGameplayStatics::GetPlayerController(GetWorld(),0),ServerButtonUIClass);
+	ServerButton->SetServerInfo(Info);
 	ServerButton->AddToViewport();
 	ServerList->AddChild(ServerButton);
 }
