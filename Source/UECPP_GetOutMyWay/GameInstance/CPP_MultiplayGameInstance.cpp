@@ -79,7 +79,7 @@ void UCPP_MultiplayGameInstance::OnFindSessionComplete(bool Succeeded)
 				continue;
 			FServerInfo Info;
 			Info.ServerName = Result.Session.SessionSettings.Settings.FindRef("SESSION_NAME").Data.ToString();//서버 이름
-			Info.MaxPlayers = Result.Session.NumOpenPublicConnections; //최대인원
+			Info.MaxPlayers = Result.Session.SessionSettings.NumPublicConnections; //최대인원
 			Info.CurrentPlayers = Info.MaxPlayers - Result.Session.NumOpenPublicConnections;//현재인원
 			Info.Index = index;
 			//delegate 호출
@@ -117,7 +117,13 @@ void UCPP_MultiplayGameInstance::CreateServer()
 	SessionSettings.bShouldAdvertise = true;
 	SessionSettings.bUsesPresence = true;
 	SessionSettings.NumPublicConnections = 8;
+	SessionSettings.Set(FName("SESSION_NAME"),
+		UGameplayStatics::GetPlayerController(GetWorld(),0)->PlayerState->GetPlayerName(),
+		EOnlineDataAdvertisementType::ViaOnlineService);
 
+	//SessionSettings.Settings.Add(FName("SESSION_NAME"),
+	//	UGameplayStatics::GetPlayerController(GetWorld(),0)->PlayerState->GetPlayerName());
+	
 	SessionInterface->CreateSession(0,
 		FName(UGameplayStatics::GetPlayerController(GetWorld(),0)->PlayerState->GetPlayerName()),SessionSettings);
 }   
