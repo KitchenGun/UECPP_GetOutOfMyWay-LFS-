@@ -3,6 +3,7 @@
 #include "Interfaces/OnlineSessionInterface.h"
 #include "OnlineSessionSettings.h"
 #include "Common/UObject/Manager/ObjectPool/CPP_ObjectPoolManager.h"
+#include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 
 UCPP_MultiplayGameInstance::UCPP_MultiplayGameInstance()
@@ -70,12 +71,21 @@ void UCPP_MultiplayGameInstance::OnFindSessionComplete(bool Succeeded)
 	UE_LOG(LogTemp,Display,L"OnFindSessionComplete, Succeeded %d",Succeeded);
 	if(Succeeded)
 	{
-		TArray<FOnlineSessionSearchResult> SearchResults = SessionSearch->SearchResults;
-		UE_LOG(LogTemp,Display,L"FindSessionCount, count %d",SearchResults.Num());
-		if(SearchResults.Num())
+		SearchResults = SessionSearch->SearchResults;
+		int32 index =0;
+		for(FOnlineSessionSearchResult Result : SearchResults)
 		{
-			UE_LOG(LogTemp,Display,L"joining Server");
-			SessionInterface->JoinSession(0,"My Session",SearchResults[0]);
+			if(!Result.IsValid())
+				continue;
+			FServerInfo Info;
+			Info.ServerName = Result.Session.SessionSettings.Settings.FindRef("SESSION_NAME").Data.ToString();//서버 이름
+			Info.MaxPlayers = Result.Session.NumOpenPublicConnections; //최대인원
+			Info.CurrentPlayers = Info.MaxPlayers - Result.Session.NumOpenPublicConnections;//현재인원
+			Info.Index = index;
+			//delegate 호출
+			if(FServerListDel.IsBound())
+				FServerListDel.Broadcast(Info);
+			index++;
 		}
 	}
 }
@@ -108,11 +118,20 @@ void UCPP_MultiplayGameInstance::CreateServer()
 	SessionSettings.bUsesPresence = true;
 	SessionSettings.NumPublicConnections = 8;
 
-	SessionInterface->CreateSession(0,FName("My Session"),SessionSettings);
+	SessionInterface->CreateSession(0,
+		FName(UGameplayStatics::GetPlayerController(GetWorld(),0)->PlayerState->GetPlayerName()),SessionSettings);
 }   
 
-void UCPP_MultiplayGameInstance::JoinServer()
+void UCPP_MultiplayGameInstance::JoinServer(FServerInfo Info)
 {
+	SessionInterface->JoinSession(0,FName(Info.ServerName),SearchResults[Info.Index]);
+}
+
+void UCPP_MultiplayGameInstance::FindServer()
+{
+	//서버 결과 초기화
+	SearchResults.Empty();
+	
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
 	if(IOnlineSubsystem::Get()->GetSubsystemName()!="NULL")
 		SessionSearch->bIsLanQuery = false;

@@ -26,9 +26,12 @@ private:
 	UFUNCTION()
 	void CancelButtonClicked();
 	UFUNCTION()
-	void ServerJoinClicked();
-	UFUNCTION()
 	void ServerCreateClicked();
+	UFUNCTION()
+	void ServerListRefreshClicked();
+
+	UFUNCTION()
+	void AddServerList(FServerInfo Info);
 	
 private:
 	//Main
@@ -44,12 +47,20 @@ private:
 	UPROPERTY(meta=(BindWidget))
 	class UCanvasPanel* ServerPanel;
 	UPROPERTY(meta=(BindWidget))
-	class UButton* Button_JoinServer;
+	class UScrollBox* ServerList;
 	UPROPERTY(meta=(BindWidget))
 	class UButton* Button_CreateServer;
 	UPROPERTY(meta=(BindWidget))
 	class UButton* Button_Cancel;
+	UPROPERTY(meta=(BindWidget))
+	class UButton* Button_Refresh;
 
+	UPROPERTY(EditAnywhere,Category="UIClass")
+	TSubclassOf<class UCPP_UserWidget_ServerButton> ServerButtonUIClass;
+	
+	//delegate
+	FServerInfo ServerInfo;
+	
 	//GameInstance
 	class UCPP_MultiplayGameInstance* GI;
 	

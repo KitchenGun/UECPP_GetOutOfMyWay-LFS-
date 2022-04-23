@@ -8,7 +8,7 @@ public class UECPP_GetOutMyWay : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "Niagara", "OnlineSubsystem", "OnlineSubsystemSteam"});
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "Niagara", "OnlineSubsystem", "OnlineSubsystemSteam","Steamworks"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 		

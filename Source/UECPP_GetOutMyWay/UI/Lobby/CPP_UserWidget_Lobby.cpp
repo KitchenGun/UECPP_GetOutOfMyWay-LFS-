@@ -1,13 +1,15 @@
 #include "UI/Lobby/CPP_UserWidget_Lobby.h"
-
+#include "CPP_UserWidget_ServerButton.h"
 #include "Components/Button.h"
 #include "Components/CanvasPanel.h"
+#include "Components/ScrollBox.h"
 #include "Kismet/GameplayStatics.h"
 
 UCPP_UserWidget_Lobby::UCPP_UserWidget_Lobby(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
 {
-	
+	ServerButtonUIClass = ConstructorHelpers::FClassFinder<UCPP_UserWidget_ServerButton>
+		(L"WidgetBlueprint'/Game/BP/UI/Lobby/WB_ServerButton.WB_ServerButton_C'").Class;
 }
 
 void UCPP_UserWidget_Lobby::NativeConstruct()
@@ -24,21 +26,26 @@ void UCPP_UserWidget_Lobby::NativeConstruct()
 	Button_Exit->OnClicked.AddDynamic(this,&UCPP_UserWidget_Lobby::ExitButtonClicked);
 	//server
 	Button_CreateServer->OnClicked.AddDynamic(this,&UCPP_UserWidget_Lobby::ServerCreateClicked);
-	Button_JoinServer->OnClicked.AddDynamic(this,&UCPP_UserWidget_Lobby::ServerJoinClicked);
 	Button_Cancel->OnClicked.AddDynamic(this,&UCPP_UserWidget_Lobby::CancelButtonClicked);
+	Button_Refresh->OnClicked.AddDynamic(this,&UCPP_UserWidget_Lobby::ServerListRefreshClicked);
 	
-	//나중에 멀티가면 player index 수정 필요할듯?//UI 전용으로 변경
+	//input UI 전용으로 변경
 	UGameplayStatics::GetPlayerController(GetWorld(),0);
 	GetOwningPlayer()->SetInputMode(FInputModeUIOnly());
 
 	//켰을때 UI 설정
 	ServerPanel->SetVisibility(ESlateVisibility::Hidden);
+
+	//바인딩
+	GI->FServerListDel.AddDynamic(this,&UCPP_UserWidget_Lobby::AddServerList);
 }
 
 void UCPP_UserWidget_Lobby::ServerBrowserClicked()
 {
 	MainPanel->SetVisibility(ESlateVisibility::Hidden);
 	ServerPanel->SetVisibility(ESlateVisibility::Visible);
+	//서버 탐색
+	ServerListRefreshClicked();
 }
 
 void UCPP_UserWidget_Lobby::ShootingRangeButtonClicked()
@@ -61,16 +68,26 @@ void UCPP_UserWidget_Lobby::CancelButtonClicked()
 	ServerPanel->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UCPP_UserWidget_Lobby::ServerJoinClicked()
-{
-	if(!IsValid(GI))
-		return;
-	GI->JoinServer();
-}
-
 void UCPP_UserWidget_Lobby::ServerCreateClicked()
 {
 	if(!IsValid(GI))
 		return;
 	GI->CreateServer();
+}
+
+void UCPP_UserWidget_Lobby::ServerListRefreshClicked()
+{
+	if(!IsValid(GI))
+		return;
+	//기존의 서버 버튼삭제 해야함
+	GI->FindServer();
+}
+
+void UCPP_UserWidget_Lobby::AddServerList(FServerInfo Info)
+{
+	class UCPP_UserWidget_ServerButton* ServerButton;
+	ServerButton = CreateWidget<class UCPP_UserWidget_ServerButton>
+	(UGameplayStatics::GetPlayerController(GetWorld(),0),ServerButtonUIClass);
+	ServerButton->AddToViewport();
+	ServerList->AddChild(ServerButton);
 }
