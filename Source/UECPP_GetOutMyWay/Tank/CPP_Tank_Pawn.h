@@ -195,6 +195,13 @@ protected:
 
 	//Damage
 	float MAX_HP = 100;
+	UPROPERTY(ReplicatedUsing=OnRep_HealthUpdated)
 	float HP = MAX_HP;
+
+	UFUNCTION()
+	void OnRep_HealthUpdated();
 	bool IsDead = false;
+	
+public:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 };

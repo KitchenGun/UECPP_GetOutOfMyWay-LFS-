@@ -16,11 +16,15 @@
 #include "Component/CPP_M1A1MainGunSystemComponent.h"
 #include "Component/CPP_ParticleControlComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+//net
+#include "Net/UnrealNetwork.h"
 
 ACPP_Tank_Pawn::ACPP_Tank_Pawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PC = Cast<APlayerController>(GetController());
+	SetReplicates(true);
+	SetReplicateMovement(true);
 }
 
 void ACPP_Tank_Pawn::BeginPlay()
@@ -263,6 +267,17 @@ void ACPP_Tank_Pawn::TurretMoveEnd()
 void ACPP_Tank_Pawn::Dead()
 {
 	IsDead =true;
+}
+
+void ACPP_Tank_Pawn::OnRep_HealthUpdated()
+{
+	
+}
+
+void ACPP_Tank_Pawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ACPP_Tank_Pawn,HP);
 }
 
 
