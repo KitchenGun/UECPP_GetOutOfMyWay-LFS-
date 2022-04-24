@@ -16,5 +16,6 @@ void UCPP_UserWidget_ServerButton::NativeConstruct()
 
 void UCPP_UserWidget_ServerButton::OnButtonClick()
 {
+	UE_LOG(LogTemp,Display,L"buttonclick");
 	GI->JoinServer(Info);
 }

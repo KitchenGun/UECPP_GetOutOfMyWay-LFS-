@@ -11,6 +11,7 @@ class UECPP_GETOUTMYWAY_API UCPP_UserWidget_ServerButton : public UUserWidget
 {
 	GENERATED_BODY()
 	virtual void NativeConstruct() override;
+	UFUNCTION()
 	void OnButtonClick();
 public:
 	FORCEINLINE void SetServerInfo(FServerInfo val)
