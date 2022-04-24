@@ -80,6 +80,11 @@ void UCPP_UserWidget_Lobby::ServerListRefreshClicked()
 	if(!IsValid(GI))
 		return;
 	//기존의 서버 버튼삭제 해야함
+	for(auto button:ServerList->GetAllChildren())
+	{
+		button->RemoveFromParent();
+	}
+	
 	GI->FindServer();
 }
 
