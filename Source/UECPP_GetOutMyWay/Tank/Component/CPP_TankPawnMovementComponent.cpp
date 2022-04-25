@@ -335,7 +335,7 @@ void UCPP_TankPawnMovementComponent::TurretMove(float DeltaTime)
 
 void UCPP_TankPawnMovementComponent::UpdateGunState(float DeltaTime)
 {
-	SightRotator = Owner->GetController()->GetControlRotation().Quaternion().Rotator();
+	SightRotator = UGameplayStatics::GetPlayerController(GetWorld(),0)->GetControlRotation().Quaternion().Rotator();
 	GunRotator = TankMesh->GetBoneQuaternion(L"gun_jnt").Rotator().Quaternion().Rotator();
 	if(!FMath::IsNearlyEqual(SightRotator.Pitch, GunRotator.Pitch,0.01f))
 	{

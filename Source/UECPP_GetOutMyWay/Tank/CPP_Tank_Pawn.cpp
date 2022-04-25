@@ -60,7 +60,7 @@ void ACPP_Tank_Pawn::OnHorizontalLook(float value)
 
 void ACPP_Tank_Pawn::CamPitchLimitSmooth()
 {
-	float pitch = Controller->GetControlRotation().Quaternion().Rotator().Pitch;
+	float pitch = PC->GetControlRotation().Quaternion().Rotator().Pitch;
 	float minAngle = PitchLimitMin;
 	float maxAngle = PitchLimitMax;
 	//탱크의 pitch를 구해서 등판각을 받음
@@ -76,8 +76,8 @@ void ACPP_Tank_Pawn::CamPitchLimitSmooth()
 	}
 	pitch = FMath::Clamp(pitch, minAngle, maxAngle);
 	
-	FRotator temp = FRotator(pitch, Controller->GetControlRotation().Quaternion().Rotator().Yaw, Controller->GetControlRotation().Quaternion().Rotator().Roll);
-	Controller->SetControlRotation(temp);
+	FRotator temp = FRotator(pitch, PC->GetControlRotation().Quaternion().Rotator().Yaw, PC->GetControlRotation().Quaternion().Rotator().Roll);
+	PC->SetControlRotation(temp);
 }
 
 void ACPP_Tank_Pawn::CamChange()
