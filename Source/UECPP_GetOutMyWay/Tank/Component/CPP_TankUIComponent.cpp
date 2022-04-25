@@ -43,6 +43,8 @@ void UCPP_TankUIComponent::UpdateGunSightPos(FVector2D value)
 
 void UCPP_TankUIComponent::BeginPlay()
 {
+	if(!Owner->IsLocallyControlled())
+		return;
 	Super::BeginPlay();
 	if(PlayerCtrl == nullptr)
 		PlayerCtrl =Cast<ACPP_Tank_Pawn>(GetOwner())->GetPlayerController();
@@ -60,6 +62,8 @@ void UCPP_TankUIComponent::BeginPlay()
 
 void UCPP_TankUIComponent::SetSightUI()
 {
+	if(!Owner->IsLocallyControlled())
+		return;
 	TankSightWidget = CreateWidget<UCPP_UserWidgetTankSight>(PlayerCtrl,TankSightUIClass);
 	TankSightWidget->AddToViewport();
 	TankWidget->MainCanvas->AddChild(TankSightWidget);

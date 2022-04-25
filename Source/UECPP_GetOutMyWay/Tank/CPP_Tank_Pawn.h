@@ -94,6 +94,7 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION()
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	UFUNCTION()
@@ -148,10 +149,13 @@ protected:
 	UFUNCTION()
 	virtual void TurretMoveEnd();
 
-	//Dead
+	//Damage
 	UFUNCTION()
 	virtual void Dead();
-	
+	UFUNCTION()
+	void OnRep_HealthUpdated();
+	UFUNCTION()
+	void OnHealthUpdate();
 protected:
 	//////////////////////////////tank 파라미터 변수/////////////////////////////////////////
 	//sight
@@ -198,10 +202,7 @@ protected:
 	UPROPERTY(ReplicatedUsing=OnRep_HealthUpdated)
 	float HP = MAX_HP;
 
-	UFUNCTION()
-	void OnRep_HealthUpdated();
-	bool IsDead = false;
-	
+	bool IsDead=false;
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 };

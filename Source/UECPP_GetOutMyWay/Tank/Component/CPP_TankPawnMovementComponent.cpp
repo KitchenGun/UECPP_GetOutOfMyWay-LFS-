@@ -31,6 +31,8 @@ void UCPP_TankPawnMovementComponent::BeginPlay()
 
 void UCPP_TankPawnMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
+	if(!Owner->IsLocallyControlled())
+		return;
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	//Engine
 	EngineControl();

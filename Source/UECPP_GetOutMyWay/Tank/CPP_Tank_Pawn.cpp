@@ -271,7 +271,24 @@ void ACPP_Tank_Pawn::Dead()
 
 void ACPP_Tank_Pawn::OnRep_HealthUpdated()
 {
+	if(IsLocallyControlled())
+	{
+		OnHealthUpdate();
+	}
 	
+}
+
+void ACPP_Tank_Pawn::OnHealthUpdate()
+{
+	if(IsLocallyControlled())
+	{
+		if (HP <= 0)
+		{
+			Dead();
+			FString deathMessage = FString::Printf(TEXT("You have been killed."));
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, deathMessage);
+		}
+	}
 }
 
 void ACPP_Tank_Pawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -355,7 +372,3 @@ void ACPP_Tank_Pawn::GunDirPosWorldToScreen()
 			FSetRangeTextFunc.Execute(0);
 	}
 }
-
-
-
-
