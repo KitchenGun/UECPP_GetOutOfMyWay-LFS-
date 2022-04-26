@@ -15,7 +15,10 @@ public:
 	UCPP_M1A1MainGunSystemComponent();
 	
 	void MainGunFire() override;
-
+	UFUNCTION(Server,Reliable,WithValidation)
+	void Server_MainGunFire();
+	bool Server_MainGunFire_Validate();
+	void Server_MainGunFire_Implementation();
 protected:
 	virtual void BeginPlay() override;
 private:

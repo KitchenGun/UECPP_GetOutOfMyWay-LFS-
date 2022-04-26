@@ -12,7 +12,6 @@ UCPP_MultiplayGameInstance::UCPP_MultiplayGameInstance()
 
 void UCPP_MultiplayGameInstance::BeginPlay()
 {
-	
 }
 
 void UCPP_MultiplayGameInstance::Init()
@@ -33,6 +32,12 @@ void UCPP_MultiplayGameInstance::Init()
 	
 	//objectpoolmanager 저장
 	RegisterManagerClass(UCPP_ObjectPoolManager::StaticClass());
+	
+	//beginplay실행용
+	for(auto & IT : ManagerClasses)
+	{
+		IT.Value->BeginPlay();
+	}
 }
 
 void UCPP_MultiplayGameInstance::Shutdown()
@@ -62,7 +67,7 @@ void UCPP_MultiplayGameInstance::OnCreateSessionComplete(FName ServerName, bool 
 	UE_LOG(LogTemp,Display,L"OnCreateSessionComplete, Succeeded %d",Succeeded);
 	if(Succeeded)
 	{
-		GetWorld()->ServerTravel("/Game/Level/TestLevel?listen");
+		GetWorld()->ServerTravel("/Game/Level/TestMap?listen");
 	}
 }
 

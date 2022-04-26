@@ -97,7 +97,6 @@ void ACPP_ProjectileAP::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 		IsOverlap = true;
 		//포탄의 입사각 계산
 		float HitAngle = GetHitAngle(OtherComp,SweepResult);
-		
 		//도탄 판정
 		BounceCal(HitAngle,ProjectileHitDir);
 		//데미지 주기
