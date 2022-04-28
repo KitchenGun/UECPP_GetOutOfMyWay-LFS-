@@ -43,37 +43,37 @@ void UCPP_TankUIComponent::UpdateGunSightPos(FVector2D value)
 
 void UCPP_TankUIComponent::BeginPlay()
 {
-	//if(!Owner->IsLocallyControlled())
-	//	return;
-	//Super::BeginPlay();
-	//if(PlayerCtrl == nullptr)
-	//	PlayerCtrl =Cast<ACPP_Tank_Pawn>(GetOwner())->GetPlayerController();
-	//if(IsValid(Owner))
-	//{
-	//	Owner->FpViewToggleFunc.BindUFunction(this,"FPViewEffectToggle");
-	//	Owner->FGunSightPosFunc.BindUFunction(this,"UpdateGunSightPos");
-	//	Owner->FZoomToggleFunc.BindUFunction(this,"ZoomToggle");
-	//	Owner->FSetRangeTextFunc.BindUFunction(this,"SetRangeText");
-	//}
-	//TankWidget = CreateWidget<UCPP_UserWidgetTank>(PlayerCtrl,TankUIClass);
-	//SetSightUI();
-	//TankWidget->AddToViewport();
+	if(!Owner->IsLocallyControlled())
+		return;
+	Super::BeginPlay();
+	if(PlayerCtrl == nullptr)
+		PlayerCtrl =Cast<ACPP_Tank_Pawn>(GetOwner())->GetPlayerController();
+	if(IsValid(Owner))
+	{
+		Owner->FpViewToggleFunc.BindUFunction(this,"FPViewEffectToggle");
+		Owner->FGunSightPosFunc.BindUFunction(this,"UpdateGunSightPos");
+		Owner->FZoomToggleFunc.BindUFunction(this,"ZoomToggle");
+		Owner->FSetRangeTextFunc.BindUFunction(this,"SetRangeText");
+	}
+	TankWidget = CreateWidget<UCPP_UserWidgetTank>(PlayerCtrl,TankUIClass);
+	SetSightUI();
+	TankWidget->AddToViewport();
 }
 
 void UCPP_TankUIComponent::SetSightUI()
 {
-	//if(!Owner->IsLocallyControlled())
-	//	return;
-	//TankSightWidget = CreateWidget<UCPP_UserWidgetTankSight>(PlayerCtrl,TankSightUIClass);
-	//TankSightWidget->AddToViewport();
-	//TankWidget->MainCanvas->AddChild(TankSightWidget);
-	//UCanvasPanelSlot* TankSightWidgetSlot = Cast<UCanvasPanelSlot>(TankWidget->MainCanvas->GetSlots()[0]);
-	//if(TankUIType==ETankType::M1A1)
-	//{
-	//	TankSightWidgetSlot->SetAnchors(FAnchors{0,0,1,1});
-	//	TankSightWidgetSlot->SetOffsets(FMargin{0,0,0,0});
-	//}
-	//TankSightWidget->SetTankType(TankUIType);
+	if(!Owner->IsLocallyControlled())
+		return;
+	TankSightWidget = CreateWidget<UCPP_UserWidgetTankSight>(PlayerCtrl,TankSightUIClass);
+	TankSightWidget->AddToViewport();
+	TankWidget->MainCanvas->AddChild(TankSightWidget);
+	UCanvasPanelSlot* TankSightWidgetSlot = Cast<UCanvasPanelSlot>(TankWidget->MainCanvas->GetSlots()[0]);
+	if(TankUIType==ETankType::M1A1)
+	{
+		TankSightWidgetSlot->SetAnchors(FAnchors{0,0,1,1});
+		TankSightWidgetSlot->SetOffsets(FMargin{0,0,0,0});
+	}
+	TankSightWidget->SetTankType(TankUIType);
 }
 
 
