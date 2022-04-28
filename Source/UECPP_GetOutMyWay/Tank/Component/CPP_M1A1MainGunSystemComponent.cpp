@@ -70,7 +70,7 @@ void UCPP_M1A1MainGunSystemComponent::MainGunFire()
 
 void UCPP_M1A1MainGunSystemComponent::Server_MainGunFire_Implementation()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, L"ServerMaingunFireImplementation called");
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, L"ServerMaingunFireImplementation called");
 }
 
 bool UCPP_M1A1MainGunSystemComponent::Server_MainGunFire_Validate()

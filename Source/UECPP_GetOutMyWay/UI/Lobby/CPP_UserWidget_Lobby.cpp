@@ -50,7 +50,7 @@ void UCPP_UserWidget_Lobby::ServerBrowserClicked()
 
 void UCPP_UserWidget_Lobby::ShootingRangeButtonClicked()
 {
-	UGameplayStatics::OpenLevel(this,"TestLevel");
+	UGameplayStatics::OpenLevel(this,"TestMap");
 }
 
 void UCPP_UserWidget_Lobby::ExitButtonClicked()

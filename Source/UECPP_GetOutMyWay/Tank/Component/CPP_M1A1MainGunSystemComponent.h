@@ -23,5 +23,5 @@ protected:
 	virtual void BeginPlay() override;
 private:
 	class ACPP_Tank_Pawn* Owner;
-	float M1A1ReloadTime =0.1f;
+	float M1A1ReloadTime =1.0f;
 };
