@@ -49,14 +49,18 @@ void UCPP_M1A1MainGunSystemComponent::MainGunFire()
 			if(temp!=nullptr)
 			{//초기화할 객체가 존재하는 경우
 				temp->OnRecycleStart(SpawnPos,Direction);
-				Server_MainGunFire();
+				if(!GetWorld()->IsServer())
+					Server_MainGunFire();
 			}
 			else
 			{//없으면 새로 생성
-				temp = GetWorld()->SpawnActor<ACPP_Projectile>(ProjectileClass,SpawnPos,Direction);
+				FActorSpawnParameters SpawnParameters;
+				SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+				temp = GetWorld()->SpawnActor<ACPP_Projectile>(ProjectileClass,SpawnPos,Direction,SpawnParameters);
 				//매니져에 새로 생성한 객체 추가
 				ObjPoolManager->RegisterRecyclableObject<ACPP_Projectile>(temp);
-				Server_MainGunFire();
+				if(!GetWorld()->IsServer())
+					Server_MainGunFire();
 			}
 			//포탄에 발사한 사람 이름과 컨트롤러를 던짐
 			temp->SetEventInstigator(FString(GetOwner()->GetName()),Owner->GetController());
@@ -70,11 +74,7 @@ void UCPP_M1A1MainGunSystemComponent::MainGunFire()
 
 void UCPP_M1A1MainGunSystemComponent::Server_MainGunFire_Implementation()
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, L"ServerMaingunFireImplementation called");
-}
-
-bool UCPP_M1A1MainGunSystemComponent::Server_MainGunFire_Validate()
-{
-	return true;
+	Super::Server_MainGunFire_Implementation();
+	MainGunFire();
 }
 

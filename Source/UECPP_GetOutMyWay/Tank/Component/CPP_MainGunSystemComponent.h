@@ -21,6 +21,11 @@ public:
 	FReloadDone GunReloadDoneFunc;
 	
 	FORCEINLINE bool GetIsMainGunCanFire() {return IsMainGunCanFire;}
+
+	UFUNCTION(Server,Reliable,WithValidation)
+	virtual void Server_MainGunFire();
+	virtual bool Server_MainGunFire_Validate();
+	virtual void Server_MainGunFire_Implementation();
 protected:
 	virtual void BeginPlay() override;
 private:

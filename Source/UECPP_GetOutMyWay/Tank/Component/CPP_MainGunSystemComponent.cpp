@@ -6,6 +6,18 @@ UCPP_MainGunSystemComponent::UCPP_MainGunSystemComponent()
 {
 }
 
+void Server_MainGunFire();
+
+bool UCPP_MainGunSystemComponent::Server_MainGunFire_Validate()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, L"Server_MainGunFire_Validate called");
+	return true;
+}
+void UCPP_MainGunSystemComponent::Server_MainGunFire_Implementation()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, L"ServerMaingunFireImplementation called");
+}
+
 void UCPP_MainGunSystemComponent::BeginPlay()
 {
 	Super::BeginPlay();
