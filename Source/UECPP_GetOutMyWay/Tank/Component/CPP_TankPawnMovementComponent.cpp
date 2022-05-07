@@ -36,7 +36,7 @@ void UCPP_TankPawnMovementComponent::TickComponent(float DeltaTime, ELevelTick T
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	//Engine
 	EngineControl();
-	Movement(DeltaTime);
+	Movement();
 	//Turret
 	UpdateTurretState(DeltaTime);
 	//Gun
@@ -55,20 +55,21 @@ void UCPP_TankPawnMovementComponent::SetWheelSpeed(float WheelSpeed)
 	}
 }
 
-void UCPP_TankPawnMovementComponent::Movement(float DeltaTime)
+
+void UCPP_TankPawnMovementComponent::Movement_Implementation()
 {
 	if (Owner != nullptr && !NextLocation.IsNearlyZero())
 	{
-		NextLocation = GetActorLocation() + (NextLocation * DeltaTime * Speed);
+		NextLocation = GetActorLocation() + (NextLocation * GetWorld()->DeltaTimeSeconds * Speed);
 		Owner->SetActorRelativeLocation(NextLocation);
 	}
 	if (Owner != nullptr && !NextRotation.IsNearlyZero())
 	{
-		NextRotation = Owner->GetActorRotation() + (NextRotation * DeltaTime * TurnSpeed);
+		NextRotation = Owner->GetActorRotation() + (NextRotation * GetWorld()->DeltaTimeSeconds * TurnSpeed);
 		//정지시 조금씩 앞으로 이동하도록 제작
 		if (!IsAccelerating)
 		{
-			NextLocation = GetActorLocation() + (Owner->GetActorForwardVector() * DeltaTime * 8.0f);
+			NextLocation = GetActorLocation() + (Owner->GetActorForwardVector() * GetWorld()->DeltaTimeSeconds * 8.0f);
 			Owner->SetActorRelativeLocation(NextLocation);
 		}
 		Owner->SetActorRelativeRotation(NextRotation);
@@ -77,12 +78,13 @@ void UCPP_TankPawnMovementComponent::Movement(float DeltaTime)
 	NextRotation = FRotator::ZeroRotator;
 }
 
-void UCPP_TankPawnMovementComponent::OnMove(float value)
+
+void UCPP_TankPawnMovementComponent::OnMove_Implementation(float value)
 {
 	TankClimbingAngle = Owner->GetActorRotation().Pitch;
 	FVector dir = Owner->GetActorForwardVector();
 
-	if (value > 0&&!isBreak)
+	if (value > 0 && !isBreak)
 	{
 		IsAccelerating = true;
 		MaxEngineGear = 4;
@@ -93,24 +95,24 @@ void UCPP_TankPawnMovementComponent::OnMove(float value)
 			RPM = FMath::Clamp<float>(RPM, MinRPM, MaxRPM);
 			IsMoveForward = true;
 		}
-		if(!FMath::IsNearlyEqual(VirtualForwardVal,1))
-			VirtualForwardVal=FMath::Clamp(VirtualForwardVal+0.01f,0.0f,1.0f);
+		if (!FMath::IsNearlyEqual(VirtualForwardVal, 1))
+			VirtualForwardVal = FMath::Clamp(VirtualForwardVal + 0.01f, 0.0f, 1.0f);
 	}
-	else if (FMath::IsNearlyZero(value)||isBreak)
+	else if (FMath::IsNearlyZero(value) || isBreak)
 	{
 		IsAccelerating = false;
 		IsMoveForward = true;
 
-		if(VirtualForwardVal>0)
+		if (VirtualForwardVal > 0)
 		{
-			VirtualForwardVal=FMath::Clamp(VirtualForwardVal-VirtualFriction,0.0f,1.0f);
+			VirtualForwardVal = FMath::Clamp(VirtualForwardVal - VirtualFriction, 0.0f, 1.0f);
 		}
-		else if(VirtualForwardVal<0)
+		else if (VirtualForwardVal < 0)
 		{
-			VirtualForwardVal=FMath::Clamp(VirtualForwardVal+VirtualFriction,-1.0f,0.0f);
+			VirtualForwardVal = FMath::Clamp(VirtualForwardVal + VirtualFriction, -1.0f, 0.0f);
 		}
 	}
-	else if(!isBreak)
+	else if (!isBreak)
 	{
 		IsAccelerating = true;
 		MaxEngineGear = 2;
@@ -122,42 +124,42 @@ void UCPP_TankPawnMovementComponent::OnMove(float value)
 			RPM = FMath::Clamp<float>(RPM, MinRPM, MaxRPM);
 			IsMoveForward = false;
 		}
-		if(!FMath::IsNearlyEqual(VirtualForwardVal,-1))
-			VirtualForwardVal=FMath::Clamp(VirtualForwardVal-0.01f,-1.0f,0.0f);
+		if (!FMath::IsNearlyEqual(VirtualForwardVal, -1))
+			VirtualForwardVal = FMath::Clamp(VirtualForwardVal - 0.01f, -1.0f, 0.0f);
 	}
 
 	//등판각에 따른 속도 조절
 	float TankClimbingAnglePercentage = 0.0f;
-	if(TankClimbingAngle>0)
+	if (TankClimbingAngle > 0)
 	{//올라가는 상황
-		TankClimbingAnglePercentage=TankClimbingAngle/30;
+		TankClimbingAnglePercentage = TankClimbingAngle / 30;
 	}
-	else if(TankClimbingAngle<0)
+	else if (TankClimbingAngle < 0)
 	{//내려가는 상황
-		TankClimbingAnglePercentage=TankClimbingAngle/30;
+		TankClimbingAnglePercentage = TankClimbingAngle / 30;
 	}
 	else
 	{
-		TankClimbingAnglePercentage=0;
+		TankClimbingAnglePercentage = 0;
 	}
 
 	//뒤집히면 못움직이게 함
 	float TankYaw = Owner->GetActorRotation().Roll;
-	if(TankYaw<70&&TankYaw>-70)
+	if (TankYaw<70 && TankYaw>-70)
 	{//최종 움직임 전달
-		NextLocation+=(dir*(VirtualForwardVal-TankClimbingAnglePercentage));
-		CurrentVelocity=(NextLocation*Speed*0.036f).Size();
+		NextLocation += (dir * (VirtualForwardVal - TankClimbingAnglePercentage));
+		CurrentVelocity = (NextLocation * Speed * 0.036f).Size();
 		//애니메이션에 전달
-		SetWheelSpeed(CurrentVelocity*VirtualForwardVal);
+		SetWheelSpeed(CurrentVelocity * VirtualForwardVal);
 	}
 	else
 	{
 		//애니메이션에 전달
-		SetWheelSpeed(10*value*VirtualForwardVal);
+		SetWheelSpeed(10 * value * VirtualForwardVal);
 	}
 }
 
-void UCPP_TankPawnMovementComponent::OnTurn(float value)
+void UCPP_TankPawnMovementComponent::OnTurn_Implementation(float value)
 {
 	//가속중이 아니라면 실제와 유사하게 회전방향으로 조금씩 이동하도록 만듬
 	if (!FMath::IsNearlyZero(value))
@@ -191,6 +193,7 @@ void UCPP_TankPawnMovementComponent::OnTurn(float value)
 	}
 	TurnValue = value;
 }
+
 
 void UCPP_TankPawnMovementComponent::EngineControl()
 {

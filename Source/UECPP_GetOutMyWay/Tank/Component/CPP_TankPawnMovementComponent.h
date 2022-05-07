@@ -21,10 +21,18 @@ public:
 	//ABP에 전달할 변수 설정 함수
 	void SetWheelSpeed(float WheelSpeed);
 	//이동
-	void Movement(float DeltaTime);
+	UFUNCTION(Server,Reliable)
+	void Movement();
+	void Movement_Implementation();
+
+	UFUNCTION(Server, Reliable)
 	void OnMove(float value);
+	void OnMove_Implementation(float value);
+
+	UFUNCTION(Server, Reliable)
 	void OnTurn(float value);
-	
+	void OnTurn_Implementation(float value);
+
 	void OnEngineBreak();
 	void OffEngineBreak();
 
