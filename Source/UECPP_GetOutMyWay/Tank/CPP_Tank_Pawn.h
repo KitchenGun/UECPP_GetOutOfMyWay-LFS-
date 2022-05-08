@@ -82,6 +82,7 @@ protected:
 	//ActorComp
 	class UCPP_TrackMovementComponent* TrackMovement;
 
+	UPROPERTY(Replicated)
 	class UCPP_TankPawnMovementComponent* TankMovement;
 
 	class UCPP_MainGunSystemComponent* GunSystem;

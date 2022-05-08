@@ -18,6 +18,8 @@ public:
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
+
 	//ABP에 전달할 변수 설정 함수
 	void SetWheelSpeed(float WheelSpeed);
 	//이동
@@ -61,13 +63,25 @@ public:
 	FTurretMoveStart TurretMoveStartFunc;
 	FTurretMoveEnd TurretMoveEndFunc;
 private:
+	UFUNCTION(Server,Reliable)
 	void EngineControl();
+	void EngineControl_Implementation();
+	UFUNCTION(Server,Reliable)
 	void RPMControl();
+	void RPMControl_Implementation();
 	
+	UFUNCTION(Server,Reliable)
 	void UpdateTurretState(float DeltaTime);
+	void UpdateTurretState_Implementation(float DeltaTime);
+	UFUNCTION(Server,Reliable)
 	void TurretMove(float DeltaTime);
+	void TurretMove_Implementation(float DeltaTime);
+	UFUNCTION(Server,Reliable)
 	void UpdateGunState(float DeltaTime);
+	void UpdateGunState_Implementation(float DeltaTime);
+	UFUNCTION(Server,Reliable)
 	void GunMove(float DeltaTime);
+	void GunMove_Implementation(float DeltaTime);
 private:
 	class APawn* Owner;
 	
@@ -87,24 +101,39 @@ private:
 	float TrackSpeed = 0;
 
 	//Engine 변수
+	UPROPERTY(Replicated)
 	bool IsMoveForward = true;
+	UPROPERTY(Replicated)
 	float TurnValue =0;
+	UPROPERTY(Replicated)
 	float EngineTorque = 0.0f;
+	UPROPERTY(Replicated)
 	int EngineGear = 0;
+	UPROPERTY(Replicated)
 	float RPM = 500;
+	UPROPERTY(Replicated)
 	bool IsAccelerating = false;
+	UPROPERTY(Replicated)
 	bool IsTurning = false;
-	float CurrentVelocity = 0;//
+	UPROPERTY(Replicated)
+	float CurrentVelocity = 0;
+	UPROPERTY(Replicated)
 	float Speed = 100;
+	UPROPERTY(Replicated)
 	bool isBreak = false;
 
 	//Engine 객체 별로 수정할 데이터변수
+	UPROPERTY(Replicated)
 	float TurnSpeed = 35;//선회 속도
 	class UCurveFloat* EngineTorqueCurve;
+	UPROPERTY(Replicated)
 	int MaxEngineGear = 4;
+	UPROPERTY(Replicated)
 	float IdleRPM = 200;
 	float RPMDisplacement = 200;
+	UPROPERTY(Replicated)
 	float MinRPM = 200;
+	UPROPERTY(Replicated)
 	float MaxRPM = 900;
 
 	//Turret

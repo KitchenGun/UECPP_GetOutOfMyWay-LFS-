@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Math/Vector.h"
+#include "Net/UnrealNetwork.h"
 #include "Tank/CPP_Tank_Pawn.h"
 
 UCPP_TankPawnMovementComponent::UCPP_TankPawnMovementComponent()
@@ -42,6 +43,33 @@ void UCPP_TankPawnMovementComponent::TickComponent(float DeltaTime, ELevelTick T
 	//Gun
 	UpdateGunState(DeltaTime);
 }
+
+
+void UCPP_TankPawnMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	//Engine 변수
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsMoveForward);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,TurnValue);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,EngineTorque);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,EngineGear);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,RPM);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsAccelerating);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsTurning);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsAccelerating);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsTurning);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,CurrentVelocity);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,Speed);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,isBreak);
+	//Engine 객체 별로 수정할 데이터변수
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,TurnSpeed);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,MaxEngineGear);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IdleRPM);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,MinRPM);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,MaxRPM);
+	
+}
+
 
 void UCPP_TankPawnMovementComponent::SetWheelSpeed(float WheelSpeed)
 {
@@ -194,8 +222,7 @@ void UCPP_TankPawnMovementComponent::OnTurn_Implementation(float value)
 	TurnValue = value;
 }
 
-
-void UCPP_TankPawnMovementComponent::EngineControl()
+void UCPP_TankPawnMovementComponent::EngineControl_Implementation()
 {
 	//속도
 	CurrentVelocity = Owner->GetVelocity().Size();//m/s
@@ -247,7 +274,7 @@ void UCPP_TankPawnMovementComponent::EngineControl()
 	//UE_LOG(LogTemp, Display, L"%d gear", EngineGear);
 }
 
-void UCPP_TankPawnMovementComponent::RPMControl()
+void UCPP_TankPawnMovementComponent::RPMControl_Implementation()
 {
 	//기어에 맞는 rpm 세팅
 	switch (EngineGear)
@@ -277,7 +304,7 @@ void UCPP_TankPawnMovementComponent::RPMControl()
 	}
 }
 
-void UCPP_TankPawnMovementComponent::UpdateTurretState(float DeltaTime)
+void UCPP_TankPawnMovementComponent::UpdateTurretState_Implementation(float DeltaTime)
 {
 	SightRotator=UKismetMathLibrary::InverseTransformRotation(TankMesh->GetComponentTransform(),SightRotator).GetDenormalized();
 	TurretRotator = TankMesh->GetBoneQuaternion(L"turret_jnt",EBoneSpaces::ComponentSpace).Rotator().GetDenormalized();
@@ -307,7 +334,7 @@ void UCPP_TankPawnMovementComponent::UpdateTurretState(float DeltaTime)
 		TurretMove(DeltaTime);
 }
 
-void UCPP_TankPawnMovementComponent::TurretMove(float DeltaTime)
+void UCPP_TankPawnMovementComponent::TurretMove_Implementation(float DeltaTime)
 {
 	if(IsTurretAngleMatch)
 		return;
@@ -338,7 +365,7 @@ void UCPP_TankPawnMovementComponent::TurretMove(float DeltaTime)
 	}
 }
 
-void UCPP_TankPawnMovementComponent::UpdateGunState(float DeltaTime)
+void UCPP_TankPawnMovementComponent::UpdateGunState_Implementation(float DeltaTime)
 {
 	SightRotator = Owner->GetController()->GetControlRotation().Quaternion().Rotator();
 		//UGameplayStatics::GetPlayerController(GetWorld(),0)->GetControlRotation().Quaternion().Rotator();
@@ -356,7 +383,7 @@ void UCPP_TankPawnMovementComponent::UpdateGunState(float DeltaTime)
 	GunMove(DeltaTime);
 }
 
-void UCPP_TankPawnMovementComponent::GunMove(float DeltaTime)
+void UCPP_TankPawnMovementComponent::GunMove_Implementation(float DeltaTime)
 {
 	if(IsGunAngleMatch)//매치하면 반환
 		return;

@@ -298,6 +298,7 @@ void ACPP_Tank_Pawn::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ACPP_Tank_Pawn,HP);
+	DOREPLIFETIME(ACPP_Tank_Pawn,TankMovement);
 }
 
 
