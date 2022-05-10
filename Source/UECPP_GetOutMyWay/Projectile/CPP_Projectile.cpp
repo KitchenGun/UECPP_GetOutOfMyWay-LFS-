@@ -14,9 +14,7 @@
 
 ACPP_Projectile::ACPP_Projectile()
 {
-	SetReplicates(true);
-	SetReplicateMovement(true);
-	
+	bReplicates = true;
 	//»ý¼º
 	Root = CreateDefaultSubobject<USceneComponent>(L"Root");
 	Capsule = CreateDefaultSubobject<UCapsuleComponent>(L"Collider");

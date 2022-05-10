@@ -40,10 +40,15 @@ ACPP_M1A1_Pawn::ACPP_M1A1_Pawn()
 	
 	//actorcomp
 	TrackMovement = CreateDefaultSubobject<UCPP_TrackMovementComponent>(L"TrackMovement");
+	TrackMovement->SetIsReplicated(true);
 	TankMovement = CreateDefaultSubobject<UCPP_TankPawnMovementComponent>(L"TankPawnMovement");
+	TankMovement->SetIsReplicated(true);
 	GunSystem = CreateDefaultSubobject<UCPP_M1A1MainGunSystemComponent>(L"GunSystem");
+	GunSystem->SetIsReplicated(true);
 	ParticleSystem = CreateDefaultSubobject<UCPP_ParticleControlComponent>(L"ParticleController");
+	ParticleSystem->SetIsReplicated(true);
 	TankUI = CreateDefaultSubobject<UCPP_TankUIComponent>(L"TankUI");
+	TankUI->SetIsReplicated(true);
 }
 
 void ACPP_M1A1_Pawn::BeginPlay()

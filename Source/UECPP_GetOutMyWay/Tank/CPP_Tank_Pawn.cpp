@@ -21,10 +21,10 @@
 
 ACPP_Tank_Pawn::ACPP_Tank_Pawn()
 {
+	bReplicates = true;
+	
 	PrimaryActorTick.bCanEverTick = true;
 	PC = Cast<APlayerController>(GetController());
-	SetReplicates(true);
-	SetReplicateMovement(true);
 }
 
 void ACPP_Tank_Pawn::BeginPlay()

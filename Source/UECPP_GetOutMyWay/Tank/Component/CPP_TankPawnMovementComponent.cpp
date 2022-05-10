@@ -2,7 +2,6 @@
 #include "Tank/CPP_TankAnimInstance.h"
 #include "GameFramework/Actor.h"
 #include "Animation/AnimInstance.h"
-#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Math/Vector.h"
 #include "Net/UnrealNetwork.h"
@@ -30,7 +29,8 @@ void UCPP_TankPawnMovementComponent::BeginPlay()
 	Super::BeginPlay();
 }
 
-void UCPP_TankPawnMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UCPP_TankPawnMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+	FActorComponentTickFunction* ThisTickFunction)
 {
 	if(!Owner->IsLocallyControlled())
 		return;
@@ -45,9 +45,22 @@ void UCPP_TankPawnMovementComponent::TickComponent(float DeltaTime, ELevelTick T
 }
 
 
+
+
 void UCPP_TankPawnMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	//movement
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,NextLocation);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,NextRotation);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,PrevPos);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,SpeedTimer);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,VirtualForwardVal);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,VirtualFriction);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,TankClimbingAngle);
+	//TrackSpeed
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,TrackSpeed);
+	
 	//Engine 변수
 	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsMoveForward);
 	DOREPLIFETIME(UCPP_TankPawnMovementComponent,TurnValue);
@@ -401,6 +414,10 @@ void UCPP_TankPawnMovementComponent::GunMove_Implementation(float DeltaTime)
 	}
 	//마지막으로 animinst에서 접근하는 변수에 넣어준다.
 	GunAngle = GunRotationPitch;
+}
+
+void UCPP_TankPawnMovementComponent::OnRep_NextTransformUpdate()
+{
 }
 
 void UCPP_TankPawnMovementComponent::OnEngineBreak()

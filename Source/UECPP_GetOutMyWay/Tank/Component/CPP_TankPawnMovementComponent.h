@@ -13,9 +13,8 @@ class UECPP_GETOUTMYWAY_API UCPP_TankPawnMovementComponent : public UPawnMovemen
 	GENERATED_BODY()
 public:
 	UCPP_TankPawnMovementComponent();
-
 	virtual void BeginPlay() override;
-
+	
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
@@ -90,14 +89,25 @@ private:
 	class UCPP_TankAnimInstance* TankAnimInst;
 
 	//movement
+	UPROPERTY(ReplicatedUsing=OnRep_NextTransformUpdate)
 	FVector NextLocation = FVector::ZeroVector;
+	
+	UPROPERTY(ReplicatedUsing=OnRep_NextTransformUpdate)
 	FRotator NextRotation = FRotator::ZeroRotator;
+	UFUNCTION()
+	void OnRep_NextTransformUpdate();
+	UPROPERTY(Replicated)
 	FVector PrevPos = FVector::ZeroVector;
+	UPROPERTY(Replicated)
 	float SpeedTimer = 0;
+	UPROPERTY(Replicated)
 	float VirtualForwardVal=0;
+	UPROPERTY(Replicated)
 	float VirtualFriction = 0.01f;
+	UPROPERTY(Replicated)
 	float TankClimbingAngle =0;
 	//TrackSpeed
+	UPROPERTY(Replicated)
 	float TrackSpeed = 0;
 
 	//Engine º¯¼ö
