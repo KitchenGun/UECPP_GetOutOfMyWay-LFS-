@@ -418,6 +418,10 @@ void UCPP_TankPawnMovementComponent::GunMove_Implementation(float DeltaTime)
 
 void UCPP_TankPawnMovementComponent::OnRep_NextTransformUpdate()
 {
+	if(Owner->IsLocallyControlled())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, L"move");
+	}
 }
 
 void UCPP_TankPawnMovementComponent::OnEngineBreak()
