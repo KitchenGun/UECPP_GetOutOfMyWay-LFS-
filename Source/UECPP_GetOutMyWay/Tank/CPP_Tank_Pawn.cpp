@@ -105,15 +105,16 @@ void ACPP_Tank_Pawn::CamChange()
 }
 
 
+
 void ACPP_Tank_Pawn::OnMoveForward(float value)
 {
 	if (TankMovement != nullptr)
 	{
 		TankMovement->OnMove(value);
+		//AddMovementInput(GetActorForwardVector(),value);
 		OnWheelParticle();
 	}
 }
-
 
 
 void ACPP_Tank_Pawn::OnMoveTurn(float value)
@@ -315,7 +316,15 @@ void ACPP_Tank_Pawn::Tick(float DeltaTime)
 void ACPP_Tank_Pawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	PlayerInputComponent->BindAxis("VerticalLook", this, &ACPP_Tank_Pawn::OnVerticalLook);
+	PlayerInputComponent->BindAxis("HorizontalLook", this, &ACPP_Tank_Pawn::OnHorizontalLook);
+	PlayerInputComponent->BindAxis("MoveForward", this, &ACPP_Tank_Pawn::OnMoveForward);
+	PlayerInputComponent->BindAxis("MoveTurn", this, &ACPP_Tank_Pawn::OnMoveTurn);
+	
+	PlayerInputComponent->BindAction("EngineBreak",IE_Pressed,this, &ACPP_Tank_Pawn::OnEngineBreak);
+	PlayerInputComponent->BindAction("EngineBreak", IE_Released, this, &ACPP_Tank_Pawn::OffEngineBreak);
+	PlayerInputComponent->BindAction("ViewChange",IE_Pressed,this,&ACPP_Tank_Pawn::CamChange);
+	PlayerInputComponent->BindAction("Fire",IE_Pressed,this,&ACPP_Tank_Pawn::OnMainGunFire);
 	PlayerInputComponent->BindAction("Zoom",IE_Pressed,this, &ACPP_Tank_Pawn::ZoomToggle);
 }
 
@@ -376,3 +385,4 @@ void ACPP_Tank_Pawn::GunDirPosWorldToScreen()
 			FSetRangeTextFunc.Execute(0);
 	}
 }
+

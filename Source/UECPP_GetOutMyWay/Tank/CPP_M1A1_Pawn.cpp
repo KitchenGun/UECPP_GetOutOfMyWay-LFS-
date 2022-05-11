@@ -39,10 +39,11 @@ ACPP_M1A1_Pawn::ACPP_M1A1_Pawn()
 	SoundSet();
 	
 	//actorcomp
+	TankMovement = CreateDefaultSubobject<UCPP_TankPawnMovementComponent>(L"TankPawnMovement");
+	TankMovement->UpdatedComponent = RootComponent;
+	TankMovement->SetIsReplicated(true);
 	TrackMovement = CreateDefaultSubobject<UCPP_TrackMovementComponent>(L"TrackMovement");
 	TrackMovement->SetIsReplicated(true);
-	TankMovement = CreateDefaultSubobject<UCPP_TankPawnMovementComponent>(L"TankPawnMovement");
-	TankMovement->SetIsReplicated(true);
 	GunSystem = CreateDefaultSubobject<UCPP_M1A1MainGunSystemComponent>(L"GunSystem");
 	GunSystem->SetIsReplicated(true);
 	ParticleSystem = CreateDefaultSubobject<UCPP_ParticleControlComponent>(L"ParticleController");
@@ -75,19 +76,6 @@ void ACPP_M1A1_Pawn::Tick(float DeltaTime)
 	CamPitchLimitSmooth();
 }
 
-void ACPP_M1A1_Pawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	PlayerInputComponent->BindAxis("VerticalLook", this, &ACPP_M1A1_Pawn::OnVerticalLook);
-	PlayerInputComponent->BindAxis("HorizontalLook", this, &ACPP_M1A1_Pawn::OnHorizontalLook);
-	PlayerInputComponent->BindAxis("MoveForward", this, &ACPP_M1A1_Pawn::OnMoveForward);
-	PlayerInputComponent->BindAxis("MoveTurn", this, &ACPP_M1A1_Pawn::OnMoveTurn);
-	
-	PlayerInputComponent->BindAction("EngineBreak",IE_Pressed,this, &ACPP_M1A1_Pawn::OnEngineBreak);
-	PlayerInputComponent->BindAction("EngineBreak", IE_Released, this, &ACPP_M1A1_Pawn::OffEngineBreak);
-	PlayerInputComponent->BindAction("ViewChange",IE_Pressed,this,&ACPP_M1A1_Pawn::CamChange);
-	PlayerInputComponent->BindAction("Fire",IE_Pressed,this,&ACPP_M1A1_Pawn::OnMainGunFire);
-}
 
 void ACPP_M1A1_Pawn::Dead()
 {
