@@ -1,10 +1,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CPP_Tank_Character.h"
-#include "GameFramework/Pawn.h"
-#include "CPP_Tank_Pawn.generated.h"
-
+#include "GameFramework/Character.h"
+#include "CPP_Tank_Character.generated.h"
 
 DECLARE_DELEGATE(FFire);
 DECLARE_DELEGATE(FFPViewEffect);
@@ -12,22 +10,86 @@ DECLARE_DELEGATE_OneParam(FGunSightWidgetPosFunc,FVector2D)
 DECLARE_DELEGATE(FZoomToggleFunc)
 DECLARE_DELEGATE_OneParam(FSetRangeText,int32)
 
+UENUM(BlueprintType)
+enum class ECameraType : uint8
+{
+	THIRD		UMETA(DisplayName = "Third"),
+	GUNNER		UMETA(DisplayName = "Gunner"),
+	MAX
+};
+
+
 UCLASS()
-class UECPP_GETOUTMYWAY_API ACPP_Tank_Pawn : public APawn
+class UECPP_GETOUTMYWAY_API ACPP_Tank_Character : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	ACPP_Tank_Pawn();
+	ACPP_Tank_Character();
+
+	virtual void BeginPlay() override;
+	
+	UFUNCTION()
+	void GunDirPosWorldToScreen();
+	
+	//get&set
+	FORCEINLINE UParticleSystemComponent* GetMuzzleFlashEffect() {return MuzzleFlashEffect;}
+	FORCEINLINE UParticleSystemComponent* GetShockWaveEffect() {return ShockWaveEffect;}
+	FORCEINLINE TArray<class UParticleSystemComponent*> GetWheelsEffect() {return WheelsEffect;}
+	FORCEINLINE APlayerController* GetPlayerController() {return PC;}
+	FORCEINLINE float GetGunAngleOffset() {return displacementAngle;}
+	//Delegate
+	FFire FireFunc;
+	FFPViewEffect FpViewToggleFunc;
+	FZoomToggleFunc FZoomToggleFunc;
+	FSetRangeText FSetRangeTextFunc;
+	FGunSightWidgetPosFunc FGunSightPosFunc;
 protected:
-	//Root
-	UPROPERTY(EditDefaultsOnly)
-	class UStaticMeshComponent* TankRoot;
+	//sight
+	void OnVerticalLook(float value);
+	void OnHorizontalLook(float value);
+	void CamPitchLimitSmooth();
+	void CamChange();
+	//move
+	void OnMoveForward(float value);
+	void OnMoveTurn(float value);
+	void OnEngineBreak();
+	void OffEngineBreak();
+	//action
+	void OnMainGunFire();
+	void ZoomToggle();
+	//particle
+	void OnWheelParticle();
+	UFUNCTION()
+	void OnFireParticle();
+	//Sound
+	UFUNCTION()
+	void IdleSoundPlay();
+	void EngineSoundPlay();
+	UFUNCTION()
+	void EngineSoundStop();
+	void GunSystemSoundPlay();
+	UFUNCTION()
+	virtual void GunSystemSoundStop();
+	UFUNCTION()
+	virtual void GunSystemSoundReloadDone();
+	UFUNCTION()
+	virtual void TurretMoveLoop();
+	UFUNCTION()
+	virtual void TurretMoveEnd();
+	//Damage
+	UFUNCTION()
+	virtual void Dead();
+public:	
+	virtual void Tick(float DeltaTime) override;
 
-	//Mesh
-	UPROPERTY(EditDefaultsOnly)
-	class USkeletalMeshComponent* TankMesh;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION()
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
+protected:
 	//Camera
 	UPROPERTY(EditDefaultsOnly)
 	class UCameraComponent* Camera;
@@ -73,86 +135,21 @@ protected:
 	class UAudioComponent* TurretSystemAudio;
 	UPROPERTY(VisibleDefaultsOnly)
 	class UAudioComponent* HitAudio;
+
 	//ActorComp
 	class UCPP_TrackMovementComponent* TrackMovement;
-
 	UPROPERTY(Replicated)
 	class UCPP_TankPawnMovementComponent* TankMovement;
-
+	UPROPERTY(Replicated)
 	class UCPP_MainGunSystemComponent* GunSystem;
-
+	UPROPERTY(Replicated)
 	class UCPP_ParticleControlComponent* ParticleSystem;
 	UPROPERTY(EditDefaultsOnly)
 	class UCPP_TankUIComponent* TankUI;
-public:	
-	virtual void Tick(float DeltaTime) override;
 
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	//APlayerController
+	APlayerController* PC;
 
-	UFUNCTION()
-	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-
-	UFUNCTION()
-	void GunDirPosWorldToScreen();
-	
-	//get&set
-	FORCEINLINE UParticleSystemComponent* GetMuzzleFlashEffect() {return MuzzleFlashEffect;}
-	FORCEINLINE UParticleSystemComponent* GetShockWaveEffect() {return ShockWaveEffect;}
-	FORCEINLINE TArray<class UParticleSystemComponent*> GetWheelsEffect() {return WheelsEffect;}
-	FORCEINLINE APlayerController* GetPlayerController() {return PC;}
-	FORCEINLINE float GetGunAngleOffset() {return displacementAngle;}
-	//Delegate
-	FFire FireFunc;
-	FFPViewEffect FpViewToggleFunc;
-	FZoomToggleFunc FZoomToggleFunc;
-	FSetRangeText FSetRangeTextFunc;
-	FGunSightWidgetPosFunc FGunSightPosFunc;
-	
-protected:
-	virtual void BeginPlay() override;
-
-	//sight
-	void OnVerticalLook(float value);
-	void OnHorizontalLook(float value);
-	void CamPitchLimitSmooth();
-	void CamChange();
-	//move
-	void OnMoveForward(float value);
-	void OnMoveTurn(float value);
-	void OnEngineBreak();
-	void OffEngineBreak();
-	//action
-	void OnMainGunFire();
-	void ZoomToggle();
-	//particle
-	void OnWheelParticle();
-	UFUNCTION()
-	void OnFireParticle();
-	//Sound
-	UFUNCTION()
-	void IdleSoundPlay();
-	void EngineSoundPlay();
-	UFUNCTION()
-	void EngineSoundStop();
-	void GunSystemSoundPlay();
-	UFUNCTION()
-	virtual void GunSystemSoundStop();
-	UFUNCTION()
-	virtual void GunSystemSoundReloadDone();
-	UFUNCTION()
-	virtual void TurretMoveLoop();
-	UFUNCTION()
-	virtual void TurretMoveEnd();
-
-	//Damage
-	UFUNCTION()
-	virtual void Dead();
-	UFUNCTION()
-	void OnRep_HealthUpdated();
-	UFUNCTION()
-	void OnHealthUpdate();
-protected:
-	//////////////////////////////tank 파라미터 변수/////////////////////////////////////////
 	//sight
 	float CamRange = 800;
 	float BasicCamTurnSpeed = 100;
@@ -161,9 +158,6 @@ protected:
 	float displacementAngle =0.0f;
 	ECameraType CamType = ECameraType::THIRD;
 	bool IsZoom = false;
-	
-	//APlayerController
-	APlayerController* PC;
 
 	//sound
 	class USoundWave* EngineStartSound;
@@ -195,10 +189,7 @@ protected:
 
 	//Damage
 	float MAX_HP = 100;
-	UPROPERTY(ReplicatedUsing=OnRep_HealthUpdated)
+	UPROPERTY(Replicated)
 	float HP = MAX_HP;
-
 	bool IsDead=false;
-public:
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 };

@@ -226,12 +226,12 @@ void ACPP_Tank_Pawn::GunSystemSoundPlay()
 	GunSystemAudio->AttenuationSettings = MainGunSoundAttenuation;
 	if(CamType==ECameraType::THIRD)
 	{
-		GunSystemAudio->Sound = MainGunFireSound[UKismetMathLibrary::RandomIntegerInRange(0,1)];
+		GunSystemAudio->Sound = MainGunFireSound[0];
 		GunSystemAudio->Play();
 	}
 	else if(CamType==ECameraType::GUNNER)
 	{
-		GunSystemAudio->Sound = MainGunFireSound[UKismetMathLibrary::RandomIntegerInRange(2,5)];
+		GunSystemAudio->Sound = MainGunFireSound[1];
 		GunSystemAudio->Play();
 	}
 }
@@ -241,7 +241,7 @@ void ACPP_Tank_Pawn::GunSystemSoundStop()
 	if (!GunSystem->GetIsMainGunCanFire())
 	{
 		GunSystemAudio->AttenuationSettings = TurretSoundAttenuation;
-		GunSystemAudio->Sound = MainGunReloadDoneSound[UKismetMathLibrary::RandomIntegerInRange(0, 2)];
+		GunSystemAudio->Sound = MainGunReloadDoneSound;
 		GunSystemAudio->Play();
 	}
 }

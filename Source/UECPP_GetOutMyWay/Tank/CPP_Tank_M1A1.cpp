@@ -1,29 +1,22 @@
-#include "Tank/CPP_M1A1_Pawn.h"
-#include "Kismet/GameplayStatics.h"
-#include "Particles/ParticleSystemComponent.h"
-//mesh
-#include "Components/SkeletalMeshComponent.h"
-#include "Components/StaticMeshComponent.h"
-#include "Components/BoxComponent.h"
-#include "Animation/AnimInstance.h"
-//camera
+#include "Tank/CPP_Tank_M1A1.h"
+#include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
-#include "GameFramework/SpringArmComponent.h"
-//sound
-#include "Components/AudioComponent.h"
-#include "Sound/SoundCue.h"
-#include "Sound/SoundAttenuation.h"
-//actorComp
-#include "Component/CPP_TrackMovementComponent.h"
-#include "Component/CPP_TankPawnMovementComponent.h"
 #include "Component/CPP_M1A1MainGunSystemComponent.h"
 #include "Component/CPP_ParticleControlComponent.h"
+#include "Component/CPP_TankPawnMovementComponent.h"
+#include "Component/CPP_TankUIComponent.h"
+#include "Component/CPP_TrackMovementComponent.h"
+#include "Components/AudioComponent.h"
+#include "Components/BoxComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Engine/AssetManager.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Materials/MaterialInstanceConstant.h"
-#include "UI/Tank/Sight/CPP_UserWidgetTankSight.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Sound/SoundCue.h"
 
 
-ACPP_M1A1_Pawn::ACPP_M1A1_Pawn()
+ACPP_Tank_M1A1::ACPP_Tank_M1A1()
 {
 	//parameter
 	ParameterSet();
@@ -52,7 +45,7 @@ ACPP_M1A1_Pawn::ACPP_M1A1_Pawn()
 	TankUI->SetIsReplicated(true);
 }
 
-void ACPP_M1A1_Pawn::BeginPlay()
+void ACPP_Tank_M1A1::BeginPlay()
 {
 	Super::BeginPlay();
 	
@@ -62,29 +55,27 @@ void ACPP_M1A1_Pawn::BeginPlay()
 	bUseControllerRotationYaw = false;
 	//사운드
 	IdleAudio->Play();
-	IdleAudio->OnAudioFinished.AddDynamic(this,&ACPP_M1A1_Pawn::IdleSoundPlay);
-	EngineAudio->OnAudioFinished.AddDynamic(this,&ACPP_M1A1_Pawn::EngineSoundStop);
-	GunSystemAudio->OnAudioFinished.AddDynamic(this,&ACPP_M1A1_Pawn::GunSystemSoundStop);
+	IdleAudio->OnAudioFinished.AddDynamic(this,&ACPP_Tank_M1A1::IdleSoundPlay);
+	EngineAudio->OnAudioFinished.AddDynamic(this,&ACPP_Tank_M1A1::EngineSoundStop);
+	GunSystemAudio->OnAudioFinished.AddDynamic(this,&ACPP_Tank_M1A1::GunSystemSoundStop);
 	//Damage
 	HP = MAX_HP;
-	
 }
 
-void ACPP_M1A1_Pawn::Tick(float DeltaTime)
+void ACPP_Tank_M1A1::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	CamPitchLimitSmooth();
 }
 
-
-void ACPP_M1A1_Pawn::Dead()
+void ACPP_Tank_M1A1::Dead()
 {
 	Super::Dead();
 	UMaterialInstanceConstant* DamageMat = Cast<UMaterialInstanceConstant>(UAssetManager::GetStreamableManager().LoadSynchronous(FSoftObjectPath(L"MaterialInstanceConstant'/Game/VigilanteContent/Vehicles/West_Tank_M1A1Abrams/Damaged/Materials/MI_West_Tank_M1A1Abrams_Damaged.MI_West_Tank_M1A1Abrams_Damaged'")));
-	TankMesh->SetMaterial(0,DamageMat);
+	GetMesh()->SetMaterial(0,DamageMat);
 }
 
-void ACPP_M1A1_Pawn::ParameterSet()
+void ACPP_Tank_M1A1::ParameterSet()
 {
 	//sight
 	CamRange = 800;
@@ -97,47 +88,42 @@ void ACPP_M1A1_Pawn::ParameterSet()
 	HP = MAX_HP;
 }
 
-void ACPP_M1A1_Pawn::RootSet()
+void ACPP_Tank_M1A1::RootSet()
 {
-	//mesh
-	TankRoot = CreateDefaultSubobject<UStaticMeshComponent>(L"TankRoot");
-	RootComponent = TankRoot;
-	TankMesh = CreateDefaultSubobject<USkeletalMeshComponent>(L"TankMesh");
-	TankMesh->SetupAttachment(TankRoot);
 	/*객체 초기화*/
-	//mesh
-	ConstructorHelpers::FObjectFinder<UStaticMesh> smesh
-	(L"StaticMesh'/Engine/BasicShapes/Cube.Cube'");
-	TankRoot->SetStaticMesh(smesh.Object);
-	TankRoot->SetSimulatePhysics(true);
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> skmesh
-	(L"SkeletalMesh'/Game/VigilanteContent/Vehicles/West_Tank_M1A1Abrams/SK_West_Tank_M1A1Abrams.SK_West_Tank_M1A1Abrams'");
-	TankMesh->SetSkeletalMesh(skmesh.Object);
+	//capsule
+	class UCapsuleComponent* root = dynamic_cast<UCapsuleComponent*>(RootComponent);
+	root->SetSimulatePhysics(true);
+	root->SetGenerateOverlapEvents(true);
+	root->SetCollisionProfileName("PhysicsActor");
+	//sk
+	GetMesh()->SetSkeletalMesh(ConstructorHelpers::FObjectFinder<USkeletalMesh>(L"SkeletalMesh'/Game/VigilanteContent/Vehicles/West_Tank_M1A1Abrams/SK_West_Tank_M1A1Abrams.SK_West_Tank_M1A1Abrams'").Object);
+	//anim
 	ConstructorHelpers::FClassFinder<UAnimInstance> animInst
 	(L"AnimBlueprint'/Game/VigilanteContent/Vehicles/West_Tank_M1A1Abrams/ABP_West_Tank_M1A1Abrams.ABP_West_Tank_M1A1Abrams_C'");
-	TankMesh->SetAnimInstanceClass(animInst.Class);
-	TankMesh->SetRelativeLocation(FVector(0, 0, -100));
+	GetMesh()->SetAnimInstanceClass(animInst.Class);
+	GetMesh()->SetRelativeLocation(FVector(0, 0, -100));
 }
 
-void ACPP_M1A1_Pawn::CollisionSet()
+void ACPP_Tank_M1A1::CollisionSet()
 {
 	//collider
 	//차체
 	FrontUpper = CreateDefaultSubobject<UBoxComponent>(L"FrontUpper");
-	FrontUpper->SetupAttachment(TankRoot);
+	FrontUpper->SetupAttachment(RootComponent);
 	Engine = CreateDefaultSubobject<UBoxComponent>(L"Engine");
-	Engine->SetupAttachment(TankRoot);
+	Engine->SetupAttachment(RootComponent);
 	Bottom = CreateDefaultSubobject<UBoxComponent>(L"Bottom");
-	Bottom->SetupAttachment(TankRoot);
+	Bottom->SetupAttachment(RootComponent);
 	FrontUnder = CreateDefaultSubobject<UBoxComponent>(L"FrontUnder");
-	FrontUnder->SetupAttachment(TankRoot);
+	FrontUnder->SetupAttachment(RootComponent);
 	LSide = CreateDefaultSubobject<UBoxComponent>(L"LSide");
-	LSide->SetupAttachment(TankRoot);
+	LSide->SetupAttachment(RootComponent);
 	RSide = CreateDefaultSubobject<UBoxComponent>(L"RSide");
-	RSide->SetupAttachment(TankRoot);
+	RSide->SetupAttachment(RootComponent);
 	//포탑
 	Turret = CreateDefaultSubobject<UBoxComponent>(L"Turret");
-	Turret->SetupAttachment(TankRoot);
+	Turret->SetupAttachment(RootComponent);
 	/*객체 초기화*/
 	//collider
 	//bp에서 처리해야하나?
@@ -169,15 +155,15 @@ void ACPP_M1A1_Pawn::CollisionSet()
 	Turret->SetCollisionProfileName("TankCollider");
 }
 
-void ACPP_M1A1_Pawn::CameraSet()
+void ACPP_Tank_M1A1::CameraSet()
 {
 	//camera
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(L"SpringArm");
-	SpringArm->SetupAttachment(TankMesh);
+	SpringArm->SetupAttachment(GetMesh());
 	Camera = CreateDefaultSubobject<UCameraComponent>(L"Camera");
 	Camera->SetupAttachment(SpringArm);
 	GunnerSpringArm = CreateDefaultSubobject<USpringArmComponent>("GunnerSpringArm");
-	GunnerSpringArm->SetupAttachment(TankMesh);
+	GunnerSpringArm->SetupAttachment(GetMesh());
 	GunnerCam = CreateDefaultSubobject<UCameraComponent>(L"GunnerCam");
 	GunnerCam->SetupAttachment(GunnerSpringArm);
 	
@@ -190,18 +176,18 @@ void ACPP_M1A1_Pawn::CameraSet()
 	GunnerSpringArm->SetRelativeLocation(FVector(0, 0, 0));
 	GunnerSpringArm->bUsePawnControlRotation = true;
 	GunnerSpringArm->TargetArmLength = 0;
-	GunnerSpringArm->SetupAttachment(TankMesh,"GunnerCamPos");
+	GunnerSpringArm->SetupAttachment(GetMesh(),"GunnerCamPos");
 	GunnerCam->SetRelativeLocation(FVector(0,0,20));
 	GunnerCam->SetupAttachment(GunnerSpringArm);
 }
 
-void ACPP_M1A1_Pawn::ParticleSet()
+void ACPP_Tank_M1A1::ParticleSet()
 {
 	//particle
 	MuzzleFlashEffect = CreateDefaultSubobject<UParticleSystemComponent>(L"MuzzleFlash");
-	MuzzleFlashEffect->SetupAttachment(TankMesh);
+	MuzzleFlashEffect->SetupAttachment(GetMesh());
 	ShockWaveEffect = CreateDefaultSubobject<UParticleSystemComponent>(L"ShockWave");
-	ShockWaveEffect->SetupAttachment(TankMesh);
+	ShockWaveEffect->SetupAttachment(GetMesh());
 	WheelsEffect.SetNum(8);
 	for(int i =0;i<WheelsEffect.Num();i++)
 	{
@@ -213,13 +199,13 @@ void ACPP_M1A1_Pawn::ParticleSet()
 	ConstructorHelpers::FObjectFinder<UParticleSystem> MuzzleParticle
 	(L"ParticleSystem'/Game/VigilanteContent/Vehicles/West_Tank_M1A1Abrams/FX/PS_MuzzleFire_01_M1A1Abrams.PS_MuzzleFire_01_M1A1Abrams'");
 	MuzzleFlashEffect->Template = MuzzleParticle.Object;
-	MuzzleFlashEffect->SetupAttachment(TankMesh,"gun_1_jntSocket");
+	MuzzleFlashEffect->SetupAttachment(GetMesh(),"gun_1_jntSocket");
 	MuzzleFlashEffect->bAutoActivate = false;
 	MuzzleFlashEffect->bAutoDestroy = false;
 	ConstructorHelpers::FObjectFinder<UParticleSystem> ShockWaveParticle
 	(L"ParticleSystem'/Game/VigilanteContent/Vehicles/West_Tank_M1A1Abrams/FX/PS_ShockWave_M1A1Abrams.PS_ShockWave_M1A1Abrams'");
 	ShockWaveEffect->Template = ShockWaveParticle.Object;
-	ShockWaveEffect->SetupAttachment(TankMesh,"root_jnt");
+	ShockWaveEffect->SetupAttachment(GetMesh(),"root_jnt");
 	ShockWaveEffect->bAutoActivate = false;
 	ShockWaveEffect->bAutoDestroy = false;
 	ConstructorHelpers::FObjectFinder<UParticleSystem> WheelParticle
@@ -227,25 +213,25 @@ void ACPP_M1A1_Pawn::ParticleSet()
 	for(int i =0;i<WheelsEffect.Num();i++)
 	{
 		FString name = FString::Printf(TEXT("Wheel%d"),i);
-		WheelsEffect[i]->SetupAttachment(TankMesh,FName(name));
+		WheelsEffect[i]->SetupAttachment(GetMesh(),FName(name));
 		WheelsEffect[i]->Template = WheelParticle.Object;
 		WheelsEffect[i]->bAutoActivate = false;
 		WheelsEffect[i]->bAutoDestroy = false;
 	}
 }
 
-void ACPP_M1A1_Pawn::SoundSet()
+void ACPP_Tank_M1A1::SoundSet()
 {
 	EngineAudio = CreateDefaultSubobject<UAudioComponent>(L"EngineAudio");
 	EngineAudio->SetupAttachment(Engine);
 	IdleAudio = CreateDefaultSubobject<UAudioComponent>(L"IdleAudio");
-	IdleAudio->SetupAttachment(TankMesh);
+	IdleAudio->SetupAttachment(GetMesh());
 	GunSystemAudio = CreateDefaultSubobject<UAudioComponent>(L"GunSystemAudio");
 	GunSystemAudio->SetupAttachment(GunnerCam);
 	TurretSystemAudio = CreateDefaultSubobject<UAudioComponent>(L"TurretSystemAudio");
 	TurretSystemAudio->SetupAttachment(GunnerCam);
 	HitAudio = CreateDefaultSubobject<UAudioComponent>(L"HitAudio");
-	HitAudio->SetupAttachment(TankMesh);
+	HitAudio->SetupAttachment(GetMesh());
 	
 	ConstructorHelpers::FObjectFinder<USoundAttenuation> EngineAttenuation
 	(L"SoundAttenuation'/Game/BP/Sound/Attenuation/EngineSoundAttenuation.EngineSoundAttenuation'");
@@ -263,7 +249,7 @@ void ACPP_M1A1_Pawn::SoundSet()
 	HitAudio->AttenuationSettings = MainGunAttenuation.Object;
 	
 	/*객체 초기화*/
-	MainGunFireSound.SetNum(6);
+	MainGunFireSound.SetNum(2);
 	//Sound
 	ConstructorHelpers::FObjectFinder<USoundWave> IdleStartCue
 	(L"SoundWave'/Game/Sound/Tank/Engine/M1A2_Start_Idle_Stop_Wave_0_0_0.M1A2_Start_Idle_Stop_Wave_0_0_0'");
@@ -284,12 +270,9 @@ void ACPP_M1A1_Pawn::SoundSet()
 	(L"SoundWave'/Game/Sound/Tank/Engine/M1A2_SuperTurbine_Wave_0_0_2.M1A2_SuperTurbine_Wave_0_0_2'");
 	EngineEndSound=EngineEndCue.Object;
 	
-	ConstructorHelpers::FObjectFinder<USoundCue> MainGunFireCue0
-	(L"SoundCue'/Game/Sound/Tank/Fire/3DFire.3DFire'");
-	MainGunFireSound[0]=MainGunFireCue0.Object;
-	ConstructorHelpers::FObjectFinder<USoundCue> MainGunFireCue1
-	(L"SoundCue'/Game/Sound/Tank/Fire/FPFire.FPFire'");
-	MainGunFireSound[1]=MainGunFireCue1.Object;
+	
+	MainGunFireSound[0]=ConstructorHelpers::FObjectFinder<USoundCue>(L"SoundCue'/Game/Sound/Tank/Fire/3DFire.3DFire'").Object;
+	MainGunFireSound[1]=ConstructorHelpers::FObjectFinder<USoundCue>(L"SoundCue'/Game/Sound/Tank/Fire/FPFire.FPFire'").Object;
 	
 	ConstructorHelpers::FObjectFinder<USoundCue> MainGunReloadCue
 	(L"SoundCue'/Game/Sound/Tank/Reload/120mm_Cannon_Reload_M1A2_Wave_0_0_0_Cue.120mm_Cannon_Reload_M1A2_Wave_0_0_0_Cue'");
@@ -297,7 +280,7 @@ void ACPP_M1A1_Pawn::SoundSet()
 	ConstructorHelpers::FObjectFinder<USoundCue> MainGunReloadDoneCue
 	(L"SoundCue'/Game/Sound/Tank/Reload/ReloadDone.ReloadDone'");
 	MainGunReloadDoneSound=MainGunReloadDoneCue.Object;
-	
+
 	ConstructorHelpers::FObjectFinder<USoundWave> TurretLoop
 	(L"SoundWave'/Game/Sound/Tank/Turret/Turret_Loop_01_Wave_0_0_0.Turret_Loop_01_Wave_0_0_0'");
 	TurretLoopSound = TurretLoop.Object;
@@ -312,17 +295,11 @@ void ACPP_M1A1_Pawn::SoundSet()
 	(L"SoundCue'/Game/Sound/Tank/Hit/Tank_turret_small_shockricos_sheetmetal_Cue.Tank_turret_small_shockricos_sheetmetal_Cue'");
 	TankRicochetHitSound = RicochetHit.Object;
 	
-	IdleAudio->SetSound(IdleStartSound);
+	IdleAudio->Sound = IdleStartSound;
 	IdleAudio->VolumeMultiplier = 0.2f;
-	EngineAudio->SetSound(EngineStartSound);
+	EngineAudio->Sound = EngineStartSound;
 	EngineAudio->VolumeMultiplier = 0.3f;
 	GunSystemAudio->VolumeMultiplier=0.5f;
 	TurretSystemAudio->VolumeMultiplier=0.3f;
 	HitAudio->VolumeMultiplier=1.0f;
 }
-
-
-
-
-
-
