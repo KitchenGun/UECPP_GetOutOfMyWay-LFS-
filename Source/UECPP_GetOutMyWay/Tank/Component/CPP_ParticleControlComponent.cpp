@@ -3,11 +3,12 @@
 #include "GameInstance/CPP_MultiplayGameInstance.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Tank/CPP_Tank_Character.h"
 
 UCPP_ParticleControlComponent::UCPP_ParticleControlComponent()
 {
 	if(IsValid(GetOwner()))
-		OwnerTank = Cast<ACPP_Tank_Pawn>(GetOwner());
+		OwnerTank = Cast<ACPP_Tank_Character>(GetOwner());
 	
 
 }

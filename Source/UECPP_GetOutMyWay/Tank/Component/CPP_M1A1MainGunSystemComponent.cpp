@@ -5,12 +5,12 @@
 #include "Common/UObject/Manager/ObjectPool/CPP_ObjectPoolManager.h"
 #include "GameInstance/CPP_MultiplayGameInstance.h"
 #include "Projectile/CPP_Projectile.h"
-#include "Tank/CPP_Tank_Pawn.h"
+#include "Tank/CPP_Tank_Character.h"
 
 void UCPP_M1A1MainGunSystemComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	Owner=Cast<ACPP_Tank_Pawn>(GetOwner());
+	Owner=Cast<ACPP_Tank_Character>(GetOwner());
 	if(IsValid(Owner))
 	{
 		Owner->FireFunc.BindUFunction(this,"MainGunFire");

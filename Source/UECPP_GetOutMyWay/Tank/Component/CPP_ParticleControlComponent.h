@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Tank/CPP_Tank_Pawn.h"
 #include "CPP_ParticleControlComponent.generated.h"
 
 
@@ -20,7 +19,7 @@ protected:
 	virtual void BeginPlay() override;
 	
 private:
-	class ACPP_Tank_Pawn* OwnerTank;
+	class ACPP_Tank_Character* OwnerTank;
 	//Particle
 	class UParticleSystemComponent* MuzzleFlashEffect;
 	class UParticleSystemComponent* ShockWaveEffect;

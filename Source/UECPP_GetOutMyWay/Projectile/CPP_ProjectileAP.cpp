@@ -1,10 +1,9 @@
 #include "Projectile/CPP_ProjectileAP.h"
 
-#include "Common/UObject/Manager/ObjectPool/CPP_ObjectPoolManager.h"
 #include "Components/BoxComponent.h"
 #include "GameInstance/CPP_MultiplayGameInstance.h"
 #include "Kismet/GameplayStatics.h"
-#include "Tank/CPP_Tank_Pawn.h"
+#include "Tank/CPP_Tank_Character.h"
 
 void ACPP_ProjectileAP::BounceCal(float hitAngle, EHitDir hitDir)
 {
@@ -91,7 +90,7 @@ void ACPP_ProjectileAP::BounceCal(float hitAngle, EHitDir hitDir)
 void ACPP_ProjectileAP::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if(Cast<ACPP_Tank_Pawn>(OtherActor)&&Cast<UBoxComponent>(OtherComp)&&!IsOverlap)
+	if(Cast<ACPP_Tank_Character>(OtherActor)&&Cast<UBoxComponent>(OtherComp)&&!IsOverlap)
 	{
 		//중복을 방지하기 위한 overlap 확인 변수
 		IsOverlap = true;

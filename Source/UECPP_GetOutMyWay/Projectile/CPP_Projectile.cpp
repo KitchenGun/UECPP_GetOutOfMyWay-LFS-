@@ -10,7 +10,6 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Particle/CPP_ParticleActor.h"
 #include "Particles/ParticleSystemComponent.h"
-#include "Tank/CPP_Tank_Pawn.h"
 
 ACPP_Projectile::ACPP_Projectile()
 {

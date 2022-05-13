@@ -46,6 +46,6 @@ private:
 	class UCPP_UserWidgetTankSight* TankSightWidget;
 	ETankType TankUIType;
 	
-	class ACPP_Tank_Pawn* Owner;
+	class ACPP_Tank_Character* Owner;
 	APlayerController* PlayerCtrl;
 };

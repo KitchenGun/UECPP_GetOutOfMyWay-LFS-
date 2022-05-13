@@ -5,7 +5,6 @@
 #include "Engine/StreamableManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Tank/CPP_Tank_M1A1.h"
-#include "Tank/CPP_Tank_Pawn.h"
 #include "UI/Tank/CPP_UserWidgetTank.h"
 #include "UI/Tank/Sight/CPP_UserWidgetTankSight.h"
 
@@ -13,16 +12,11 @@ UCPP_TankUIComponent::UCPP_TankUIComponent()
 {
 	if(GetOwner()==nullptr)
 		return;
-	if(Cast<ACPP_Tank_Pawn>(GetOwner()))
-	{
-		Owner = Cast<ACPP_Tank_Pawn>(GetOwner());
-	}
-	else
-	{
-		//Owner = Cast<ACPP_Tank_M1A1>(GetOwner());
-	}
+
+	(Cast<ACPP_Tank_M1A1>(GetOwner()))? Owner = Cast<ACPP_Tank_M1A1>(GetOwner()) : Owner=nullptr;
 		
-	if(GetOwner()->GetName().Equals("CPP_M1A1_Pawn")||GetOwner()->GetName().Equals("CPP_Tank_M1A1"))
+		
+	if(GetOwner()->GetName().Equals("CPP_Tank_M1A1"))
 	{
 		TankUIType = ETankType::M1A1;
 	}
@@ -56,7 +50,7 @@ void UCPP_TankUIComponent::BeginPlay()
 		return;
 	Super::BeginPlay();
 	if(PlayerCtrl == nullptr)
-		PlayerCtrl =Cast<ACPP_Tank_Pawn>(GetOwner())->GetPlayerController();
+		PlayerCtrl =Owner->GetPlayerController();
 	if(IsValid(Owner))
 	{
 		Owner->FpViewToggleFunc.BindUFunction(this,"FPViewEffectToggle");

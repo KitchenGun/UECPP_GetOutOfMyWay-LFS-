@@ -54,7 +54,7 @@ void ACPP_Tank_Character::BeginPlay()
 	Super::BeginPlay();
 	if(PC==nullptr)
 	{
-		PC = GetWorld()->GetFirstPlayerController();
+		PC = GEngine->GetFirstLocalPlayerController(GetWorld());
 	}
 	//¹ÙÀÎµù
 	if(IsValid(TankMovement))

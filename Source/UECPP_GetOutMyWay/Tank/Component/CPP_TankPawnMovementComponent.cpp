@@ -5,7 +5,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Math/Vector.h"
 #include "Net/UnrealNetwork.h"
-#include "Tank/CPP_Tank_Pawn.h"
+#include "Tank/CPP_Tank_Character.h"
 
 UCPP_TankPawnMovementComponent::UCPP_TankPawnMovementComponent()
 {
@@ -401,7 +401,7 @@ void UCPP_TankPawnMovementComponent::GunMove_Implementation(float DeltaTime)
 	if(IsGunAngleMatch)//매치하면 반환
 		return;
 	//시선을 등판각을 합쳐서 tankmesh의 gun rotator에 맞게 변경
-	float targetPitch = SightRotator.Pitch-Cast<ACPP_Tank_Pawn>(Owner)->GetGunAngleOffset();
+	float targetPitch = SightRotator.Pitch-Cast<ACPP_Tank_Character>(Owner)->GetGunAngleOffset();
 	//gun본의 rotator를 받아와옴
 	float GunRotationPitch = TankMesh->GetBoneQuaternion(L"gun_jnt",EBoneSpaces::ComponentSpace).Rotator().Pitch;
 	if(GunRotationPitch>targetPitch)
