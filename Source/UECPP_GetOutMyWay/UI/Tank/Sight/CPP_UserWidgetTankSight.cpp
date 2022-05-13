@@ -50,7 +50,7 @@ void UCPP_UserWidgetTankSight::OnFPViewEffectToggle()
 {
 	IsFPView =IsFPView?false:true;
 	if(IsFPView)
-	{//1ÀÎÄª
+	{//1???
 		TPSightReticle->SetVisibility(ESlateVisibility::Hidden);
 		FPViewEffect->SetVisibility(ESlateVisibility::Visible);
 		GunSightReticle->SetVisibility(ESlateVisibility::Visible);
@@ -58,7 +58,7 @@ void UCPP_UserWidgetTankSight::OnFPViewEffectToggle()
 		OpticalText->SetVisibility(ESlateVisibility::Visible);
 	}
 	else
-	{//3ÀÎÄª
+	{//3???
 		TPSightReticle->SetVisibility(ESlateVisibility::Visible);
 		FPViewEffect->SetVisibility(ESlateVisibility::Hidden);
 		GunSightReticle->SetVisibility(ESlateVisibility::Hidden);

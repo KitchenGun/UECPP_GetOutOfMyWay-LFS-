@@ -15,7 +15,6 @@ ACPP_Tank_Character::ACPP_Tank_Character()
 {
 	bReplicates = true;
 	PrimaryActorTick.bCanEverTick = true;
-	PC = Cast<APlayerController>(GetController());
 }
 
 void ACPP_Tank_Character::GunDirPosWorldToScreen()

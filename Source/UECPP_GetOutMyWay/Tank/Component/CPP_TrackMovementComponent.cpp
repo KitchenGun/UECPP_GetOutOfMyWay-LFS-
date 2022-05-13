@@ -3,6 +3,7 @@
 #include "Components/ActorComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Tank/CPP_Tank_Character.h"
 
 
 UCPP_TrackMovementComponent::UCPP_TrackMovementComponent()
@@ -26,7 +27,7 @@ UCPP_TrackMovementComponent::UCPP_TrackMovementComponent()
 void UCPP_TrackMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	Owner = Cast<APawn>(GetOwner());
+	Owner = Cast<ACPP_Tank_Character>(GetOwner());
 	Mesh = Cast<USkeletalMeshComponent>(Owner->GetComponentByClass(USkeletalMeshComponent::StaticClass()));
 }
 

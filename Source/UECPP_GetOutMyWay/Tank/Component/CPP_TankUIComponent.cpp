@@ -50,7 +50,7 @@ void UCPP_TankUIComponent::BeginPlay()
 		return;
 	Super::BeginPlay();
 	if(PlayerCtrl == nullptr)
-		PlayerCtrl =Owner->GetPlayerController();
+		PlayerCtrl =GEngine->GetFirstLocalPlayerController(GetWorld());
 	if(IsValid(Owner))
 	{
 		Owner->FpViewToggleFunc.BindUFunction(this,"FPViewEffectToggle");
