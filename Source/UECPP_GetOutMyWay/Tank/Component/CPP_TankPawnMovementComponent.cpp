@@ -101,16 +101,16 @@ void UCPP_TankPawnMovementComponent::Movement_Implementation()
 {
 	if (Owner != nullptr && !NextLocation.IsNearlyZero())
 	{
-		NextLocation = GetActorLocation() + (NextLocation * GetWorld()->DeltaTimeSeconds * Speed);
+		NextLocation = GetOwner()->GetActorLocation() + (NextLocation * GetWorld()->DeltaTimeSeconds * Speed);
 		Owner->SetActorRelativeLocation(NextLocation);
 	}
 	if (Owner != nullptr && !NextRotation.IsNearlyZero())
 	{
-		NextRotation = Owner->GetActorRotation() + (NextRotation * GetWorld()->DeltaTimeSeconds * TurnSpeed);
+		NextRotation = GetOwner()->GetActorRotation() + (NextRotation * GetWorld()->DeltaTimeSeconds * TurnSpeed);
 		//정지시 조금씩 앞으로 이동하도록 제작
 		if (!IsAccelerating)
 		{
-			NextLocation = GetActorLocation() + (Owner->GetActorForwardVector() * GetWorld()->DeltaTimeSeconds * 8.0f);
+			NextLocation =Owner->GetActorLocation() + (Owner->GetActorForwardVector() * GetWorld()->DeltaTimeSeconds * 8.0f);
 			Owner->SetActorRelativeLocation(NextLocation);
 		}
 		Owner->SetActorRelativeRotation(NextRotation);
@@ -189,6 +189,7 @@ void UCPP_TankPawnMovementComponent::OnMove_Implementation(float value)
 	if (TankYaw<70 && TankYaw>-70)
 	{//최종 움직임 전달
 		NextLocation += (dir * (VirtualForwardVal - TankClimbingAnglePercentage));
+		InputVal = VirtualForwardVal - TankClimbingAnglePercentage;
 		CurrentVelocity = (NextLocation * Speed * 0.036f).Size();
 		//애니메이션에 전달
 		SetWheelSpeed(CurrentVelocity * VirtualForwardVal);
@@ -279,7 +280,6 @@ void UCPP_TankPawnMovementComponent::EngineControl_Implementation()
 	EngineTorque = EngineTorqueCurve->GetFloatValue(RPM);
 	//단위 m/s
 	Speed = (RPM * EngineTorque) / ((10 - EngineGear) * 100);
-
 	/*출력용*/
 	//UE_LOG(LogTemp, Display, L"%.2f MaxWalkSpeed", GetCharacterMovement()->MaxWalkSpeed);//max 1250//max 75
 	//UE_LOG(LogTemp, Display, L"%.2f EngineTorque", EngineTorque);
@@ -414,14 +414,6 @@ void UCPP_TankPawnMovementComponent::GunMove_Implementation(float DeltaTime)
 	}
 	//마지막으로 animinst에서 접근하는 변수에 넣어준다.
 	GunAngle = GunRotationPitch;
-}
-
-void UCPP_TankPawnMovementComponent::OnRep_NextTransformUpdate()
-{
-	if(Owner->IsLocallyControlled())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, L"move");
-	}
 }
 
 void UCPP_TankPawnMovementComponent::OnEngineBreak()

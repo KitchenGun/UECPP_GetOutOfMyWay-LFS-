@@ -7,6 +7,7 @@
 #include "Components/AudioComponent.h"
 #include "Sound/SoundCue.h"
 #include "Components/BoxComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -66,6 +67,7 @@ void ACPP_Tank_Character::BeginPlay()
 		GunSystem->FireEffectFunc.BindUFunction(this,"OnFireParticle");
 		GunSystem->GunReloadDoneFunc.BindUFunction(this,"GunSystemSoundReloadDone");
 	}
+	GetCharacterMovement()->MaxWalkSpeed = 400;
 }
 
 void ACPP_Tank_Character::OnVerticalLook(float value)
@@ -129,9 +131,10 @@ void ACPP_Tank_Character::OnMoveForward(float value)
 	if (TankMovement != nullptr)
 	{
 		TankMovement->OnMove(value);
-		//AddMovementInput(GetActorForwardVector(),value);
 		OnWheelParticle();
 	}
+	FVector direction = GetActorForwardVector().GetSafeNormal();//.Normalize/반환값이 bool 이라서 사용하지 않음
+	this->AddMovementInput(direction, value);
 }
 
 void ACPP_Tank_Character::OnMoveTurn(float value)

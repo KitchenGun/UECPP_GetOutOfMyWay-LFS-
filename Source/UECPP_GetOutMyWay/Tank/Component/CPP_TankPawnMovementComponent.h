@@ -8,7 +8,7 @@ DECLARE_DYNAMIC_DELEGATE(FTurretMoveStart);
 DECLARE_DYNAMIC_DELEGATE(FTurretMoveEnd);
 
 UCLASS()
-class UECPP_GETOUTMYWAY_API UCPP_TankPawnMovementComponent : public UPawnMovementComponent
+class UECPP_GETOUTMYWAY_API UCPP_TankPawnMovementComponent : public UActorComponent
 {
 	GENERATED_BODY()
 public:
@@ -89,13 +89,12 @@ private:
 	class UCPP_TankAnimInstance* TankAnimInst;
 
 	//movement
-	UPROPERTY(ReplicatedUsing=OnRep_NextTransformUpdate)
+	UPROPERTY(Replicated)
 	FVector NextLocation = FVector::ZeroVector;
-	
-	UPROPERTY(ReplicatedUsing=OnRep_NextTransformUpdate)
+	UPROPERTY(Replicated)
+	float InputVal;
+	UPROPERTY(Replicated)
 	FRotator NextRotation = FRotator::ZeroRotator;
-	UFUNCTION()
-	void OnRep_NextTransformUpdate();
 	UPROPERTY(Replicated)
 	FVector PrevPos = FVector::ZeroVector;
 	UPROPERTY(Replicated)

@@ -33,7 +33,6 @@ ACPP_Tank_M1A1::ACPP_Tank_M1A1()
 	
 	//actorcomp
 	TankMovement = CreateDefaultSubobject<UCPP_TankPawnMovementComponent>(L"TankPawnMovement");
-	TankMovement->UpdatedComponent = RootComponent;
 	TankMovement->SetIsReplicated(true);
 	TrackMovement = CreateDefaultSubobject<UCPP_TrackMovementComponent>(L"TrackMovement");
 	TrackMovement->SetIsReplicated(true);
@@ -70,7 +69,8 @@ void ACPP_Tank_M1A1::Tick(float DeltaTime)
 void ACPP_Tank_M1A1::Dead()
 {
 	Super::Dead();
-	UMaterialInstanceConstant* DamageMat = Cast<UMaterialInstanceConstant>(UAssetManager::GetStreamableManager().LoadSynchronous(FSoftObjectPath(L"MaterialInstanceConstant'/Game/VigilanteContent/Vehicles/West_Tank_M1A1Abrams/Damaged/Materials/MI_West_Tank_M1A1Abrams_Damaged.MI_West_Tank_M1A1Abrams_Damaged'")));
+	UMaterialInstanceConstant* DamageMat =
+		Cast<UMaterialInstanceConstant>(UAssetManager::GetStreamableManager().LoadSynchronous(FSoftObjectPath(L"MaterialInstanceConstant'/Game/VigilanteContent/Vehicles/West_Tank_M1A1Abrams/Damaged/Materials/MI_West_Tank_M1A1Abrams_Damaged.MI_West_Tank_M1A1Abrams_Damaged'")));
 	GetMesh()->SetMaterial(0,DamageMat);
 }
 
