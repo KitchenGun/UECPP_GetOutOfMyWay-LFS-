@@ -10,7 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetMathLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 ACPP_Tank_Character::ACPP_Tank_Character()
 {
@@ -131,10 +131,8 @@ void ACPP_Tank_Character::OnMoveForward(float value)
 	if (TankMovement != nullptr)
 	{
 		TankMovement->OnMove(value);
-		OnWheelParticle();
+		OnWheelParticle_Implementation();
 	}
-	FVector direction = GetActorForwardVector().GetSafeNormal();//.Normalize/반환값이 bool 이라서 사용하지 않음
-	this->AddMovementInput(direction, value);
 }
 
 void ACPP_Tank_Character::OnMoveTurn(float value)
@@ -185,17 +183,39 @@ void ACPP_Tank_Character::ZoomToggle()
 	}
 }
 
-void ACPP_Tank_Character::OnWheelParticle()
+void ACPP_Tank_Character::OnWheelParticle_Implementation()
 {
-	if(ParticleSystem->OnWheelParticle(TankMovement->GetIsMove()))
+	if (IsLocallyControlled())
 	{
-		EngineSoundPlay();
-		IsMoveBefore =true;
+		if(TankMovement->GetIsMove())
+		{
+			ParticleSystem->SetIsMove(true);
+			EngineSoundPlay();
+			IsMoveBefore =true;
+		}
+		else if(IsMoveBefore)
+		{
+			ParticleSystem->SetIsMove(false);
+			EngineSoundStop();
+			IsMoveBefore = false;
+		}
 	}
-	else if(IsMoveBefore)
+	if (GetLocalRole() == ROLE_Authority)
 	{
-		EngineSoundStop();
-		IsMoveBefore = false;
+		if(TankMovement->GetIsMove())
+		{
+			ParticleSystem->SetIsMove(true);
+			ParticleSystem->OnRepWheelParticle();
+			EngineSoundPlay();
+			IsMoveBefore =true;
+		}
+		else if(IsMoveBefore)
+		{
+			ParticleSystem->SetIsMove(false);
+			ParticleSystem->OnRepWheelParticle();
+			EngineSoundStop();
+			IsMoveBefore = false;
+		}
 	}
 }
 
@@ -347,5 +367,14 @@ float ACPP_Tank_Character::TakeDamage(float DamageAmount, FDamageEvent const& Da
 void ACPP_Tank_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ACPP_Tank_Character,TrackMovement);
+	DOREPLIFETIME(ACPP_Tank_Character,TankMovement);
+	DOREPLIFETIME(ACPP_Tank_Character,GunSystem);
+	DOREPLIFETIME(ACPP_Tank_Character,ParticleSystem);
+	
+	DOREPLIFETIME(ACPP_Tank_Character,MuzzleFlashEffect);
+	DOREPLIFETIME(ACPP_Tank_Character,ShockWaveEffect);
+	DOREPLIFETIME(ACPP_Tank_Character,WheelsEffect);
+	DOREPLIFETIME(ACPP_Tank_Character,HP);
 }
 

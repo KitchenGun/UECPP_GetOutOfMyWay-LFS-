@@ -84,7 +84,7 @@ void UCPP_TankPawnMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetime
 }
 
 
-void UCPP_TankPawnMovementComponent::SetWheelSpeed(float WheelSpeed)
+void UCPP_TankPawnMovementComponent::SetWheelSpeed_Implementation(float WheelSpeed)
 {
 	if(IsAccelerating)
 	{

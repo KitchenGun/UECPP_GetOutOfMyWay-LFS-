@@ -20,7 +20,9 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 
 	//ABP에 전달할 변수 설정 함수
+	UFUNCTION(Server,Reliable)
 	void SetWheelSpeed(float WheelSpeed);
+	void SetWheelSpeed_Implementation(float WheelSpeed);
 	//이동
 	UFUNCTION(Server,Reliable)
 	void Movement();

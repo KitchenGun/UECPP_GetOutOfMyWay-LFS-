@@ -2,6 +2,7 @@
 
 #include "GameInstance/CPP_MultiplayGameInstance.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Net/UnrealNetwork.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Tank/CPP_Tank_Character.h"
 
@@ -10,7 +11,24 @@ UCPP_ParticleControlComponent::UCPP_ParticleControlComponent()
 	if(IsValid(GetOwner()))
 		OwnerTank = Cast<ACPP_Tank_Character>(GetOwner());
 	
+}
 
+void UCPP_ParticleControlComponent::OnRepWheelParticle()
+{
+	if(IsMove)
+	{
+		for(int i =0;i<WheelsEffect.Num();i++)
+		{
+			WheelsEffect[i]->SetActive(true);
+		}
+	}
+	else
+	{
+		for(int i =0;i<WheelsEffect.Num();i++)
+		{
+			WheelsEffect[i]->SetActive(false);
+		}
+	}
 }
 
 void UCPP_ParticleControlComponent::BeginPlay()
@@ -22,25 +40,6 @@ void UCPP_ParticleControlComponent::BeginPlay()
 	WheelsEffect = OwnerTank->GetWheelsEffect();
 }
 
-bool UCPP_ParticleControlComponent::OnWheelParticle(bool IsMove)
-{
-	if(IsMove)
-	{
-		for(int i =0;i<WheelsEffect.Num();i++)
-		{
-			WheelsEffect[i]->SetActive(true);
-		}
-		return true;
-	}
-	else
-	{
-		for(int i =0;i<WheelsEffect.Num();i++)
-		{
-			WheelsEffect[i]->SetActive(false);
-		}
-		return false;
-	}
-}
 
 void UCPP_ParticleControlComponent::OnFireParticle()
 {
@@ -80,6 +79,12 @@ void UCPP_ParticleControlComponent::OnFireParticle()
 		}
 	}
 	
+}
+
+void UCPP_ParticleControlComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UCPP_ParticleControlComponent,IsMove);
 }
 
 

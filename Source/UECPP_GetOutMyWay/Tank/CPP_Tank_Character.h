@@ -59,7 +59,9 @@ protected:
 	void OnMainGunFire();
 	void ZoomToggle();
 	//particle
+	UFUNCTION(Server,Reliable)
 	void OnWheelParticle();
+	void OnWheelParticle_Implementation();
 	UFUNCTION()
 	void OnFireParticle();
 	//Sound
@@ -117,11 +119,11 @@ protected:
 	class UBoxComponent* Turret;
 
 	//Particle
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly,Replicated)
 	class UParticleSystemComponent* MuzzleFlashEffect;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly,Replicated)
 	class UParticleSystemComponent* ShockWaveEffect;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly,Replicated)
 	TArray<class UParticleSystemComponent*> WheelsEffect;
 
 	//sound
@@ -137,6 +139,7 @@ protected:
 	class UAudioComponent* HitAudio;
 
 	//ActorComp
+	UPROPERTY(Replicated)
 	class UCPP_TrackMovementComponent* TrackMovement;
 	UPROPERTY(Replicated)
 	class UCPP_TankPawnMovementComponent* TankMovement;
