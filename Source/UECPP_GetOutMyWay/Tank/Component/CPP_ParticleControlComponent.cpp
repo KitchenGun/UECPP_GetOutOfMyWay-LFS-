@@ -18,8 +18,6 @@ void UCPP_ParticleControlComponent::WheelParticle_Implementation()
 	for(int i =0;i<WheelsEffect.Num();i++)
 	{
 		WheelsEffect[i]->SetActive(IsMove);
-		//https://forums.unrealengine.com/t/particle-component-not-visible-to-clients/295667/4
-		//이 방식으로 해보자
 	}
 }
 

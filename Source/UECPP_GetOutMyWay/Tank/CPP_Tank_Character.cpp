@@ -63,7 +63,7 @@ void ACPP_Tank_Character::BeginPlay()
 	Super::BeginPlay();
 	if(PC==nullptr)
 	{
-		PC = GEngine->GetFirstLocalPlayerController(GetWorld());
+		PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	}
 	//바인딩
 	if(IsValid(TankMovement))
@@ -91,13 +91,14 @@ void ACPP_Tank_Character::OnHorizontalLook(float value)
 
 void ACPP_Tank_Character::CamPitchLimitSmooth()
 {
-	float pitch = PC->GetControlRotation().Quaternion().Rotator().Pitch;
+	float pitch = GetControlRotation().Quaternion().Rotator().Pitch;
 	float minAngle = PitchLimitMin;
 	float maxAngle = PitchLimitMax;
 	//탱크의 pitch를 구해서 등판각을 받음
 	if(!FMath::IsNearlyZero(Turret->GetComponentRotation().Pitch,0.1f))
 	{
 		displacementAngle = FRotator(GunnerSpringArm->GetComponentRotation().Quaternion()).Pitch;
+		
 		minAngle = PitchLimitMin+displacementAngle;
 		maxAngle = PitchLimitMax+displacementAngle;
 	}
@@ -314,7 +315,6 @@ void ACPP_Tank_Character::Tick(float DeltaTime)
 void ACPP_Tank_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	PlayerInputComponent->BindAxis("VerticalLook", this, &ACPP_Tank_Character::OnVerticalLook);
 	PlayerInputComponent->BindAxis("HorizontalLook", this, &ACPP_Tank_Character::OnHorizontalLook);
 	PlayerInputComponent->BindAxis("MoveForward", this, &ACPP_Tank_Character::OnMoveForward);
@@ -356,11 +356,23 @@ float ACPP_Tank_Character::TakeDamage(float DamageAmount, FDamageEvent const& Da
 void ACPP_Tank_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	//Camera
+	DOREPLIFETIME(ACPP_Tank_Character,Camera);
+	DOREPLIFETIME(ACPP_Tank_Character,GunnerCam);
+	DOREPLIFETIME(ACPP_Tank_Character,GunnerSpringArm);
+	DOREPLIFETIME(ACPP_Tank_Character,SpringArm);
+	//actor comp
 	DOREPLIFETIME(ACPP_Tank_Character,TrackMovement);
 	DOREPLIFETIME(ACPP_Tank_Character,TankMovement);
 	DOREPLIFETIME(ACPP_Tank_Character,GunSystem);
 	DOREPLIFETIME(ACPP_Tank_Character,ParticleSystem);
-	
+	//sound
+	DOREPLIFETIME(ACPP_Tank_Character,EngineAudio);
+	DOREPLIFETIME(ACPP_Tank_Character,IdleAudio);
+	DOREPLIFETIME(ACPP_Tank_Character,GunSystemAudio);
+	DOREPLIFETIME(ACPP_Tank_Character,TurretSystemAudio);
+	DOREPLIFETIME(ACPP_Tank_Character,HitAudio);
+
 	DOREPLIFETIME(ACPP_Tank_Character,MuzzleFlashEffect);
 	DOREPLIFETIME(ACPP_Tank_Character,ShockWaveEffect);
 	DOREPLIFETIME(ACPP_Tank_Character,WheelsEffect);

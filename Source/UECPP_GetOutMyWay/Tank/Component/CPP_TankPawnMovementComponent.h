@@ -13,6 +13,7 @@ class UECPP_GETOUTMYWAY_API UCPP_TankPawnMovementComponent : public UActorCompon
 	GENERATED_BODY()
 public:
 	UCPP_TankPawnMovementComponent();
+	
 	virtual void BeginPlay() override;
 	
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -35,10 +36,14 @@ public:
 	UFUNCTION(Server, Reliable)
 	void OnTurn(float value);
 	void OnTurn_Implementation(float value);
-
+	
+	UFUNCTION(Server, Reliable)
 	void OnEngineBreak();
+	void OnEngineBreak_Implementation();
+	
+	UFUNCTION(Server, Reliable)
 	void OffEngineBreak();
-
+	void OffEngineBreak_Implementation();
 	
 	//get&set
 	FORCEINLINE float GetTrackSpeed() { return TrackSpeed; }
@@ -148,15 +153,25 @@ private:
 	float MaxRPM = 900;
 
 	//Turret
+	UPROPERTY(Replicated)
 	FRotator SightRotator =  FRotator::ZeroRotator;
+	UPROPERTY(Replicated)
 	FRotator TurretRotator = FRotator::ZeroRotator; //world로 연산하도록 해야함
+	UPROPERTY(Replicated)
 	bool IsTurretAngleMatch = true;
+	UPROPERTY(Replicated)
 	bool IsSightRight = false; //차체 기준으로 오른쪽인가 왼쪽인가
+	UPROPERTY(Replicated)
 	bool IsTurretRight = false; //차체 기준으로 오른쪽인가 왼쪽인가
+	UPROPERTY(Replicated)
 	FVector SightDir = FVector::ZeroVector;
+	UPROPERTY(Replicated)
 	FVector TurretDir = FVector::ZeroVector;
+	UPROPERTY(Replicated)
 	float TurretAngle = 0.0f;
+	UPROPERTY(Replicated)
 	float LeftAngle=0;
+	UPROPERTY(Replicated)
 	float RightAngle=0;
 	//Turret 객체 별로 수정해야할 데이터 변수
 	float TurretTurnSpeed = 100.0f;

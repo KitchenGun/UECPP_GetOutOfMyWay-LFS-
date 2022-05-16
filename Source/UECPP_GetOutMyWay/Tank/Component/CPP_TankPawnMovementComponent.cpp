@@ -80,7 +80,18 @@ void UCPP_TankPawnMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetime
 	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IdleRPM);
 	DOREPLIFETIME(UCPP_TankPawnMovementComponent,MinRPM);
 	DOREPLIFETIME(UCPP_TankPawnMovementComponent,MaxRPM);
-	
+
+	//Turret
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,SightRotator);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,TurretRotator);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsTurretAngleMatch);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsSightRight);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsTurretRight);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,SightDir);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,TurretDir);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,TurretAngle);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,LeftAngle);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,RightAngle);
 }
 
 
@@ -319,7 +330,10 @@ void UCPP_TankPawnMovementComponent::RPMControl_Implementation()
 
 void UCPP_TankPawnMovementComponent::UpdateTurretState_Implementation(float DeltaTime)
 {
+	if(!Owner->HasAuthority())
+		return;
 	SightRotator=UKismetMathLibrary::InverseTransformRotation(TankMesh->GetComponentTransform(),SightRotator).GetDenormalized();
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, L"call");
 	TurretRotator = TankMesh->GetBoneQuaternion(L"turret_jnt",EBoneSpaces::ComponentSpace).Rotator().GetDenormalized();
 	if (!FMath::IsNearlyZero(SightRotator.Yaw-TurretRotator.Yaw,0.01f))
 	{
@@ -381,7 +395,6 @@ void UCPP_TankPawnMovementComponent::TurretMove_Implementation(float DeltaTime)
 void UCPP_TankPawnMovementComponent::UpdateGunState_Implementation(float DeltaTime)
 {
 	SightRotator = Owner->GetController()->GetControlRotation().Quaternion().Rotator();
-		//UGameplayStatics::GetPlayerController(GetWorld(),0)->GetControlRotation().Quaternion().Rotator();
 	GunRotator = TankMesh->GetBoneQuaternion(L"gun_jnt").Rotator().Quaternion().Rotator();
 	if(!FMath::IsNearlyEqual(SightRotator.Pitch, GunRotator.Pitch,0.01f))
 	{
@@ -416,13 +429,13 @@ void UCPP_TankPawnMovementComponent::GunMove_Implementation(float DeltaTime)
 	GunAngle = GunRotationPitch;
 }
 
-void UCPP_TankPawnMovementComponent::OnEngineBreak()
+void UCPP_TankPawnMovementComponent::OnEngineBreak_Implementation()
 {
 	isBreak=true;
 	VirtualFriction = 0.02f;
 }
 
-void UCPP_TankPawnMovementComponent::OffEngineBreak()
+void UCPP_TankPawnMovementComponent::OffEngineBreak_Implementation()
 {
 	isBreak = false;
 	VirtualFriction = 0.005f;

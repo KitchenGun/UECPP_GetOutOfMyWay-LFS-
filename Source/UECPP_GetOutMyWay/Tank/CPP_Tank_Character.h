@@ -93,13 +93,13 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 protected:
 	//Camera
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly,Replicated)
 	class UCameraComponent* Camera;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly,Replicated)
 	class UCameraComponent* GunnerCam;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly,Replicated)
 	class USpringArmComponent* GunnerSpringArm;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly,Replicated)
 	class USpringArmComponent* SpringArm;
 	
 	//Collision
@@ -127,23 +127,23 @@ protected:
 	TArray<class UParticleSystemComponent*> WheelsEffect;
 
 	//sound
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly,Replicated)
 	class UAudioComponent* EngineAudio;
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly,Replicated)
 	class UAudioComponent* IdleAudio;
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly,Replicated)
 	class UAudioComponent* GunSystemAudio;
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly,Replicated)
 	class UAudioComponent* TurretSystemAudio;
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly,Replicated)
 	class UAudioComponent* HitAudio;
 
 	//ActorComp
-	UPROPERTY(Replicated)
+	UPROPERTY(EditDefaultsOnly,Replicated)
 	class UCPP_TrackMovementComponent* TrackMovement;
-	UPROPERTY(Replicated)
+	UPROPERTY(EditDefaultsOnly,Replicated)
 	class UCPP_TankPawnMovementComponent* TankMovement;
-	UPROPERTY(Replicated)
+	UPROPERTY(EditDefaultsOnly,Replicated)
 	class UCPP_MainGunSystemComponent* GunSystem;
 	UPROPERTY(EditDefaultsOnly,Replicated)
 	class UCPP_ParticleControlComponent* ParticleSystem;
@@ -158,6 +158,7 @@ protected:
 	float BasicCamTurnSpeed = 100;
 	float PitchLimitMax = 20;
 	float PitchLimitMin = -10;
+	UPROPERTY(Replicated)
 	float displacementAngle =0.0f;
 	ECameraType CamType = ECameraType::THIRD;
 	bool IsZoom = false;

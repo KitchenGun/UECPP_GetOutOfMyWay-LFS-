@@ -3,6 +3,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Component/CPP_TrackMovementComponent.h"
 #include "Component/CPP_TankPawnMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 
 void UCPP_TankAnimInstance::NativeInitializeAnimation()
 {
@@ -74,4 +75,13 @@ void UCPP_TankAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		CurGunAngle = TankMovementComp->GetGunAngle();
 		CurGunAngleOffset = TankMovementComp->GetGunAngleOffset();
 	}
+}
+
+void UCPP_TankAnimInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UCPP_TankAnimInstance,TrackSpeed);
+	DOREPLIFETIME(UCPP_TankAnimInstance,CurTurretAngle);
+	DOREPLIFETIME(UCPP_TankAnimInstance,CurGunAngle);
+	DOREPLIFETIME(UCPP_TankAnimInstance,CurGunAngleOffset);
 }
