@@ -13,23 +13,21 @@ class UECPP_GETOUTMYWAY_API UCPP_ParticleControlComponent : public UActorCompone
 
 public:
 	UCPP_ParticleControlComponent();
-	UFUNCTION()
-	void OnRepWheelParticle();
+	UFUNCTION(NetMulticast,Reliable)
+	void WheelParticle();
+	void WheelParticle_Implementation();
 	
 	void OnFireParticle();
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 
 	//getset
-	UFUNCTION()
-	void SetIsMove(bool value)
+	UFUNCTION(NetMulticast,Reliable)
+	void SetIsMove(bool value);
+	void SetIsMove_Implementation(bool value)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "IsControlled");
 		IsMove=value;
-		if(GetOwnerRole()==ROLE_Authority)
-		{
-			OnRepWheelParticle();
-		}
+		WheelParticle();
 	}
 protected:
 	virtual void BeginPlay() override;
@@ -39,8 +37,9 @@ private:
 	//Particle
 	class UParticleSystemComponent* MuzzleFlashEffect;
 	class UParticleSystemComponent* ShockWaveEffect;
+	UPROPERTY(EditAnywhere,Category="Effects")
 	TArray<class UParticleSystemComponent*> WheelsEffect;
 
-	UPROPERTY(ReplicatedUsing=OnRepWheelParticle)
+	UPROPERTY(Replicated)
 	bool IsMove = false;
 };

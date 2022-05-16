@@ -12,6 +12,7 @@
 #include "Engine/AssetManager.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/MaterialInstanceConstant.h"
+#include "Net/UnrealNetwork.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Sound/SoundCue.h"
 
@@ -30,16 +31,10 @@ ACPP_Tank_M1A1::ACPP_Tank_M1A1()
 	ParticleSet();
 	//sound
 	SoundSet();
-	
-	//actorcomp
-	TankMovement = CreateDefaultSubobject<UCPP_TankPawnMovementComponent>(L"TankPawnMovement");
-	TankMovement->SetIsReplicated(true);
-	TrackMovement = CreateDefaultSubobject<UCPP_TrackMovementComponent>(L"TrackMovement");
-	TrackMovement->SetIsReplicated(true);
+
 	GunSystem = CreateDefaultSubobject<UCPP_M1A1MainGunSystemComponent>(L"GunSystem");
 	GunSystem->SetIsReplicated(true);
-	ParticleSystem = CreateDefaultSubobject<UCPP_ParticleControlComponent>(L"ParticleController");
-	ParticleSystem->SetIsReplicated(true);
+	
 	TankUI = CreateDefaultSubobject<UCPP_TankUIComponent>(L"TankUI");
 	TankUI->SetIsReplicated(true);
 }
@@ -73,6 +68,7 @@ void ACPP_Tank_M1A1::Dead()
 		Cast<UMaterialInstanceConstant>(UAssetManager::GetStreamableManager().LoadSynchronous(FSoftObjectPath(L"MaterialInstanceConstant'/Game/VigilanteContent/Vehicles/West_Tank_M1A1Abrams/Damaged/Materials/MI_West_Tank_M1A1Abrams_Damaged.MI_West_Tank_M1A1Abrams_Damaged'")));
 	GetMesh()->SetMaterial(0,DamageMat);
 }
+
 
 void ACPP_Tank_M1A1::ParameterSet()
 {
@@ -192,6 +188,7 @@ void ACPP_Tank_M1A1::ParticleSet()
 	{
 		FString name = FString::Printf(TEXT("Wheel%d"),i);
 		WheelsEffect[i] = CreateDefaultSubobject<UParticleSystemComponent>(FName(name));
+		WheelsEffect[i]->bAutoDestroy=false;
 	}
 	/*∞¥√º √ ±‚»≠*/
 	//particle

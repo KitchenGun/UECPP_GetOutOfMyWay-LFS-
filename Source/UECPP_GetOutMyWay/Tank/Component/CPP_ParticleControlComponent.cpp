@@ -13,21 +13,13 @@ UCPP_ParticleControlComponent::UCPP_ParticleControlComponent()
 	
 }
 
-void UCPP_ParticleControlComponent::OnRepWheelParticle()
+void UCPP_ParticleControlComponent::WheelParticle_Implementation()
 {
-	if(IsMove)
+	for(int i =0;i<WheelsEffect.Num();i++)
 	{
-		for(int i =0;i<WheelsEffect.Num();i++)
-		{
-			WheelsEffect[i]->SetActive(true);
-		}
-	}
-	else
-	{
-		for(int i =0;i<WheelsEffect.Num();i++)
-		{
-			WheelsEffect[i]->SetActive(false);
-		}
+		WheelsEffect[i]->SetActive(IsMove);
+		//https://forums.unrealengine.com/t/particle-component-not-visible-to-clients/295667/4
+		//이 방식으로 해보자
 	}
 }
 
@@ -84,7 +76,7 @@ void UCPP_ParticleControlComponent::OnFireParticle()
 void UCPP_ParticleControlComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(UCPP_ParticleControlComponent,IsMove);
+	DOREPLIFETIME_CONDITION(UCPP_ParticleControlComponent,IsMove,COND_OwnerOnly);
 }
 
 

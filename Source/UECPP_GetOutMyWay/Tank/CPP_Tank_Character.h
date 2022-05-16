@@ -145,7 +145,7 @@ protected:
 	class UCPP_TankPawnMovementComponent* TankMovement;
 	UPROPERTY(Replicated)
 	class UCPP_MainGunSystemComponent* GunSystem;
-	UPROPERTY(Replicated)
+	UPROPERTY(EditDefaultsOnly,Replicated)
 	class UCPP_ParticleControlComponent* ParticleSystem;
 	UPROPERTY(EditDefaultsOnly)
 	class UCPP_TankUIComponent* TankUI;

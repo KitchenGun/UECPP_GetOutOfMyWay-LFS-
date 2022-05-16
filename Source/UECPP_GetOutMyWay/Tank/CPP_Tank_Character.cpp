@@ -4,6 +4,7 @@
 #include "Component/CPP_MainGunSystemComponent.h"
 #include "Component/CPP_ParticleControlComponent.h"
 #include "Component/CPP_TankPawnMovementComponent.h"
+#include "Component/CPP_TrackMovementComponent.h"
 #include "Components/AudioComponent.h"
 #include "Sound/SoundCue.h"
 #include "Components/BoxComponent.h"
@@ -16,6 +17,14 @@ ACPP_Tank_Character::ACPP_Tank_Character()
 {
 	bReplicates = true;
 	PrimaryActorTick.bCanEverTick = true;
+
+	//actorcomp
+	TankMovement = CreateDefaultSubobject<UCPP_TankPawnMovementComponent>(L"TankPawnMovement");
+	TankMovement->SetIsReplicated(true);
+	TrackMovement = CreateDefaultSubobject<UCPP_TrackMovementComponent>(L"TrackMovement");
+	TrackMovement->SetIsReplicated(true);
+	ParticleSystem = CreateDefaultSubobject<UCPP_ParticleControlComponent>(L"ParticleController");
+	ParticleSystem->SetIsReplicated(true);
 }
 
 void ACPP_Tank_Character::GunDirPosWorldToScreen()
@@ -185,37 +194,17 @@ void ACPP_Tank_Character::ZoomToggle()
 
 void ACPP_Tank_Character::OnWheelParticle_Implementation()
 {
-	if (IsLocallyControlled())
+	if(TankMovement->GetIsMove())
 	{
-		if(TankMovement->GetIsMove())
-		{
-			ParticleSystem->SetIsMove(true);
-			EngineSoundPlay();
-			IsMoveBefore =true;
-		}
-		else if(IsMoveBefore)
-		{
-			ParticleSystem->SetIsMove(false);
-			EngineSoundStop();
-			IsMoveBefore = false;
-		}
+		ParticleSystem->SetIsMove(true);
+		EngineSoundPlay();
+		IsMoveBefore =true;
 	}
-	if (GetLocalRole() == ROLE_Authority)
+	else if(IsMoveBefore)
 	{
-		if(TankMovement->GetIsMove())
-		{
-			ParticleSystem->SetIsMove(true);
-			ParticleSystem->OnRepWheelParticle();
-			EngineSoundPlay();
-			IsMoveBefore =true;
-		}
-		else if(IsMoveBefore)
-		{
-			ParticleSystem->SetIsMove(false);
-			ParticleSystem->OnRepWheelParticle();
-			EngineSoundStop();
-			IsMoveBefore = false;
-		}
+		ParticleSystem->SetIsMove(false);
+		EngineSoundStop();
+		IsMoveBefore = false;
 	}
 }
 
