@@ -47,14 +47,44 @@ public:
 protected:
 	//sight
 	void OnVerticalLook(float value);
+	UFUNCTION(Server,Reliable)
+	void Server_OnVerticalLook(float value);
+	void Server_OnVerticalLook_Implementation(float value);
 	void OnHorizontalLook(float value);
+	UFUNCTION(Server,Reliable)
+	void Server_OnHorizontalLook(float value);
+	void Server_OnHorizontalLook_Implementation(float value);
+	
 	void CamPitchLimitSmooth();
+	UFUNCTION(Server,Reliable)
+	void Server_CamPitchLimitSmooth();
+	void Server_CamPitchLimitSmooth_Implementation();
 	void CamChange();
+	UFUNCTION(Server,Reliable)
+	void Server_CamChange();
+	void Server_CamChange_Implementation();
 	//move
+	
 	void OnMoveForward(float value);
+	UFUNCTION(Server,Reliable)
+	void Server_OnMoveForward(float value);
+	void Server_OnMoveForward_Implementation(float value);
+	
 	void OnMoveTurn(float value);
+	UFUNCTION(Server,Reliable)
+	void Server_OnMoveTurn(float value);
+	void Server_OnMoveTurn_Implementation(float value);
+	
 	void OnEngineBreak();
+	UFUNCTION(Server,Reliable)
+	void Server_OnEngineBreak();
+	void Server_OnEngineBreak_Implementation();
+	
 	void OffEngineBreak();
+	UFUNCTION(Server,Reliable)
+	void Server_OffEngineBreak();
+	void Server_OffEngineBreak_Implementation();
+
 	//action
 	void OnMainGunFire();
 	void ZoomToggle();
@@ -93,13 +123,13 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 protected:
 	//Camera
-	UPROPERTY(EditDefaultsOnly,Replicated)
+	UPROPERTY(EditDefaultsOnly)
 	class UCameraComponent* Camera;
-	UPROPERTY(EditDefaultsOnly,Replicated)
+	UPROPERTY(EditDefaultsOnly)
 	class UCameraComponent* GunnerCam;
-	UPROPERTY(EditDefaultsOnly,Replicated)
+	UPROPERTY(EditDefaultsOnly)
 	class USpringArmComponent* GunnerSpringArm;
-	UPROPERTY(EditDefaultsOnly,Replicated)
+	UPROPERTY(EditDefaultsOnly)
 	class USpringArmComponent* SpringArm;
 	
 	//Collision
@@ -119,33 +149,33 @@ protected:
 	class UBoxComponent* Turret;
 
 	//Particle
-	UPROPERTY(EditDefaultsOnly,Replicated)
+	UPROPERTY(EditDefaultsOnly)
 	class UParticleSystemComponent* MuzzleFlashEffect;
-	UPROPERTY(EditDefaultsOnly,Replicated)
+	UPROPERTY(EditDefaultsOnly)
 	class UParticleSystemComponent* ShockWaveEffect;
-	UPROPERTY(EditDefaultsOnly,Replicated)
+	UPROPERTY(EditDefaultsOnly)
 	TArray<class UParticleSystemComponent*> WheelsEffect;
 
 	//sound
-	UPROPERTY(VisibleDefaultsOnly,Replicated)
+	UPROPERTY(VisibleDefaultsOnly)
 	class UAudioComponent* EngineAudio;
-	UPROPERTY(VisibleDefaultsOnly,Replicated)
+	UPROPERTY(VisibleDefaultsOnly)
 	class UAudioComponent* IdleAudio;
-	UPROPERTY(VisibleDefaultsOnly,Replicated)
+	UPROPERTY(VisibleDefaultsOnly)
 	class UAudioComponent* GunSystemAudio;
-	UPROPERTY(VisibleDefaultsOnly,Replicated)
+	UPROPERTY(VisibleDefaultsOnly)
 	class UAudioComponent* TurretSystemAudio;
-	UPROPERTY(VisibleDefaultsOnly,Replicated)
+	UPROPERTY(VisibleDefaultsOnly)
 	class UAudioComponent* HitAudio;
 
 	//ActorComp
-	UPROPERTY(EditDefaultsOnly,Replicated)
+	UPROPERTY(EditDefaultsOnly)
 	class UCPP_TrackMovementComponent* TrackMovement;
-	UPROPERTY(EditDefaultsOnly,Replicated)
+	UPROPERTY(EditDefaultsOnly)
 	class UCPP_TankPawnMovementComponent* TankMovement;
-	UPROPERTY(EditDefaultsOnly,Replicated)
+	UPROPERTY(EditDefaultsOnly)
 	class UCPP_MainGunSystemComponent* GunSystem;
-	UPROPERTY(EditDefaultsOnly,Replicated)
+	UPROPERTY(EditDefaultsOnly)
 	class UCPP_ParticleControlComponent* ParticleSystem;
 	UPROPERTY(EditDefaultsOnly)
 	class UCPP_TankUIComponent* TankUI;
@@ -158,7 +188,6 @@ protected:
 	float BasicCamTurnSpeed = 100;
 	float PitchLimitMax = 20;
 	float PitchLimitMin = -10;
-	UPROPERTY(Replicated)
 	float displacementAngle =0.0f;
 	ECameraType CamType = ECameraType::THIRD;
 	bool IsZoom = false;

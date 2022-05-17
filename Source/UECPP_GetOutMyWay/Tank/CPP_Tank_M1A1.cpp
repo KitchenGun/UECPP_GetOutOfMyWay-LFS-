@@ -58,7 +58,8 @@ void ACPP_Tank_M1A1::BeginPlay()
 void ACPP_Tank_M1A1::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	CamPitchLimitSmooth();
+	if(IsLocallyControlled())
+		CamPitchLimitSmooth();
 }
 
 void ACPP_Tank_M1A1::Dead()
@@ -155,12 +156,16 @@ void ACPP_Tank_M1A1::CameraSet()
 	//camera
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(L"SpringArm");
 	SpringArm->SetupAttachment(GetMesh());
+	SpringArm->SetIsReplicated(true);
 	Camera = CreateDefaultSubobject<UCameraComponent>(L"Camera");
 	Camera->SetupAttachment(SpringArm);
+	Camera->SetIsReplicated(true);
 	GunnerSpringArm = CreateDefaultSubobject<USpringArmComponent>("GunnerSpringArm");
 	GunnerSpringArm->SetupAttachment(GetMesh());
+	GunnerSpringArm->SetIsReplicated(true);
 	GunnerCam = CreateDefaultSubobject<UCameraComponent>(L"GunnerCam");
 	GunnerCam->SetupAttachment(GunnerSpringArm);
+	GunnerCam->SetIsReplicated(true);
 	
 	/*∞¥√º √ ±‚»≠*/
 	//camera

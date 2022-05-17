@@ -82,9 +82,24 @@ void ACPP_Tank_Character::BeginPlay()
 void ACPP_Tank_Character::OnVerticalLook(float value)
 {
 	AddControllerPitchInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
+	if(!HasAuthority())
+		Server_OnVerticalLook(value);
+	
+}
+
+void ACPP_Tank_Character::Server_OnVerticalLook_Implementation(float value)
+{
+	AddControllerPitchInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
 }
 
 void ACPP_Tank_Character::OnHorizontalLook(float value)
+{
+	AddControllerYawInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
+	if(!HasAuthority())
+		Server_OnVerticalLook(value);
+}
+
+void ACPP_Tank_Character::Server_OnHorizontalLook_Implementation(float value)
 {
 	AddControllerYawInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
 }
@@ -110,15 +125,66 @@ void ACPP_Tank_Character::CamPitchLimitSmooth()
 	
 	FRotator temp = FRotator(pitch, PC->GetControlRotation().Quaternion().Rotator().Yaw, PC->GetControlRotation().Quaternion().Rotator().Roll);
 	PC->SetControlRotation(temp);
+	if(!HasAuthority())
+		Server_CamPitchLimitSmooth();
+}
+
+void ACPP_Tank_Character::Server_CamPitchLimitSmooth_Implementation()
+{
+	float pitch = GetControlRotation().Quaternion().Rotator().Pitch;
+	float minAngle = PitchLimitMin;
+	float maxAngle = PitchLimitMax;
+	//탱크의 pitch를 구해서 등판각을 받음
+	if(!FMath::IsNearlyZero(Turret->GetComponentRotation().Pitch,0.1f))
+	{
+		displacementAngle = FRotator(GunnerSpringArm->GetComponentRotation().Quaternion()).Pitch;
+		
+		minAngle = PitchLimitMin+displacementAngle;
+		maxAngle = PitchLimitMax+displacementAngle;
+	}
+	else
+	{
+		displacementAngle =0;
+	}
+	pitch = FMath::Clamp(pitch, minAngle, maxAngle);
+	
+	FRotator temp = FRotator(pitch, PC->GetControlRotation().Quaternion().Rotator().Yaw, PC->GetControlRotation().Quaternion().Rotator().Roll);
+	PC->SetControlRotation(temp);
 }
 
 void ACPP_Tank_Character::CamChange()
 {
-	static_cast<ECameraType>((uint8)CamType+1)==ECameraType::MAX
-	?CamType=static_cast<ECameraType>((uint8)0)
-	:CamType=static_cast<ECameraType>((uint8)CamType+1);
+	static_cast<ECameraType>((uint8)CamType + 1) == ECameraType::MAX
+		? CamType = static_cast<ECameraType>((uint8)0)
+		: CamType = static_cast<ECameraType>((uint8)CamType + 1);
 
-	if(FpViewToggleFunc.IsBound())
+	if (FpViewToggleFunc.IsBound())
+		FpViewToggleFunc.Execute();
+	switch (CamType)
+	{
+	case ECameraType::THIRD:
+		Camera->SetActive(true);
+		GunnerCam->SetFieldOfView(90);
+		GunnerCam->SetActive(false);
+		break;
+	case ECameraType::GUNNER:
+		GunnerCam->SetActive(true);
+		Camera->SetActive(false);
+		break;
+	default:
+		break;
+	}
+	if(!HasAuthority())
+		Server_CamChange();
+}
+
+void ACPP_Tank_Character::Server_CamChange_Implementation()
+{
+	static_cast<ECameraType>((uint8)CamType + 1) == ECameraType::MAX
+		? CamType = static_cast<ECameraType>((uint8)0)
+		: CamType = static_cast<ECameraType>((uint8)CamType + 1);
+
+	if (FpViewToggleFunc.IsBound())
 		FpViewToggleFunc.Execute();
 	switch (CamType)
 	{
@@ -138,11 +204,20 @@ void ACPP_Tank_Character::CamChange()
 
 void ACPP_Tank_Character::OnMoveForward(float value)
 {
+	
 	if (TankMovement != nullptr)
 	{
 		TankMovement->OnMove(value);
-		OnWheelParticle_Implementation();
+		OnWheelParticle();
+		if(!HasAuthority())
+			Server_OnMoveForward(value);
 	}
+}
+
+void ACPP_Tank_Character::Server_OnMoveForward_Implementation(float value)
+{
+	TankMovement->OnMove(value);
+	OnWheelParticle();
 }
 
 void ACPP_Tank_Character::OnMoveTurn(float value)
@@ -151,15 +226,37 @@ void ACPP_Tank_Character::OnMoveTurn(float value)
 	{
 		TankMovement->OnTurn(value);
 		OnWheelParticle();
+		if(!HasAuthority())
+			Server_OnMoveTurn(value);
 	}
+}
+
+void ACPP_Tank_Character::Server_OnMoveTurn_Implementation(float value)
+{
+	TankMovement->OnTurn(value);
+	OnWheelParticle();
 }
 
 void ACPP_Tank_Character::OnEngineBreak()
 {
 	TankMovement->OnEngineBreak();
+	if(!HasAuthority())
+		Server_OnEngineBreak();
+}
+
+void ACPP_Tank_Character::Server_OnEngineBreak_Implementation()
+{
+	TankMovement->OnEngineBreak();
 }
 
 void ACPP_Tank_Character::OffEngineBreak()
+{
+	TankMovement->OffEngineBreak();
+	if(!HasAuthority())
+		Server_OffEngineBreak();
+}
+
+void ACPP_Tank_Character::Server_OffEngineBreak_Implementation()
 {
 	TankMovement->OffEngineBreak();
 }
@@ -356,26 +453,6 @@ float ACPP_Tank_Character::TakeDamage(float DamageAmount, FDamageEvent const& Da
 void ACPP_Tank_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	//Camera
-	DOREPLIFETIME(ACPP_Tank_Character,Camera);
-	DOREPLIFETIME(ACPP_Tank_Character,GunnerCam);
-	DOREPLIFETIME(ACPP_Tank_Character,GunnerSpringArm);
-	DOREPLIFETIME(ACPP_Tank_Character,SpringArm);
-	//actor comp
-	DOREPLIFETIME(ACPP_Tank_Character,TrackMovement);
-	DOREPLIFETIME(ACPP_Tank_Character,TankMovement);
-	DOREPLIFETIME(ACPP_Tank_Character,GunSystem);
-	DOREPLIFETIME(ACPP_Tank_Character,ParticleSystem);
-	//sound
-	DOREPLIFETIME(ACPP_Tank_Character,EngineAudio);
-	DOREPLIFETIME(ACPP_Tank_Character,IdleAudio);
-	DOREPLIFETIME(ACPP_Tank_Character,GunSystemAudio);
-	DOREPLIFETIME(ACPP_Tank_Character,TurretSystemAudio);
-	DOREPLIFETIME(ACPP_Tank_Character,HitAudio);
-
-	DOREPLIFETIME(ACPP_Tank_Character,MuzzleFlashEffect);
-	DOREPLIFETIME(ACPP_Tank_Character,ShockWaveEffect);
-	DOREPLIFETIME(ACPP_Tank_Character,WheelsEffect);
-	DOREPLIFETIME(ACPP_Tank_Character,HP);
+	
 }
 

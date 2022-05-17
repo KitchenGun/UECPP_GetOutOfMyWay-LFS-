@@ -50,52 +50,11 @@ void UCPP_TankPawnMovementComponent::TickComponent(float DeltaTime, ELevelTick T
 void UCPP_TankPawnMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	//movement
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,NextLocation);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,NextRotation);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,PrevPos);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,SpeedTimer);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,VirtualForwardVal);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,VirtualFriction);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,TankClimbingAngle);
-	//TrackSpeed
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,TrackSpeed);
 	
-	//Engine 변수
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsMoveForward);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,TurnValue);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,EngineTorque);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,EngineGear);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,RPM);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsAccelerating);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsTurning);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsAccelerating);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsTurning);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,CurrentVelocity);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,Speed);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,isBreak);
-	//Engine 객체 별로 수정할 데이터변수
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,TurnSpeed);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,MaxEngineGear);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IdleRPM);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,MinRPM);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,MaxRPM);
-
-	//Turret
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,SightRotator);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,TurretRotator);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsTurretAngleMatch);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsSightRight);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsTurretRight);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,SightDir);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,TurretDir);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,TurretAngle);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,LeftAngle);
-	DOREPLIFETIME(UCPP_TankPawnMovementComponent,RightAngle);
 }
 
 
-void UCPP_TankPawnMovementComponent::SetWheelSpeed_Implementation(float WheelSpeed)
+void UCPP_TankPawnMovementComponent::SetWheelSpeed(float WheelSpeed)
 {
 	if(IsAccelerating)
 	{
@@ -131,7 +90,7 @@ void UCPP_TankPawnMovementComponent::Movement_Implementation()
 }
 
 
-void UCPP_TankPawnMovementComponent::OnMove_Implementation(float value)
+void UCPP_TankPawnMovementComponent::OnMove(float value)
 {
 	TankClimbingAngle = Owner->GetActorRotation().Pitch;
 	FVector dir = Owner->GetActorForwardVector();
@@ -212,7 +171,7 @@ void UCPP_TankPawnMovementComponent::OnMove_Implementation(float value)
 	}
 }
 
-void UCPP_TankPawnMovementComponent::OnTurn_Implementation(float value)
+void UCPP_TankPawnMovementComponent::OnTurn(float value)
 {
 	//가속중이 아니라면 실제와 유사하게 회전방향으로 조금씩 이동하도록 만듬
 	if (!FMath::IsNearlyZero(value))

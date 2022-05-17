@@ -21,21 +21,14 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 
 	//ABP에 전달할 변수 설정 함수
-	UFUNCTION(Server,Reliable)
 	void SetWheelSpeed(float WheelSpeed);
-	void SetWheelSpeed_Implementation(float WheelSpeed);
 	//이동
 	UFUNCTION(Server,Reliable)
 	void Movement();
 	void Movement_Implementation();
 
-	UFUNCTION(Server, Reliable)
 	void OnMove(float value);
-	void OnMove_Implementation(float value);
-
-	UFUNCTION(Server, Reliable)
 	void OnTurn(float value);
-	void OnTurn_Implementation(float value);
 	
 	UFUNCTION(Server, Reliable)
 	void OnEngineBreak();
@@ -96,82 +89,48 @@ private:
 	class UCPP_TankAnimInstance* TankAnimInst;
 
 	//movement
-	UPROPERTY(Replicated)
 	FVector NextLocation = FVector::ZeroVector;
-	UPROPERTY(Replicated)
 	float InputVal;
-	UPROPERTY(Replicated)
 	FRotator NextRotation = FRotator::ZeroRotator;
-	UPROPERTY(Replicated)
 	FVector PrevPos = FVector::ZeroVector;
-	UPROPERTY(Replicated)
 	float SpeedTimer = 0;
-	UPROPERTY(Replicated)
 	float VirtualForwardVal=0;
-	UPROPERTY(Replicated)
 	float VirtualFriction = 0.01f;
-	UPROPERTY(Replicated)
 	float TankClimbingAngle =0;
 	//TrackSpeed
-	UPROPERTY(Replicated)
 	float TrackSpeed = 0;
 
 	//Engine 변수
-	UPROPERTY(Replicated)
 	bool IsMoveForward = true;
-	UPROPERTY(Replicated)
 	float TurnValue =0;
-	UPROPERTY(Replicated)
 	float EngineTorque = 0.0f;
-	UPROPERTY(Replicated)
 	int EngineGear = 0;
-	UPROPERTY(Replicated)
 	float RPM = 500;
-	UPROPERTY(Replicated)
 	bool IsAccelerating = false;
-	UPROPERTY(Replicated)
 	bool IsTurning = false;
-	UPROPERTY(Replicated)
 	float CurrentVelocity = 0;
-	UPROPERTY(Replicated)
 	float Speed = 100;
-	UPROPERTY(Replicated)
 	bool isBreak = false;
 
 	//Engine 객체 별로 수정할 데이터변수
-	UPROPERTY(Replicated)
 	float TurnSpeed = 35;//선회 속도
 	class UCurveFloat* EngineTorqueCurve;
-	UPROPERTY(Replicated)
 	int MaxEngineGear = 4;
-	UPROPERTY(Replicated)
 	float IdleRPM = 200;
 	float RPMDisplacement = 200;
-	UPROPERTY(Replicated)
 	float MinRPM = 200;
-	UPROPERTY(Replicated)
 	float MaxRPM = 900;
 
 	//Turret
-	UPROPERTY(Replicated)
 	FRotator SightRotator =  FRotator::ZeroRotator;
-	UPROPERTY(Replicated)
 	FRotator TurretRotator = FRotator::ZeroRotator; //world로 연산하도록 해야함
-	UPROPERTY(Replicated)
 	bool IsTurretAngleMatch = true;
-	UPROPERTY(Replicated)
 	bool IsSightRight = false; //차체 기준으로 오른쪽인가 왼쪽인가
-	UPROPERTY(Replicated)
 	bool IsTurretRight = false; //차체 기준으로 오른쪽인가 왼쪽인가
-	UPROPERTY(Replicated)
 	FVector SightDir = FVector::ZeroVector;
-	UPROPERTY(Replicated)
 	FVector TurretDir = FVector::ZeroVector;
-	UPROPERTY(Replicated)
 	float TurretAngle = 0.0f;
-	UPROPERTY(Replicated)
 	float LeftAngle=0;
-	UPROPERTY(Replicated)
 	float RightAngle=0;
 	//Turret 객체 별로 수정해야할 데이터 변수
 	float TurretTurnSpeed = 100.0f;
