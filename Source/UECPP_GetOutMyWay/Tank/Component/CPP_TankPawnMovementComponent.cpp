@@ -12,6 +12,8 @@ UCPP_TankPawnMovementComponent::UCPP_TankPawnMovementComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 	Owner = Cast<APawn>(GetOwner());
 
+	SetIsReplicated(true);
+	
 	ConstructorHelpers::FObjectFinder<UCurveFloat> Curvefloat(L"CurveFloat'/Game/Data/Tank/Curve/FCurv_EngineTorque.FCurv_EngineTorque'");
 	EngineTorqueCurve = Curvefloat.Object;
 
@@ -50,7 +52,7 @@ void UCPP_TankPawnMovementComponent::TickComponent(float DeltaTime, ELevelTick T
 void UCPP_TankPawnMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,SightRotator);
 }
 
 
@@ -206,11 +208,15 @@ void UCPP_TankPawnMovementComponent::OnTurn(float value)
 	TurnValue = value;
 }
 
+void UCPP_TankPawnMovementComponent::Server_SetRotation_Implementation(FRotator value)
+{
+	NetMulticastSetRotation(value);
+}
+
 void UCPP_TankPawnMovementComponent::NetMulticastSetRotation_Implementation(FRotator value)
 {
-	
-	if(Owner->IsLocallyControlled())
-		SightRotator = value;
+	UE_LOG(LogTemp,Warning,L"%.2f",value.Yaw);
+	SightRotator = value;
 }
 
 void UCPP_TankPawnMovementComponent::EngineControl_Implementation()
@@ -294,11 +300,11 @@ void UCPP_TankPawnMovementComponent::RPMControl_Implementation()
 	}
 }
 
-void UCPP_TankPawnMovementComponent::UpdateTurretState_Implementation(float DeltaTime)
+void UCPP_TankPawnMovementComponent::UpdateTurretState(float DeltaTime)
 {
 	//https://forums.unrealengine.com/t/how-do-i-replicate-my-camera-rotation/308853/2
-	NetMulticastSetRotation(UKismetMathLibrary::InverseTransformRotation(TankMesh->GetComponentTransform(),SightRotator).GetDenormalized());
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *SightRotator.ToString());
+	Server_SetRotation(UKismetMathLibrary::InverseTransformRotation(TankMesh->GetComponentTransform(),SightRotator).GetDenormalized());
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *SightRotator.ToString());
 	TurretRotator = TankMesh->GetBoneQuaternion(L"turret_jnt",EBoneSpaces::ComponentSpace).Rotator().GetDenormalized();
 	if (!FMath::IsNearlyZero(SightRotator.Yaw-TurretRotator.Yaw,0.01f))
 	{
@@ -326,7 +332,7 @@ void UCPP_TankPawnMovementComponent::UpdateTurretState_Implementation(float Delt
 		TurretMove(DeltaTime);
 }
 
-void UCPP_TankPawnMovementComponent::TurretMove_Implementation(float DeltaTime)
+void UCPP_TankPawnMovementComponent::TurretMove(float DeltaTime)
 {
 	if(IsTurretAngleMatch)
 		return;
@@ -359,7 +365,7 @@ void UCPP_TankPawnMovementComponent::TurretMove_Implementation(float DeltaTime)
 
 void UCPP_TankPawnMovementComponent::UpdateGunState_Implementation(float DeltaTime)
 {
-	//NetMulticastSetRotation(Owner->GetController()->GetControlRotation().Quaternion().Rotator());
+	Server_SetRotation(Owner->GetController()->GetControlRotation().Quaternion().Rotator());
 	//https://www.youtube.com/watch?v=_UlqmpH0AXs
 	GunRotator = TankMesh->GetBoneQuaternion(L"gun_jnt").Rotator().Quaternion().Rotator();
 	if(!FMath::IsNearlyEqual(SightRotator.Pitch, GunRotator.Pitch,0.01f))

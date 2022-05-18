@@ -57,7 +57,10 @@ public:
 			RightAngle = SightRotator.Yaw+(360.0f-TurretRotator.Yaw);
 		}
 	}
-	
+
+	UFUNCTION(Server,Reliable)
+	void Server_SetRotation(FRotator value);
+	void Server_SetRotation_Implementation(FRotator value);
 	UFUNCTION(NetMulticast,Reliable)
 	void NetMulticastSetRotation(FRotator value);
 	void NetMulticastSetRotation_Implementation(FRotator value);
@@ -72,12 +75,10 @@ private:
 	void RPMControl();
 	void RPMControl_Implementation();
 	
-	UFUNCTION(Server,Reliable)
+	UFUNCTION()
 	void UpdateTurretState(float DeltaTime);
-	void UpdateTurretState_Implementation(float DeltaTime);
-	UFUNCTION(Server,Reliable)
+	UFUNCTION()
 	void TurretMove(float DeltaTime);
-	void TurretMove_Implementation(float DeltaTime);
 	UFUNCTION(Server,Reliable)
 	void UpdateGunState(float DeltaTime);
 	void UpdateGunState_Implementation(float DeltaTime);
@@ -125,7 +126,9 @@ private:
 	float MaxRPM = 900;
 
 	//Turret
+	UPROPERTY(Replicated)
 	FRotator SightRotator =  FRotator::ZeroRotator;
+	
 	FRotator TurretRotator = FRotator::ZeroRotator; //world로 연산하도록 해야함
 	bool IsTurretAngleMatch = true;
 	bool IsSightRight = false; //차체 기준으로 오른쪽인가 왼쪽인가

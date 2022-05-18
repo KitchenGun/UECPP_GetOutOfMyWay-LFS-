@@ -64,7 +64,6 @@ protected:
 	void Server_CamChange();
 	void Server_CamChange_Implementation();
 	//move
-	
 	void OnMoveForward(float value);
 	UFUNCTION(Server,Reliable)
 	void Server_OnMoveForward(float value);
@@ -123,13 +122,13 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 protected:
 	//Camera
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly,Replicated)
 	class UCameraComponent* Camera;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly,Replicated)
 	class UCameraComponent* GunnerCam;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly,Replicated)
 	class USpringArmComponent* GunnerSpringArm;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly,Replicated)
 	class USpringArmComponent* SpringArm;
 	
 	//Collision

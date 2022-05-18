@@ -453,6 +453,9 @@ float ACPP_Tank_Character::TakeDamage(float DamageAmount, FDamageEvent const& Da
 void ACPP_Tank_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	
+	DOREPLIFETIME(ACPP_Tank_Character,Camera);
+	DOREPLIFETIME(ACPP_Tank_Character,GunnerCam);
+	DOREPLIFETIME(ACPP_Tank_Character,SpringArm);
+	DOREPLIFETIME(ACPP_Tank_Character,GunnerSpringArm);
 }
 
