@@ -57,6 +57,7 @@ public:
 			RightAngle = SightRotator.Yaw+(360.0f-TurretRotator.Yaw);
 		}
 	}
+	
 	UFUNCTION(NetMulticast,Reliable)
 	void NetMulticastSetRotation(FRotator value);
 	void NetMulticastSetRotation_Implementation(FRotator value);

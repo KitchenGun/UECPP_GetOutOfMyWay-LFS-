@@ -208,6 +208,7 @@ void UCPP_TankPawnMovementComponent::OnTurn(float value)
 
 void UCPP_TankPawnMovementComponent::NetMulticastSetRotation_Implementation(FRotator value)
 {
+	
 	if(Owner->IsLocallyControlled())
 		SightRotator = value;
 }
