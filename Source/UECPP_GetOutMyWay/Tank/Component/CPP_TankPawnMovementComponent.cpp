@@ -206,6 +206,12 @@ void UCPP_TankPawnMovementComponent::OnTurn(float value)
 	TurnValue = value;
 }
 
+void UCPP_TankPawnMovementComponent::NetMulticastSetRotation_Implementation(FRotator value)
+{
+	if(Owner->IsLocallyControlled())
+		SightRotator = value;
+}
+
 void UCPP_TankPawnMovementComponent::EngineControl_Implementation()
 {
 	//¼Óµµ
@@ -289,10 +295,9 @@ void UCPP_TankPawnMovementComponent::RPMControl_Implementation()
 
 void UCPP_TankPawnMovementComponent::UpdateTurretState_Implementation(float DeltaTime)
 {
-	if(!Owner->HasAuthority())
-		return;
-	SightRotator=UKismetMathLibrary::InverseTransformRotation(TankMesh->GetComponentTransform(),SightRotator).GetDenormalized();
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, L"call");
+	//https://forums.unrealengine.com/t/how-do-i-replicate-my-camera-rotation/308853/2
+	NetMulticastSetRotation(UKismetMathLibrary::InverseTransformRotation(TankMesh->GetComponentTransform(),SightRotator).GetDenormalized());
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *SightRotator.ToString());
 	TurretRotator = TankMesh->GetBoneQuaternion(L"turret_jnt",EBoneSpaces::ComponentSpace).Rotator().GetDenormalized();
 	if (!FMath::IsNearlyZero(SightRotator.Yaw-TurretRotator.Yaw,0.01f))
 	{
@@ -353,7 +358,8 @@ void UCPP_TankPawnMovementComponent::TurretMove_Implementation(float DeltaTime)
 
 void UCPP_TankPawnMovementComponent::UpdateGunState_Implementation(float DeltaTime)
 {
-	SightRotator = Owner->GetController()->GetControlRotation().Quaternion().Rotator();
+	//NetMulticastSetRotation(Owner->GetController()->GetControlRotation().Quaternion().Rotator());
+	//https://www.youtube.com/watch?v=_UlqmpH0AXs
 	GunRotator = TankMesh->GetBoneQuaternion(L"gun_jnt").Rotator().Quaternion().Rotator();
 	if(!FMath::IsNearlyEqual(SightRotator.Pitch, GunRotator.Pitch,0.01f))
 	{
