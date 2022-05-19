@@ -84,10 +84,16 @@ void ACPP_Tank_Character::OnVerticalLook(float value)
 	AddControllerPitchInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
 	if(!HasAuthority())
 		Server_OnVerticalLook(value);
-	
+	else
+		Multicast_OnVerticalLook(value);
 }
 
 void ACPP_Tank_Character::Server_OnVerticalLook_Implementation(float value)
+{
+	AddControllerPitchInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
+}
+
+void ACPP_Tank_Character::Multicast_OnVerticalLook_Implementation(float value)
 {
 	AddControllerPitchInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
 }
@@ -97,9 +103,16 @@ void ACPP_Tank_Character::OnHorizontalLook(float value)
 	AddControllerYawInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
 	if(!HasAuthority())
 		Server_OnVerticalLook(value);
+	else
+		Multicast_OnVerticalLook(value);
 }
 
 void ACPP_Tank_Character::Server_OnHorizontalLook_Implementation(float value)
+{
+	AddControllerYawInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
+}
+
+void ACPP_Tank_Character::Multicast_OnHorizontalLook_Implementation(float value)
 {
 	AddControllerYawInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
 }
@@ -125,6 +138,7 @@ void ACPP_Tank_Character::CamPitchLimitSmooth()
 	
 	FRotator temp = FRotator(pitch, PC->GetControlRotation().Quaternion().Rotator().Yaw, PC->GetControlRotation().Quaternion().Rotator().Roll);
 	PC->SetControlRotation(temp);
+	
 	if(!HasAuthority())
 		Server_CamPitchLimitSmooth();
 }
@@ -174,6 +188,7 @@ void ACPP_Tank_Character::CamChange()
 	default:
 		break;
 	}
+	
 	if(!HasAuthority())
 		Server_CamChange();
 }

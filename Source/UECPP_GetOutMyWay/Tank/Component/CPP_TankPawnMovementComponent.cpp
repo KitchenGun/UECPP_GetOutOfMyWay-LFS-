@@ -47,12 +47,13 @@ void UCPP_TankPawnMovementComponent::TickComponent(float DeltaTime, ELevelTick T
 }
 
 
-
-
 void UCPP_TankPawnMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	
 	DOREPLIFETIME(UCPP_TankPawnMovementComponent,SightRotator);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsTurretAngleMatch);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,TurretAngle);
 }
 
 
@@ -90,7 +91,6 @@ void UCPP_TankPawnMovementComponent::Movement_Implementation()
 	NextLocation = FVector::ZeroVector;
 	NextRotation = FRotator::ZeroRotator;
 }
-
 
 void UCPP_TankPawnMovementComponent::OnMove(float value)
 {
@@ -210,14 +210,34 @@ void UCPP_TankPawnMovementComponent::OnTurn(float value)
 
 void UCPP_TankPawnMovementComponent::Server_SetRotation_Implementation(FRotator value)
 {
-	NetMulticastSetRotation(value);
+	SightRotator = value;
 }
 
 void UCPP_TankPawnMovementComponent::NetMulticastSetRotation_Implementation(FRotator value)
 {
-	UE_LOG(LogTemp,Warning,L"%.2f",value.Yaw);
 	SightRotator = value;
 }
+
+void UCPP_TankPawnMovementComponent::Server_SetTurretIsMatch_Implementation(bool value)
+{
+	IsTurretAngleMatch = value;
+}
+
+void UCPP_TankPawnMovementComponent::NetMulticastSetTurretIsMatch_Implementation(bool value)
+{
+	IsTurretAngleMatch = value;
+}
+
+void UCPP_TankPawnMovementComponent::Server_SetTurretAngle_Implementation(float value)
+{
+	TurretAngle = value;
+}
+
+void UCPP_TankPawnMovementComponent::NetMulticastSetTurretAngle_Implementation(float value)
+{
+	TurretAngle = value;
+}
+
 
 void UCPP_TankPawnMovementComponent::EngineControl_Implementation()
 {
@@ -302,9 +322,24 @@ void UCPP_TankPawnMovementComponent::RPMControl_Implementation()
 
 void UCPP_TankPawnMovementComponent::UpdateTurretState(float DeltaTime)
 {
-	//https://forums.unrealengine.com/t/how-do-i-replicate-my-camera-rotation/308853/2
-	Server_SetRotation(UKismetMathLibrary::InverseTransformRotation(TankMesh->GetComponentTransform(),SightRotator).GetDenormalized());
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *SightRotator.ToString());
+	if(Owner->IsLocallyControlled())
+	{
+		if(Owner->HasAuthority())
+		{
+			NetMulticastSetRotation(UKismetMathLibrary::InverseTransformRotation(TankMesh->GetComponentTransform(),Owner->GetControlRotation()).GetDenormalized());
+		}
+		else
+		{
+			Server_SetRotation(UKismetMathLibrary::InverseTransformRotation(TankMesh->GetComponentTransform(),Owner->GetControlRotation()).GetDenormalized());
+		}
+
+		if(Owner->IsLocallyControlled())
+		{
+			FString temp = Owner->HasAuthority()?L"Server : ":L"Client : ";
+			temp.Append(FString::FormatAsNumber(SightRotator.Yaw));
+			GEngine->AddOnScreenDebugMessage(-1,1.0f,FColor::White,temp);
+		}
+	}
 	TurretRotator = TankMesh->GetBoneQuaternion(L"turret_jnt",EBoneSpaces::ComponentSpace).Rotator().GetDenormalized();
 	if (!FMath::IsNearlyZero(SightRotator.Yaw-TurretRotator.Yaw,0.01f))
 	{
@@ -314,9 +349,14 @@ void UCPP_TankPawnMovementComponent::UpdateTurretState(float DeltaTime)
 			if(TurretMoveStartFunc.IsBound())
 				TurretMoveStartFunc.Execute();			
 		}
-		
-		//일치 하지 않을 경우
-		IsTurretAngleMatch = false;
+		if(Owner->IsLocallyControlled())
+		{
+			//일치 하지 않을 경우
+			if(Owner->HasAuthority())
+				NetMulticastSetTurretIsMatch(false);
+			else
+				Server_SetTurretIsMatch(false);		
+		}
 	}
 	else
 	{
@@ -326,7 +366,14 @@ void UCPP_TankPawnMovementComponent::UpdateTurretState(float DeltaTime)
 			if(TurretMoveEndFunc.IsBound())
 				TurretMoveEndFunc.Execute();			
 		}
-		IsTurretAngleMatch = true;
+		if(Owner->IsLocallyControlled())
+		{
+			//일치 하지 않을 경우
+			if(Owner->HasAuthority())
+				NetMulticastSetTurretIsMatch(true);
+			else
+				Server_SetTurretIsMatch(true);		
+		}
 	}
 	if(!IsTurretAngleMatch)
 		TurretMove(DeltaTime);
@@ -343,30 +390,50 @@ void UCPP_TankPawnMovementComponent::TurretMove(float DeltaTime)
 	{
 		if(LeftAngle>DeltaTime*TurretTurnSpeed)
 		{
-			TurretAngle = TurretAngle-(DeltaTime*TurretTurnSpeed);//크기가 작은쪽으로 회전
+			TurretAngle = TurretAngle-(DeltaTime*TurretTurnSpeed);
+			
+			if(!Owner->HasAuthority())
+				Server_SetTurretAngle(TurretAngle);
+			else
+				NetMulticastSetTurretAngle(TurretAngle);
 		}
 		else
 		{//회전 방향의 남은 각도와 사용자가 바라보는 각도와 보간
-			TurretAngle = FMath::RInterpTo(FRotator(0,TurretAngle,0),SightRotator,DeltaTime,TurretTurnSpeed).Yaw;
+			TurretAngle = (FMath::RInterpTo(FRotator(0,TurretAngle,0),SightRotator,DeltaTime,TurretTurnSpeed).Yaw);
+			
+			if(!Owner->HasAuthority())
+				Server_SetTurretAngle(TurretAngle);
+			else
+				NetMulticastSetTurretAngle(TurretAngle);
 		}
 	}
 	else if(LeftAngle>RightAngle)
 	{
 		if(RightAngle>DeltaTime*TurretTurnSpeed)
 		{
-			TurretAngle = TurretAngle+(DeltaTime*TurretTurnSpeed);//크기가 작은쪽으로 회전
+			TurretAngle=(TurretAngle+(DeltaTime*TurretTurnSpeed));//크기가 작은쪽으로 회전
+
+			if(!Owner->HasAuthority())
+				Server_SetTurretAngle(TurretAngle);
+			else
+				NetMulticastSetTurretAngle(TurretAngle);
 		}
 		else
 		{
-			TurretAngle = FMath::RInterpTo(FRotator(0,TurretAngle,0),SightRotator,DeltaTime,TurretTurnSpeed).Yaw;
+			TurretAngle=(FMath::RInterpTo(FRotator(0,TurretAngle,0),SightRotator,DeltaTime,TurretTurnSpeed).Yaw);
+			
+			if(!Owner->HasAuthority())
+				Server_SetTurretAngle(TurretAngle);
+			else
+				NetMulticastSetTurretAngle(TurretAngle);
 		}
 	}
+
+	
 }
 
 void UCPP_TankPawnMovementComponent::UpdateGunState_Implementation(float DeltaTime)
 {
-	Server_SetRotation(Owner->GetController()->GetControlRotation().Quaternion().Rotator());
-	//https://www.youtube.com/watch?v=_UlqmpH0AXs
 	GunRotator = TankMesh->GetBoneQuaternion(L"gun_jnt").Rotator().Quaternion().Rotator();
 	if(!FMath::IsNearlyEqual(SightRotator.Pitch, GunRotator.Pitch,0.01f))
 	{

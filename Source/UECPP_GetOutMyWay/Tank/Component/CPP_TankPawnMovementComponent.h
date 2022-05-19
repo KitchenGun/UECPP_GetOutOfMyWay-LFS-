@@ -40,7 +40,8 @@ public:
 	
 	//get&set
 	FORCEINLINE float GetTrackSpeed() { return TrackSpeed; }
-	FORCEINLINE float GetTurretAngle() { return TurretAngle; }
+	FORCEINLINE float GetTurretAngle(){return TurretAngle;}
+
 	FORCEINLINE float GetGunAngle() {return GunAngle;}
 	FORCEINLINE float GetGunAngleOffset() { return GunAngleOffSet; }
 	FORCEINLINE bool GetIsMove() {return IsAccelerating||IsTurning;}
@@ -58,16 +59,32 @@ public:
 		}
 	}
 
+public:
+	FTurretMoveStart TurretMoveStartFunc;
+	FTurretMoveEnd TurretMoveEndFunc;
+private:
+	//turret
 	UFUNCTION(Server,Reliable)
 	void Server_SetRotation(FRotator value);
 	void Server_SetRotation_Implementation(FRotator value);
 	UFUNCTION(NetMulticast,Reliable)
 	void NetMulticastSetRotation(FRotator value);
 	void NetMulticastSetRotation_Implementation(FRotator value);
-public:
-	FTurretMoveStart TurretMoveStartFunc;
-	FTurretMoveEnd TurretMoveEndFunc;
-private:
+
+	UFUNCTION(Server,Reliable)
+	void Server_SetTurretIsMatch(bool value);
+	void Server_SetTurretIsMatch_Implementation(bool value);
+	UFUNCTION(NetMulticast,Reliable)
+	void NetMulticastSetTurretIsMatch(bool value);
+	void NetMulticastSetTurretIsMatch_Implementation(bool value);
+
+	UFUNCTION(Server,Reliable)
+	void Server_SetTurretAngle(float value);
+	void Server_SetTurretAngle_Implementation(float value);
+	UFUNCTION(NetMulticast,Reliable)
+	void NetMulticastSetTurretAngle(float value);
+	void NetMulticastSetTurretAngle_Implementation(float value);
+	//engine
 	UFUNCTION(Server,Reliable)
 	void EngineControl();
 	void EngineControl_Implementation();
@@ -128,13 +145,14 @@ private:
 	//Turret
 	UPROPERTY(Replicated)
 	FRotator SightRotator =  FRotator::ZeroRotator;
-	
 	FRotator TurretRotator = FRotator::ZeroRotator; //world로 연산하도록 해야함
+	UPROPERTY(Replicated)
 	bool IsTurretAngleMatch = true;
 	bool IsSightRight = false; //차체 기준으로 오른쪽인가 왼쪽인가
 	bool IsTurretRight = false; //차체 기준으로 오른쪽인가 왼쪽인가
 	FVector SightDir = FVector::ZeroVector;
 	FVector TurretDir = FVector::ZeroVector;
+	UPROPERTY(Replicated)
 	float TurretAngle = 0.0f;
 	float LeftAngle=0;
 	float RightAngle=0;

@@ -50,10 +50,17 @@ protected:
 	UFUNCTION(Server,Reliable)
 	void Server_OnVerticalLook(float value);
 	void Server_OnVerticalLook_Implementation(float value);
+	UFUNCTION(NetMulticast,Reliable)
+	void Multicast_OnVerticalLook(float value);
+	void Multicast_OnVerticalLook_Implementation(float value);
+	
 	void OnHorizontalLook(float value);
 	UFUNCTION(Server,Reliable)
 	void Server_OnHorizontalLook(float value);
 	void Server_OnHorizontalLook_Implementation(float value);
+	UFUNCTION(NetMulticast,Reliable)
+	void Multicast_OnHorizontalLook(float value);
+	void Multicast_OnHorizontalLook_Implementation(float value);
 	
 	void CamPitchLimitSmooth();
 	UFUNCTION(Server,Reliable)
@@ -190,6 +197,7 @@ protected:
 	float displacementAngle =0.0f;
 	ECameraType CamType = ECameraType::THIRD;
 	bool IsZoom = false;
+	FRotator ControllerRotation = FRotator::ZeroRotator;
 
 	//sound
 	class USoundWave* EngineStartSound;

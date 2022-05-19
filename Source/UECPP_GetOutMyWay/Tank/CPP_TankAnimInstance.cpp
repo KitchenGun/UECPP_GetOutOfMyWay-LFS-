@@ -72,16 +72,8 @@ void UCPP_TankAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		TrackSpeed = TankMovementComp->GetTrackSpeed();
 		CurTurretAngle = TankMovementComp->GetTurretAngle();
 		
+		
 		CurGunAngle = TankMovementComp->GetGunAngle();
 		CurGunAngleOffset = TankMovementComp->GetGunAngleOffset();
 	}
-}
-
-void UCPP_TankAnimInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(UCPP_TankAnimInstance,TrackSpeed);
-	DOREPLIFETIME(UCPP_TankAnimInstance,CurTurretAngle);
-	DOREPLIFETIME(UCPP_TankAnimInstance,CurGunAngle);
-	DOREPLIFETIME(UCPP_TankAnimInstance,CurGunAngleOffset);
 }

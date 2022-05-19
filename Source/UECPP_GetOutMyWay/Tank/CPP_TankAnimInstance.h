@@ -15,14 +15,14 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Suspension")
 	TArray<FWheelLocationData> BogieWheelData;
 
-	UPROPERTY(Replicated,BlueprintReadOnly,EditAnywhere,Category ="Track")
+	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category ="Track")
 	float TrackSpeed = 0;
 	
-	UPROPERTY(Replicated,BlueprintReadOnly, EditAnywhere, Category = "Turret")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Turret")
 	float CurTurretAngle =0;
-	UPROPERTY(Replicated,BlueprintReadOnly, EditAnywhere, Category = "Gun")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gun")
 	float CurGunAngle=0.0f;
-	UPROPERTY(Replicated,BlueprintReadOnly, EditAnywhere, Category = "Gun")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gun")
 	float CurGunAngleOffset =0;
 	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category ="Mesh")
 	class USkeletalMeshComponent* TankMeshComp;
@@ -30,7 +30,6 @@ public:
 public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 
 private:
 	class APawn* Owner;
