@@ -13,7 +13,6 @@ UCPP_TankPawnMovementComponent::UCPP_TankPawnMovementComponent()
 	Owner = Cast<APawn>(GetOwner());
 
 	SetIsReplicated(true);
-	
 	ConstructorHelpers::FObjectFinder<UCurveFloat> Curvefloat(L"CurveFloat'/Game/Data/Tank/Curve/FCurv_EngineTorque.FCurv_EngineTorque'");
 	EngineTorqueCurve = Curvefloat.Object;
 
@@ -332,13 +331,6 @@ void UCPP_TankPawnMovementComponent::UpdateTurretState(float DeltaTime)
 		{
 			Server_SetRotation(UKismetMathLibrary::InverseTransformRotation(TankMesh->GetComponentTransform(),Owner->GetControlRotation()).GetDenormalized());
 		}
-
-		if(Owner->IsLocallyControlled())
-		{
-			FString temp = Owner->HasAuthority()?L"Server : ":L"Client : ";
-			temp.Append(FString::FormatAsNumber(SightRotator.Yaw));
-			GEngine->AddOnScreenDebugMessage(-1,1.0f,FColor::White,temp);
-		}
 	}
 	TurretRotator = TankMesh->GetBoneQuaternion(L"turret_jnt",EBoneSpaces::ComponentSpace).Rotator().GetDenormalized();
 	if (!FMath::IsNearlyZero(SightRotator.Yaw-TurretRotator.Yaw,0.01f))
@@ -377,6 +369,7 @@ void UCPP_TankPawnMovementComponent::UpdateTurretState(float DeltaTime)
 	}
 	if(!IsTurretAngleMatch)
 		TurretMove(DeltaTime);
+	
 }
 
 void UCPP_TankPawnMovementComponent::TurretMove(float DeltaTime)
@@ -428,8 +421,6 @@ void UCPP_TankPawnMovementComponent::TurretMove(float DeltaTime)
 				NetMulticastSetTurretAngle(TurretAngle);
 		}
 	}
-
-	
 }
 
 void UCPP_TankPawnMovementComponent::UpdateGunState_Implementation(float DeltaTime)

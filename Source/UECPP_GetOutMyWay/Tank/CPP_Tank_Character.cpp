@@ -16,9 +16,11 @@
 ACPP_Tank_Character::ACPP_Tank_Character()
 {
 	bReplicates = true;
+	GetMesh()->bIsAutonomousTickPose =true;
 	PrimaryActorTick.bCanEverTick = true;
 
 	//actorcomp
+	GetCharacterMovement()->SetIsReplicated(true);
 	TankMovement = CreateDefaultSubobject<UCPP_TankPawnMovementComponent>(L"TankPawnMovement");
 	TankMovement->SetIsReplicated(true);
 	TrackMovement = CreateDefaultSubobject<UCPP_TrackMovementComponent>(L"TrackMovement");
