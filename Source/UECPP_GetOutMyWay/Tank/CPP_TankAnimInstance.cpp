@@ -71,7 +71,7 @@ void UCPP_TankAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		TrackSpeed = TankMovementComp->GetTrackSpeed();
 		CurTurretAngle = TankMovementComp->GetTurretAngle();
-		
+	
 		CurGunAngle = TankMovementComp->GetGunAngle();
 		CurGunAngleOffset = TankMovementComp->GetGunAngleOffset();
 	}

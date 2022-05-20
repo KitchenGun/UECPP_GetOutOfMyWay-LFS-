@@ -121,81 +121,32 @@ void ACPP_Tank_Character::Multicast_OnHorizontalLook_Implementation(float value)
 
 void ACPP_Tank_Character::CamPitchLimitSmooth()
 {
-	float pitch = GetControlRotation().Quaternion().Rotator().Pitch;
-	float minAngle = PitchLimitMin;
-	float maxAngle = PitchLimitMax;
-	//탱크의 pitch를 구해서 등판각을 받음
-	if(!FMath::IsNearlyZero(Turret->GetComponentRotation().Pitch,0.1f))
+	if(IsLocallyControlled())
 	{
-		displacementAngle = FRotator(GunnerSpringArm->GetComponentRotation().Quaternion()).Pitch;
+		float pitch = GetControlRotation().Quaternion().Rotator().Pitch;
+		float minAngle = PitchLimitMin;
+		float maxAngle = PitchLimitMax;
+		//탱크의 pitch를 구해서 등판각을 받음
+		if(!FMath::IsNearlyZero(Turret->GetComponentRotation().Pitch,0.1f))
+		{
+			displacementAngle = FRotator(GunnerSpringArm->GetComponentRotation().Quaternion()).Pitch;
 		
-		minAngle = PitchLimitMin+displacementAngle;
-		maxAngle = PitchLimitMax+displacementAngle;
-	}
-	else
-	{
-		displacementAngle =0;
-	}
-	pitch = FMath::Clamp(pitch, minAngle, maxAngle);
+			minAngle = PitchLimitMin+displacementAngle;
+			maxAngle = PitchLimitMax+displacementAngle;
+		}
+		else
+		{
+			displacementAngle =0;
+		}
+		pitch = FMath::Clamp(pitch, minAngle, maxAngle);
 	
-	FRotator temp = FRotator(pitch, PC->GetControlRotation().Quaternion().Rotator().Yaw, PC->GetControlRotation().Quaternion().Rotator().Roll);
-	PC->SetControlRotation(temp);
-	
-	if(!HasAuthority())
-		Server_CamPitchLimitSmooth();
+		FRotator temp = FRotator(pitch, PC->GetControlRotation().Quaternion().Rotator().Yaw, PC->GetControlRotation().Quaternion().Rotator().Roll);
+		PC->SetControlRotation(temp);
+	}
 }
 
-void ACPP_Tank_Character::Server_CamPitchLimitSmooth_Implementation()
-{
-	float pitch = GetControlRotation().Quaternion().Rotator().Pitch;
-	float minAngle = PitchLimitMin;
-	float maxAngle = PitchLimitMax;
-	//탱크의 pitch를 구해서 등판각을 받음
-	if(!FMath::IsNearlyZero(Turret->GetComponentRotation().Pitch,0.1f))
-	{
-		displacementAngle = FRotator(GunnerSpringArm->GetComponentRotation().Quaternion()).Pitch;
-		
-		minAngle = PitchLimitMin+displacementAngle;
-		maxAngle = PitchLimitMax+displacementAngle;
-	}
-	else
-	{
-		displacementAngle =0;
-	}
-	pitch = FMath::Clamp(pitch, minAngle, maxAngle);
-	
-	FRotator temp = FRotator(pitch, PC->GetControlRotation().Quaternion().Rotator().Yaw, PC->GetControlRotation().Quaternion().Rotator().Roll);
-	PC->SetControlRotation(temp);
-}
 
 void ACPP_Tank_Character::CamChange()
-{
-	static_cast<ECameraType>((uint8)CamType + 1) == ECameraType::MAX
-		? CamType = static_cast<ECameraType>((uint8)0)
-		: CamType = static_cast<ECameraType>((uint8)CamType + 1);
-
-	if (FpViewToggleFunc.IsBound())
-		FpViewToggleFunc.Execute();
-	switch (CamType)
-	{
-	case ECameraType::THIRD:
-		Camera->SetActive(true);
-		GunnerCam->SetFieldOfView(90);
-		GunnerCam->SetActive(false);
-		break;
-	case ECameraType::GUNNER:
-		GunnerCam->SetActive(true);
-		Camera->SetActive(false);
-		break;
-	default:
-		break;
-	}
-	
-	if(!HasAuthority())
-		Server_CamChange();
-}
-
-void ACPP_Tank_Character::Server_CamChange_Implementation()
 {
 	static_cast<ECameraType>((uint8)CamType + 1) == ECameraType::MAX
 		? CamType = static_cast<ECameraType>((uint8)0)
@@ -422,6 +373,13 @@ void ACPP_Tank_Character::Tick(float DeltaTime)
 	//Turret Collider 위치 변환 탱크 포탑에 충돌체 같이 움직이기 위해서
 	Turret->SetWorldLocation(GetMesh()->GetSocketLocation("turret_jntSocket"));
 	Turret->SetWorldRotation(GetMesh()->GetSocketRotation("turret_jntSocket"));
+	if(IsLocallyControlled())
+	{
+		TankTransform = GetMesh()->GetComponentTransform();
+		if(HasAuthority())
+			OnRep_UpdateTankTransform(GetMesh()->GetComponentTransform()); 
+	}
+	
 	//ui에 전달
 	GunDirPosWorldToScreen();
 }
@@ -470,9 +428,11 @@ float ACPP_Tank_Character::TakeDamage(float DamageAmount, FDamageEvent const& Da
 void ACPP_Tank_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(ACPP_Tank_Character,Camera);
-	DOREPLIFETIME(ACPP_Tank_Character,GunnerCam);
-	DOREPLIFETIME(ACPP_Tank_Character,SpringArm);
-	DOREPLIFETIME(ACPP_Tank_Character,GunnerSpringArm);
+	DOREPLIFETIME(ACPP_Tank_Character,TankTransform);
+}
+
+void ACPP_Tank_Character::OnRep_UpdateTankTransform(FTransform value)
+{
+	TankTransform = value;
 }
 

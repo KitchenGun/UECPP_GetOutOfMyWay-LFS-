@@ -38,6 +38,7 @@ public:
 	FORCEINLINE TArray<class UParticleSystemComponent*> GetWheelsEffect() {return WheelsEffect;}
 	FORCEINLINE APlayerController* GetPlayerController() {return PC;}
 	FORCEINLINE float GetGunAngleOffset() {return displacementAngle;}
+	FORCEINLINE FTransform GetTankTransform() {return TankTransform;}
 	//Delegate
 	FFire FireFunc;
 	FFPViewEffect FpViewToggleFunc;
@@ -63,13 +64,7 @@ protected:
 	void Multicast_OnHorizontalLook_Implementation(float value);
 	
 	void CamPitchLimitSmooth();
-	UFUNCTION(Server,Reliable)
-	void Server_CamPitchLimitSmooth();
-	void Server_CamPitchLimitSmooth_Implementation();
 	void CamChange();
-	UFUNCTION(Server,Reliable)
-	void Server_CamChange();
-	void Server_CamChange_Implementation();
 	//move
 	void OnMoveForward(float value);
 	UFUNCTION(Server,Reliable)
@@ -128,6 +123,11 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 protected:
+	//mesh rotation
+	UPROPERTY(ReplicatedUsing=OnRep_UpdateTankTransform)
+	FTransform TankTransform = FTransform::Identity;
+	UFUNCTION()
+	void OnRep_UpdateTankTransform(FTransform value);
 	//Camera
 	UPROPERTY(EditDefaultsOnly,Replicated)
 	class UCameraComponent* Camera;

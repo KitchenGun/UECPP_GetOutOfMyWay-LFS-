@@ -64,19 +64,11 @@ public:
 	FTurretMoveEnd TurretMoveEndFunc;
 private:
 	//turret
-	UFUNCTION(Server,Reliable)
-	void Server_SetRotation(FRotator value);
-	void Server_SetRotation_Implementation(FRotator value);
-	UFUNCTION(NetMulticast,Reliable)
-	void NetMulticastSetRotation(FRotator value);
-	void NetMulticastSetRotation_Implementation(FRotator value);
+	UFUNCTION()
+	void OnRep_SightRotation(FRotator value);
 
-	UFUNCTION(Server,Reliable)
-	void Server_SetTurretIsMatch(bool value);
-	void Server_SetTurretIsMatch_Implementation(bool value);
-	UFUNCTION(NetMulticast,Reliable)
-	void NetMulticastSetTurretIsMatch(bool value);
-	void NetMulticastSetTurretIsMatch_Implementation(bool value);
+	UFUNCTION()
+	void OnRep_TurretIsMatch(bool value);
 
 	UFUNCTION(Server,Reliable)
 	void Server_SetTurretAngle(float value);
@@ -84,6 +76,7 @@ private:
 	UFUNCTION(NetMulticast,Reliable)
 	void NetMulticastSetTurretAngle(float value);
 	void NetMulticastSetTurretAngle_Implementation(float value);
+	
 	//engine
 	UFUNCTION(Server,Reliable)
 	void EngineControl();
@@ -96,18 +89,16 @@ private:
 	void UpdateTurretState(float DeltaTime);
 	UFUNCTION()
 	void TurretMove(float DeltaTime);
-	UFUNCTION(Server,Reliable)
+	UFUNCTION()
 	void UpdateGunState(float DeltaTime);
-	void UpdateGunState_Implementation(float DeltaTime);
-	UFUNCTION(Server,Reliable)
+	UFUNCTION()
 	void GunMove(float DeltaTime);
-	void GunMove_Implementation(float DeltaTime);
 private:
-	class APawn* Owner;
+	class APawn* Owner = nullptr;
 	
 	//mesh&ani
-	class USkeletalMeshComponent* TankMesh;
-	class UCPP_TankAnimInstance* TankAnimInst;
+	class USkeletalMeshComponent* TankMesh = nullptr;
+	class UCPP_TankAnimInstance* TankAnimInst = nullptr;
 
 	//movement
 	FVector NextLocation = FVector::ZeroVector;
@@ -143,10 +134,10 @@ private:
 	float MaxRPM = 900;
 
 	//Turret
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing=OnRep_SightRotation)
 	FRotator SightRotator =  FRotator::ZeroRotator;
 	FRotator TurretRotator = FRotator::ZeroRotator; //world로 연산하도록 해야함
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing=OnRep_TurretIsMatch)
 	bool IsTurretAngleMatch = true;
 	bool IsSightRight = false; //차체 기준으로 오른쪽인가 왼쪽인가
 	bool IsTurretRight = false; //차체 기준으로 오른쪽인가 왼쪽인가
