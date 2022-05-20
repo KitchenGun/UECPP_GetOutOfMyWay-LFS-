@@ -22,8 +22,6 @@ public:
 	float CurTurretAngle =0;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gun")
 	float CurGunAngle=0.0f;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gun")
-	float CurGunAngleOffset =0;
 	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category ="Mesh")
 	class USkeletalMeshComponent* TankMeshComp;
 

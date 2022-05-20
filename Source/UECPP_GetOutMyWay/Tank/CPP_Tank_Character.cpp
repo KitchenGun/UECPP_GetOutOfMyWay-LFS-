@@ -139,10 +139,11 @@ void ACPP_Tank_Character::CamPitchLimitSmooth()
 			displacementAngle =0;
 		}
 		pitch = FMath::Clamp(pitch, minAngle, maxAngle);
-	
+
 		FRotator temp = FRotator(pitch, PC->GetControlRotation().Quaternion().Rotator().Yaw, PC->GetControlRotation().Quaternion().Rotator().Roll);
 		PC->SetControlRotation(temp);
 	}
+	
 }
 
 

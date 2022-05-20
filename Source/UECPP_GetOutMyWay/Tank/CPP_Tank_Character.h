@@ -129,13 +129,13 @@ protected:
 	UFUNCTION()
 	void OnRep_UpdateTankTransform(FTransform value);
 	//Camera
-	UPROPERTY(EditDefaultsOnly,Replicated)
+	UPROPERTY(EditDefaultsOnly)
 	class UCameraComponent* Camera;
-	UPROPERTY(EditDefaultsOnly,Replicated)
+	UPROPERTY(EditDefaultsOnly)
 	class UCameraComponent* GunnerCam;
-	UPROPERTY(EditDefaultsOnly,Replicated)
+	UPROPERTY(EditDefaultsOnly)
 	class USpringArmComponent* GunnerSpringArm;
-	UPROPERTY(EditDefaultsOnly,Replicated)
+	UPROPERTY(EditDefaultsOnly)
 	class USpringArmComponent* SpringArm;
 	
 	//Collision
@@ -229,7 +229,6 @@ protected:
 
 	//Damage
 	float MAX_HP = 100;
-	UPROPERTY(Replicated)
 	float HP = MAX_HP;
 	bool IsDead=false;
 };

@@ -43,7 +43,6 @@ public:
 	FORCEINLINE float GetTurretAngle(){return TurretAngle;}
 
 	FORCEINLINE float GetGunAngle() {return GunAngle;}
-	FORCEINLINE float GetGunAngleOffset() { return GunAngleOffSet; }
 	FORCEINLINE bool GetIsMove() {return IsAccelerating||IsTurning;}
 	FORCEINLINE void FixRotatorDirSize()
 	{
@@ -66,16 +65,23 @@ private:
 	//turret
 	UFUNCTION()
 	void OnRep_SightRotation(FRotator value);
-
 	UFUNCTION()
 	void OnRep_TurretIsMatch(bool value);
-
 	UFUNCTION(Server,Reliable)
 	void Server_SetTurretAngle(float value);
 	void Server_SetTurretAngle_Implementation(float value);
 	UFUNCTION(NetMulticast,Reliable)
 	void NetMulticastSetTurretAngle(float value);
 	void NetMulticastSetTurretAngle_Implementation(float value);
+
+	UFUNCTION()
+	void OnRep_GunIsMatch(bool value);
+	UFUNCTION(Server,Reliable)
+	void Server_SetGunAngle(float value);
+	void Server_SetGunAngle_Implementation(float value);
+	UFUNCTION(NetMulticast,Reliable)
+	void NetMulticastSetGunAngle(float value);
+	void NetMulticastSetGunAngle_Implementation(float value);
 	
 	//engine
 	UFUNCTION(Server,Reliable)
@@ -151,12 +157,13 @@ private:
 	float TurretTurnSpeed = 100.0f;
 
 	//Gun
+	UPROPERTY(ReplicatedUsing=OnRep_GunIsMatch)
 	bool IsGunAngleMatch = true;
 	FRotator GunRotator = FRotator::ZeroRotator;
 	bool IsGunUpZero=true;
 	bool IsSightUpZero=true;
+	UPROPERTY(Replicated)
 	float GunAngle=0.0f;
-	float GunAngleOffSet=0.0f;
 	
 	//Gun 객체 별로 수정해야할 데이터 변수
 	float GunMoveSpeed = 50.0f;

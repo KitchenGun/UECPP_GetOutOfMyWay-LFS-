@@ -2,6 +2,7 @@
 #include "Tank/CPP_TankAnimInstance.h"
 #include "GameFramework/Actor.h"
 #include "Animation/AnimInstance.h"
+#include "Engine/AssetManager.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Math/Vector.h"
 #include "Net/UnrealNetwork.h"
@@ -13,10 +14,7 @@ UCPP_TankPawnMovementComponent::UCPP_TankPawnMovementComponent()
 	Owner = Cast<APawn>(GetOwner());
 
 	SetIsReplicated(true);
-	ConstructorHelpers::FObjectFinder<UCurveFloat> Curvefloat(L"CurveFloat'/Game/Data/Tank/Curve/FCurv_EngineTorque.FCurv_EngineTorque'");
-	EngineTorqueCurve = Curvefloat.Object;
-
-
+		
 	if(Owner != nullptr)
 		TankMesh = Cast<USkeletalMeshComponent>(Owner->GetComponentByClass(USkeletalMeshComponent::StaticClass()));
 	if (TankMesh != nullptr)
@@ -28,6 +26,7 @@ UCPP_TankPawnMovementComponent::UCPP_TankPawnMovementComponent()
 void UCPP_TankPawnMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	EngineTorqueCurve =Cast<UCurveFloat>(UAssetManager::GetStreamableManager().LoadSynchronous(FSoftObjectPath(L"CurveFloat'/Game/Data/Tank/Curve/FCurv_EngineTorque.FCurv_EngineTorque'")));
 }
 
 void UCPP_TankPawnMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,
@@ -53,6 +52,8 @@ void UCPP_TankPawnMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetime
 	DOREPLIFETIME(UCPP_TankPawnMovementComponent,SightRotator);
 	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsTurretAngleMatch);
 	DOREPLIFETIME(UCPP_TankPawnMovementComponent,TurretAngle);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsGunAngleMatch);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,GunAngle);
 }
 
 
@@ -225,6 +226,21 @@ void UCPP_TankPawnMovementComponent::Server_SetTurretAngle_Implementation(float 
 void UCPP_TankPawnMovementComponent::NetMulticastSetTurretAngle_Implementation(float value)
 {
 	TurretAngle = value;
+}
+
+void UCPP_TankPawnMovementComponent::OnRep_GunIsMatch(bool value)
+{
+	IsGunAngleMatch = value;
+}
+
+void UCPP_TankPawnMovementComponent::Server_SetGunAngle_Implementation(float value)
+{
+	GunAngle = value;
+}
+
+void UCPP_TankPawnMovementComponent::NetMulticastSetGunAngle_Implementation(float value)
+{
+	GunAngle = value;
 }
 
 void UCPP_TankPawnMovementComponent::EngineControl_Implementation()
@@ -405,26 +421,35 @@ void UCPP_TankPawnMovementComponent::TurretMove(float DeltaTime)
 
 void UCPP_TankPawnMovementComponent::UpdateGunState(float DeltaTime)
 {
-	GunRotator = TankMesh->GetBoneQuaternion(L"gun_jnt").Rotator().Quaternion().Rotator();
-	if(!FMath::IsNearlyEqual(SightRotator.Pitch, GunRotator.Pitch,0.01f))
+	if(Owner->IsLocallyControlled())
 	{
-		//일치 하지 않을 경우
-		IsGunAngleMatch = false;
-		IsSightUpZero = SightRotator.Pitch>=0?true:false;
+		GunRotator = TankMesh->GetBoneQuaternion(L"gun_jnt").Rotator().Quaternion().Rotator();
+		if(!FMath::IsNearlyEqual(SightRotator.Pitch, GunRotator.Pitch,0.01f))
+		{
+			//일치 하지 않을 경우
+			IsGunAngleMatch = false;
+			if(Owner->HasAuthority())
+				OnRep_GunIsMatch(false);
+			IsSightUpZero = SightRotator.Pitch>=0?true:false;
+		}
+		else
+		{
+			IsGunAngleMatch = true;
+			if(Owner->HasAuthority())
+				OnRep_GunIsMatch(true);
+		}
+		GunMove(DeltaTime);
 	}
-	else
-	{
-		IsGunAngleMatch = true;
-	}
-	GunMove(DeltaTime);
 }
 
 void UCPP_TankPawnMovementComponent::GunMove(float DeltaTime)
 {
 	if(IsGunAngleMatch)//매치하면 반환
 		return;
+	SightRotator = SightRotator.GetEquivalentRotator();
 	//시선을 등판각을 합쳐서 tankmesh의 gun rotator에 맞게 변경
 	float targetPitch = SightRotator.Pitch-Cast<ACPP_Tank_Character>(Owner)->GetGunAngleOffset();
+	
 	//gun본의 rotator를 받아와옴
 	float GunRotationPitch = TankMesh->GetBoneQuaternion(L"gun_jnt",EBoneSpaces::ComponentSpace).Rotator().Pitch;
 	if(GunRotationPitch>targetPitch)
@@ -437,6 +462,11 @@ void UCPP_TankPawnMovementComponent::GunMove(float DeltaTime)
 	}
 	//마지막으로 animinst에서 접근하는 변수에 넣어준다.
 	GunAngle = GunRotationPitch;
+
+	if(Owner->HasAuthority())
+		NetMulticastSetGunAngle(GunAngle);
+	else
+		Server_SetGunAngle(GunAngle);
 }
 
 void UCPP_TankPawnMovementComponent::OnEngineBreak_Implementation()
