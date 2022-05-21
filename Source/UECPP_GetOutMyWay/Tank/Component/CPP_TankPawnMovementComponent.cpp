@@ -448,8 +448,7 @@ void UCPP_TankPawnMovementComponent::GunMove(float DeltaTime)
 		return;
 	SightRotator = SightRotator.GetEquivalentRotator();
 	//시선을 등판각을 합쳐서 tankmesh의 gun rotator에 맞게 변경
-	float targetPitch = SightRotator.Pitch-Cast<ACPP_Tank_Character>(Owner)->GetGunAngleOffset();
-	
+	float targetPitch = SightRotator.Quaternion().Rotator().Pitch-Cast<ACPP_Tank_Character>(Owner)->GetGunAngleOffset();
 	//gun본의 rotator를 받아와옴
 	float GunRotationPitch = TankMesh->GetBoneQuaternion(L"gun_jnt",EBoneSpaces::ComponentSpace).Rotator().Pitch;
 	if(GunRotationPitch>targetPitch)
@@ -462,11 +461,10 @@ void UCPP_TankPawnMovementComponent::GunMove(float DeltaTime)
 	}
 	//마지막으로 animinst에서 접근하는 변수에 넣어준다.
 	GunAngle = GunRotationPitch;
-
 	if(Owner->HasAuthority())
-		NetMulticastSetGunAngle(GunAngle);
+		NetMulticastSetGunAngle(GunRotationPitch);
 	else
-		Server_SetGunAngle(GunAngle);
+		Server_SetGunAngle(GunRotationPitch);
 }
 
 void UCPP_TankPawnMovementComponent::OnEngineBreak_Implementation()

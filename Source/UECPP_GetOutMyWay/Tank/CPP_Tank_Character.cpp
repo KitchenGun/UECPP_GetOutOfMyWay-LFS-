@@ -84,10 +84,10 @@ void ACPP_Tank_Character::BeginPlay()
 void ACPP_Tank_Character::OnVerticalLook(float value)
 {
 	AddControllerPitchInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
-	if(!HasAuthority())
-		Server_OnVerticalLook(value);
-	else
-		Multicast_OnVerticalLook(value);
+	//if(!HasAuthority())
+	//	Server_OnVerticalLook(value);
+	//else
+	//	Multicast_OnVerticalLook(value);
 }
 
 void ACPP_Tank_Character::Server_OnVerticalLook_Implementation(float value)
@@ -103,10 +103,10 @@ void ACPP_Tank_Character::Multicast_OnVerticalLook_Implementation(float value)
 void ACPP_Tank_Character::OnHorizontalLook(float value)
 {
 	AddControllerYawInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
-	if(!HasAuthority())
-		Server_OnVerticalLook(value);
-	else
-		Multicast_OnVerticalLook(value);
+	//if(!HasAuthority())
+	//	Server_OnVerticalLook(value);
+	//else
+	//	Multicast_OnVerticalLook(value);
 }
 
 void ACPP_Tank_Character::Server_OnHorizontalLook_Implementation(float value)
