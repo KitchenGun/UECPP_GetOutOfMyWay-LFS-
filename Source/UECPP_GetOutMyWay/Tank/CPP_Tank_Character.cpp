@@ -84,10 +84,6 @@ void ACPP_Tank_Character::BeginPlay()
 void ACPP_Tank_Character::OnVerticalLook(float value)
 {
 	AddControllerPitchInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
-	//if(!HasAuthority())
-	//	Server_OnVerticalLook(value);
-	//else
-	//	Multicast_OnVerticalLook(value);
 }
 
 void ACPP_Tank_Character::Server_OnVerticalLook_Implementation(float value)
@@ -103,10 +99,6 @@ void ACPP_Tank_Character::Multicast_OnVerticalLook_Implementation(float value)
 void ACPP_Tank_Character::OnHorizontalLook(float value)
 {
 	AddControllerYawInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
-	//if(!HasAuthority())
-	//	Server_OnVerticalLook(value);
-	//else
-	//	Multicast_OnVerticalLook(value);
 }
 
 void ACPP_Tank_Character::Server_OnHorizontalLook_Implementation(float value)
@@ -146,7 +138,6 @@ void ACPP_Tank_Character::CamPitchLimitSmooth()
 	
 }
 
-
 void ACPP_Tank_Character::CamChange()
 {
 	static_cast<ECameraType>((uint8)CamType + 1) == ECameraType::MAX
@@ -173,7 +164,6 @@ void ACPP_Tank_Character::CamChange()
 
 void ACPP_Tank_Character::OnMoveForward(float value)
 {
-	
 	if (TankMovement != nullptr)
 	{
 		TankMovement->OnMove(value);
@@ -259,7 +249,30 @@ void ACPP_Tank_Character::ZoomToggle()
 	}
 }
 
-void ACPP_Tank_Character::OnWheelParticle_Implementation()
+void ACPP_Tank_Character::OnWheelParticle()
+{
+	if(HasAuthority())
+	{
+		if(TankMovement->GetIsMove())
+		{
+			ParticleSystem->SetIsMove(true);
+			EngineSoundPlay();
+			IsMoveBefore =true;
+		}
+		else if(IsMoveBefore)
+		{
+			ParticleSystem->SetIsMove(false);
+			EngineSoundStop();
+			IsMoveBefore = false;
+		}
+	}
+	else
+	{
+		Server_OnWheelParticle();	
+	}
+}
+
+void ACPP_Tank_Character::Server_OnWheelParticle_Implementation()
 {
 	if(TankMovement->GetIsMove())
 	{
@@ -285,9 +298,22 @@ void ACPP_Tank_Character::IdleSoundPlay()
 {
 	IdleAudio->SetSound(IdleLoopSound);
 	IdleAudio->Play();
+
+	if(!HasAuthority())
+		Server_IdleSoundPlay();
+
 }
 
-void ACPP_Tank_Character::EngineSoundPlay()
+void ACPP_Tank_Character::Server_IdleSoundPlay_Implementation()
+{
+	IdleAudio->SetSound(IdleLoopSound);
+	IdleAudio->Play();
+	FString temp = HasAuthority()?L"Server : ":L"Client : ";
+	temp.Append(IdleAudio->Sound->GetName());
+	GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::White,temp);
+}
+
+void ACPP_Tank_Character::EngineSoundPlay_Implementation()
 {
 	if(!IsMoveBefore&&TankMovement->GetIsMove())
 	{
@@ -297,7 +323,7 @@ void ACPP_Tank_Character::EngineSoundPlay()
 	}
 }
 
-void ACPP_Tank_Character::EngineSoundStop()
+void ACPP_Tank_Character::EngineSoundStop_Implementation()
 {
 	if(!TankMovement->GetIsMove())
 	{
@@ -316,7 +342,7 @@ void ACPP_Tank_Character::EngineSoundStop()
 	}
 }
 
-void ACPP_Tank_Character::GunSystemSoundPlay()
+void ACPP_Tank_Character::GunSystemSoundPlay_Implementation()
 {
 	GunSystemAudio->AttenuationSettings = MainGunSoundAttenuation;
 	if(CamType==ECameraType::THIRD)
@@ -331,7 +357,7 @@ void ACPP_Tank_Character::GunSystemSoundPlay()
 	}
 }
 
-void ACPP_Tank_Character::GunSystemSoundStop()
+void ACPP_Tank_Character::GunSystemSoundStop_Implementation()
 {
 	if (!GunSystem->GetIsMainGunCanFire())
 	{
@@ -341,20 +367,20 @@ void ACPP_Tank_Character::GunSystemSoundStop()
 	}
 }
 
-void ACPP_Tank_Character::GunSystemSoundReloadDone()
+void ACPP_Tank_Character::GunSystemSoundReloadDone_Implementation()
 {
 	GunSystemAudio->AttenuationSettings = TurretSoundAttenuation;
 	GunSystemAudio->SetSound(MainGunReloadSound);
 	GunSystemAudio->Play();
 }
 
-void ACPP_Tank_Character::TurretMoveLoop()
+void ACPP_Tank_Character::TurretMoveLoop_Implementation()
 {
 	TurretSystemAudio->SetSound(TurretLoopSound);
 	TurretSystemAudio->Play();
 }
 
-void ACPP_Tank_Character::TurretMoveEnd()
+void ACPP_Tank_Character::TurretMoveEnd_Implementation()
 {
 	if (TurretSystemAudio->Sound == TurretLoopSound)
 	{
@@ -430,6 +456,12 @@ void ACPP_Tank_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ACPP_Tank_Character,TankTransform);
+
+	DOREPLIFETIME(ACPP_Tank_Character,IdleAudio);
+	DOREPLIFETIME(ACPP_Tank_Character,EngineAudio);
+	DOREPLIFETIME(ACPP_Tank_Character,GunSystemAudio);
+	DOREPLIFETIME(ACPP_Tank_Character,TurretSystemAudio);
+	DOREPLIFETIME(ACPP_Tank_Character,HitAudio);
 }
 
 void ACPP_Tank_Character::OnRep_UpdateTankTransform(FTransform value)

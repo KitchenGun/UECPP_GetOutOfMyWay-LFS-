@@ -90,25 +90,35 @@ protected:
 	void OnMainGunFire();
 	void ZoomToggle();
 	//particle
-	UFUNCTION(Server,Reliable)
 	void OnWheelParticle();
-	void OnWheelParticle_Implementation();
+	UFUNCTION(Server,Reliable)
+	void Server_OnWheelParticle();
+	void Server_OnWheelParticle_Implementation();
 	UFUNCTION()
 	void OnFireParticle();
 	//Sound
 	UFUNCTION()
 	void IdleSoundPlay();
+	UFUNCTION(Server,Reliable)
+	void Server_IdleSoundPlay();
+	void Server_IdleSoundPlay_Implementation();
+	UFUNCTION(Server,Reliable)
 	void EngineSoundPlay();
-	UFUNCTION()
+	void EngineSoundPlay_Implementation();
+	UFUNCTION(Server,Reliable)
 	void EngineSoundStop();
+	void EngineSoundStop_Implementation();
+	UFUNCTION(Server,Reliable)
 	void GunSystemSoundPlay();
-	UFUNCTION()
+	void GunSystemSoundPlay_Implementation();
+	UFUNCTION(Server,Reliable)
 	virtual void GunSystemSoundStop();
-	UFUNCTION()
+	virtual void GunSystemSoundStop_Implementation();
+	UFUNCTION(Server,Reliable)
 	virtual void GunSystemSoundReloadDone();
-	UFUNCTION()
+	UFUNCTION(Server,Reliable)
 	virtual void TurretMoveLoop();
-	UFUNCTION()
+	UFUNCTION(Server,Reliable)
 	virtual void TurretMoveEnd();
 	//Damage
 	UFUNCTION()
@@ -163,15 +173,15 @@ protected:
 	TArray<class UParticleSystemComponent*> WheelsEffect;
 
 	//sound
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly,Replicated)
 	class UAudioComponent* EngineAudio;
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly,Replicated)
 	class UAudioComponent* IdleAudio;
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly,Replicated)
 	class UAudioComponent* GunSystemAudio;
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly,Replicated)
 	class UAudioComponent* TurretSystemAudio;
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly,Replicated)
 	class UAudioComponent* HitAudio;
 
 	//ActorComp
@@ -200,16 +210,16 @@ protected:
 	FRotator ControllerRotation = FRotator::ZeroRotator;
 
 	//sound
-	class USoundWave* EngineStartSound;
-	class USoundWave* EngineLoopSound;
-	class USoundWave* EngineEndSound;
+	class USoundCue* EngineStartSound;
+	class USoundCue* EngineLoopSound;
+	class USoundCue* EngineEndSound;
 	
-	class USoundWave* IdleStartSound;
-	class USoundWave* IdleLoopSound;
-	class USoundWave* IdleEndSound;
+	class USoundCue* IdleStartSound;
+	class USoundCue* IdleLoopSound;
+	class USoundCue* IdleEndSound;
 
-	class USoundWave* TurretLoopSound;
-	class USoundWave* TurretEndSound;
+	class USoundCue* TurretLoopSound;
+	class USoundCue* TurretEndSound;
 
 	TArray<class USoundCue*> MainGunFireSound;
 	class USoundCue* MainGunReloadSound;

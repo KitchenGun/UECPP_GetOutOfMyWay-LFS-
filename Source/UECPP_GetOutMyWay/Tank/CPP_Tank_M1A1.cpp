@@ -252,23 +252,23 @@ void ACPP_Tank_M1A1::SoundSet()
 	/*∞¥√º √ ±‚»≠*/
 	MainGunFireSound.SetNum(2);
 	//Sound
-	ConstructorHelpers::FObjectFinder<USoundWave> IdleStartCue
-	(L"SoundWave'/Game/Sound/Tank/Engine/M1A2_Start_Idle_Stop_Wave_0_0_0.M1A2_Start_Idle_Stop_Wave_0_0_0'");
+	ConstructorHelpers::FObjectFinder<USoundCue> IdleStartCue
+	(L"SoundCue'/Game/Sound/Tank/Engine/M1A2_Start_Idle_Stop_Wave_0_0_0_Cue.M1A2_Start_Idle_Stop_Wave_0_0_0_Cue'");
 	IdleStartSound=IdleStartCue.Object;
-	ConstructorHelpers::FObjectFinder<USoundWave> IdleLoopCue
-	(L"SoundWave'/Game/Sound/Tank/Engine/M1A2_Start_Idle_Stop_Wave_0_0_1.M1A2_Start_Idle_Stop_Wave_0_0_1'");
+	ConstructorHelpers::FObjectFinder<USoundCue> IdleLoopCue
+	(L"SoundCue'/Game/Sound/Tank/Engine/M1A2_Start_Idle_Stop_Wave_0_0_1_Cue.M1A2_Start_Idle_Stop_Wave_0_0_1_Cue'");
 	IdleLoopSound=IdleLoopCue.Object;
-	ConstructorHelpers::FObjectFinder<USoundWave> IdleEndCue
-	(L"SoundWave'/Game/Sound/Tank/Engine/M1A2_Start_Idle_Stop_Wave_0_0_2.M1A2_Start_Idle_Stop_Wave_0_0_2'");
+	ConstructorHelpers::FObjectFinder<USoundCue> IdleEndCue
+	(L"SoundCue'/Game/Sound/Tank/Engine/M1A2_Start_Idle_Stop_Wave_0_0_2_Cue.M1A2_Start_Idle_Stop_Wave_0_0_2_Cue'");
 	IdleEndSound=IdleEndCue.Object;
-	ConstructorHelpers::FObjectFinder<USoundWave> EngineStartCue
-	(L"SoundWave'/Game/Sound/Tank/Engine/M1A2_SuperTurbine_Wave_0_0_0.M1A2_SuperTurbine_Wave_0_0_0'");
+	ConstructorHelpers::FObjectFinder<USoundCue> EngineStartCue
+	(L"SoundCue'/Game/Sound/Tank/Engine/M1A2_SuperTurbine_Wave_0_0_0_Cue.M1A2_SuperTurbine_Wave_0_0_0_Cue'");
 	EngineStartSound=EngineStartCue.Object;
-	ConstructorHelpers::FObjectFinder<USoundWave> EngineLoopCue
-	(L"SoundWave'/Game/Sound/Tank/Engine/M1A2_SuperTurbine_Wave_0_0_1.M1A2_SuperTurbine_Wave_0_0_1'");
+	ConstructorHelpers::FObjectFinder<USoundCue> EngineLoopCue
+	(L"SoundCue'/Game/Sound/Tank/Engine/M1A2_SuperTurbine_Wave_0_0_1_Cue.M1A2_SuperTurbine_Wave_0_0_1_Cue'");
 	EngineLoopSound=EngineLoopCue.Object;
-	ConstructorHelpers::FObjectFinder<USoundWave> EngineEndCue
-	(L"SoundWave'/Game/Sound/Tank/Engine/M1A2_SuperTurbine_Wave_0_0_2.M1A2_SuperTurbine_Wave_0_0_2'");
+	ConstructorHelpers::FObjectFinder<USoundCue> EngineEndCue
+	(L"SoundCue'/Game/Sound/Tank/Engine/M1A2_SuperTurbine_Wave_0_0_2_Cue.M1A2_SuperTurbine_Wave_0_0_2_Cue'");
 	EngineEndSound=EngineEndCue.Object;
 	
 	
@@ -282,11 +282,11 @@ void ACPP_Tank_M1A1::SoundSet()
 	(L"SoundCue'/Game/Sound/Tank/Reload/ReloadDone.ReloadDone'");
 	MainGunReloadDoneSound=MainGunReloadDoneCue.Object;
 
-	ConstructorHelpers::FObjectFinder<USoundWave> TurretLoop
-	(L"SoundWave'/Game/Sound/Tank/Turret/Turret_Loop_01_Wave_0_0_0.Turret_Loop_01_Wave_0_0_0'");
+	ConstructorHelpers::FObjectFinder<USoundCue> TurretLoop
+	(L"SoundCue'/Game/Sound/Tank/Turret/Turret_Loop_01_Wave_0_0_0_Cue.Turret_Loop_01_Wave_0_0_0_Cue'");
 	TurretLoopSound = TurretLoop.Object;
-	ConstructorHelpers::FObjectFinder<USoundWave> TurretEnd
-	(L"SoundWave'/Game/Sound/Tank/Turret/Turret_Start_Stop_Wave_0_3_0.Turret_Start_Stop_Wave_0_3_0'");
+	ConstructorHelpers::FObjectFinder<USoundCue> TurretEnd
+	(L"SoundCue'/Game/Sound/Tank/Turret/Turret_Start_Stop_Wave_0_3_0_Cue.Turret_Start_Stop_Wave_0_3_0_Cue'");
 	TurretEndSound = TurretEnd.Object;
 
 	ConstructorHelpers::FObjectFinder<USoundCue> Hit
