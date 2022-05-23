@@ -251,25 +251,25 @@ void ACPP_Tank_Character::ZoomToggle()
 
 void ACPP_Tank_Character::OnWheelParticle()
 {
-	if(HasAuthority())
+	if(TankMovement->GetIsMove())
 	{
-		if(TankMovement->GetIsMove())
-		{
-			ParticleSystem->SetIsMove(true);
-			EngineSoundPlay();
-			IsMoveBefore =true;
-		}
-		else if(IsMoveBefore)
-		{
-			ParticleSystem->SetIsMove(false);
-			EngineSoundStop();
-			IsMoveBefore = false;
-		}
+		ParticleSystem->SetIsMove(true);
+		EngineSoundPlay();
+		if(!HasAuthority())
+			Server_EngineSoundPlay();
+		IsMoveBefore =true;
 	}
-	else
+	else if(IsMoveBefore)
 	{
-		Server_OnWheelParticle();	
+		ParticleSystem->SetIsMove(false);
+		EngineSoundStop();
+		if(!HasAuthority())
+			Server_EngineSoundStop();
+		IsMoveBefore = false;
 	}
+
+	if(!HasAuthority())
+		Server_OnWheelParticle();
 }
 
 void ACPP_Tank_Character::Server_OnWheelParticle_Implementation()
@@ -289,6 +289,14 @@ void ACPP_Tank_Character::Server_OnWheelParticle_Implementation()
 }
 
 void ACPP_Tank_Character::OnFireParticle()
+{
+	ParticleSystem->OnFireParticle();
+	GunSystemSoundPlay();
+	if(!HasAuthority())
+		Server_OnFireParticle();
+}
+
+void ACPP_Tank_Character::Server_OnFireParticle_Implementation()
 {
 	ParticleSystem->OnFireParticle();
 	GunSystemSoundPlay();
@@ -313,7 +321,19 @@ void ACPP_Tank_Character::Server_IdleSoundPlay_Implementation()
 	GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::White,temp);
 }
 
-void ACPP_Tank_Character::EngineSoundPlay_Implementation()
+void ACPP_Tank_Character::EngineSoundPlay()
+{
+	if(!IsMoveBefore&&TankMovement->GetIsMove())
+	{
+		EngineAudio->SetSound(EngineStartSound);
+		EngineAudio->Play();
+		IsEngineEnd=false;
+	}
+	if(!HasAuthority())
+		Server_EngineSoundPlay();
+}
+
+void ACPP_Tank_Character:: Server_EngineSoundPlay_Implementation()
 {
 	if(!IsMoveBefore&&TankMovement->GetIsMove())
 	{
@@ -323,7 +343,29 @@ void ACPP_Tank_Character::EngineSoundPlay_Implementation()
 	}
 }
 
-void ACPP_Tank_Character::EngineSoundStop_Implementation()
+void ACPP_Tank_Character::EngineSoundStop()
+{
+	if(!TankMovement->GetIsMove())
+	{
+		EngineAudio->Sound = EngineEndSound;
+		if(!IsEngineEnd)
+		{
+			EngineAudio->Stop();
+			EngineAudio->Play();
+		}
+		IsEngineEnd = true;
+	}
+	else if(IsMoveBefore&&TankMovement->GetIsMove())
+	{
+		EngineAudio->Sound = EngineLoopSound;
+		EngineAudio->Play();
+	}
+
+	if(!HasAuthority())
+		Server_EngineSoundStop();
+}
+
+void ACPP_Tank_Character::Server_EngineSoundStop_Implementation()
 {
 	if(!TankMovement->GetIsMove())
 	{
@@ -342,51 +384,103 @@ void ACPP_Tank_Character::EngineSoundStop_Implementation()
 	}
 }
 
-void ACPP_Tank_Character::GunSystemSoundPlay_Implementation()
+void ACPP_Tank_Character::GunSystemSoundPlay()
 {
-	GunSystemAudio->AttenuationSettings = MainGunSoundAttenuation;
-	if(CamType==ECameraType::THIRD)
+	if(IsLocallyControlled())//자신의 사운드를 들을 경우
+	{
+		GunSystemAudio->AttenuationSettings = MainGunSoundAttenuation;
+		if(CamType==ECameraType::THIRD)
+		{
+			GunSystemAudio->SetSound(MainGunFireSound[0]);
+			GunSystemAudio->Play();
+		}
+		else if(CamType==ECameraType::GUNNER)
+		{
+			GunSystemAudio->SetSound(MainGunFireSound[1]);
+			GunSystemAudio->Play();
+		}
+	}
+	else//다른 탱크에서 사운드를 들을 경우
 	{
 		GunSystemAudio->SetSound(MainGunFireSound[0]);
 		GunSystemAudio->Play();
 	}
-	else if(CamType==ECameraType::GUNNER)
-	{
-		GunSystemAudio->SetSound(MainGunFireSound[1]);
-		GunSystemAudio->Play();
-	}
+
+	if(!HasAuthority())
+		Server_GunSystemSoundPlay();
 }
 
-void ACPP_Tank_Character::GunSystemSoundStop_Implementation()
+void ACPP_Tank_Character::Server_GunSystemSoundPlay_Implementation()
+{
+	GunSystemAudio->SetSound(MainGunFireSound[0]);
+	GunSystemAudio->Play();
+}
+
+void ACPP_Tank_Character::GunSystemSoundStop()
 {
 	if (!GunSystem->GetIsMainGunCanFire())
 	{
 		GunSystemAudio->AttenuationSettings = TurretSoundAttenuation;
 		GunSystemAudio->Sound = MainGunReloadDoneSound;
 		GunSystemAudio->Play();
+		
+		if(HasAuthority())
+			Server_GunSystemSoundStop();
 	}
 }
 
-void ACPP_Tank_Character::GunSystemSoundReloadDone_Implementation()
+void ACPP_Tank_Character::Server_GunSystemSoundStop_Implementation()
+{
+	GunSystemAudio->AttenuationSettings = TurretSoundAttenuation;
+	GunSystemAudio->Sound = MainGunReloadDoneSound;
+	GunSystemAudio->Play();
+}
+
+void ACPP_Tank_Character::GunSystemSoundReloadDone()
+{
+	GunSystemAudio->AttenuationSettings = TurretSoundAttenuation;
+	GunSystemAudio->SetSound(MainGunReloadSound);
+	GunSystemAudio->Play();
+	if(!HasAuthority())
+		Server_GunSystemSoundReloadDone();
+}
+
+void ACPP_Tank_Character::Server_GunSystemSoundReloadDone_Implementation()
 {
 	GunSystemAudio->AttenuationSettings = TurretSoundAttenuation;
 	GunSystemAudio->SetSound(MainGunReloadSound);
 	GunSystemAudio->Play();
 }
 
-void ACPP_Tank_Character::TurretMoveLoop_Implementation()
+void ACPP_Tank_Character::TurretMoveLoop()
+{
+	TurretSystemAudio->SetSound(TurretLoopSound);
+	TurretSystemAudio->Play();
+	if(!HasAuthority())
+		Server_TurretMoveLoop();
+}
+
+void ACPP_Tank_Character::Server_TurretMoveLoop_Implementation()
 {
 	TurretSystemAudio->SetSound(TurretLoopSound);
 	TurretSystemAudio->Play();
 }
 
-void ACPP_Tank_Character::TurretMoveEnd_Implementation()
+void ACPP_Tank_Character::TurretMoveEnd()
 {
 	if (TurretSystemAudio->Sound == TurretLoopSound)
 	{
 		TurretSystemAudio->SetSound(TurretEndSound);
 		TurretSystemAudio->Play();
+		if(!HasAuthority())
+			Server_TurretMoveEnd();
 	}
+}
+
+void ACPP_Tank_Character::Server_TurretMoveEnd_Implementation()
+{
+	TurretSystemAudio->SetSound(TurretEndSound);
+	TurretSystemAudio->Play();
 }
 
 void ACPP_Tank_Character::Dead()
@@ -400,8 +494,9 @@ void ACPP_Tank_Character::Tick(float DeltaTime)
 	//Turret Collider 위치 변환 탱크 포탑에 충돌체 같이 움직이기 위해서
 	Turret->SetWorldLocation(GetMesh()->GetSocketLocation("turret_jntSocket"));
 	Turret->SetWorldRotation(GetMesh()->GetSocketRotation("turret_jntSocket"));
+	
 	if(IsLocallyControlled())
-	{
+	{//차체가 바라보는 방향 획득해서 inverse용 transform 저장
 		TankTransform = GetMesh()->GetComponentTransform();
 		if(HasAuthority())
 			OnRep_UpdateTankTransform(GetMesh()->GetComponentTransform()); 

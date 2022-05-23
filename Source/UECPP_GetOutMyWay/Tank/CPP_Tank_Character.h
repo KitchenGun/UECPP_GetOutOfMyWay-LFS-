@@ -96,30 +96,50 @@ protected:
 	void Server_OnWheelParticle_Implementation();
 	UFUNCTION()
 	void OnFireParticle();
+	UFUNCTION(Server,Reliable)
+	void Server_OnFireParticle();
+	void Server_OnFireParticle_Implementation();
 	//Sound
 	UFUNCTION()
 	void IdleSoundPlay();
 	UFUNCTION(Server,Reliable)
 	void Server_IdleSoundPlay();
 	void Server_IdleSoundPlay_Implementation();
-	UFUNCTION(Server,Reliable)
+	UFUNCTION()
 	void EngineSoundPlay();
-	void EngineSoundPlay_Implementation();
 	UFUNCTION(Server,Reliable)
+	void Server_EngineSoundPlay();
+	void Server_EngineSoundPlay_Implementation();
+	UFUNCTION()
 	void EngineSoundStop();
-	void EngineSoundStop_Implementation();
 	UFUNCTION(Server,Reliable)
+	void Server_EngineSoundStop();
+	void Server_EngineSoundStop_Implementation();
+	UFUNCTION()
 	void GunSystemSoundPlay();
-	void GunSystemSoundPlay_Implementation();
 	UFUNCTION(Server,Reliable)
+	void Server_GunSystemSoundPlay();
+	void Server_GunSystemSoundPlay_Implementation();
+	UFUNCTION()
 	virtual void GunSystemSoundStop();
-	virtual void GunSystemSoundStop_Implementation();
 	UFUNCTION(Server,Reliable)
+	virtual void Server_GunSystemSoundStop();
+	virtual void Server_GunSystemSoundStop_Implementation();
+	UFUNCTION()
 	virtual void GunSystemSoundReloadDone();
 	UFUNCTION(Server,Reliable)
+	virtual void Server_GunSystemSoundReloadDone();
+	virtual void Server_GunSystemSoundReloadDone_Implementation();
+	UFUNCTION()
 	virtual void TurretMoveLoop();
 	UFUNCTION(Server,Reliable)
+	virtual void Server_TurretMoveLoop();
+	virtual void Server_TurretMoveLoop_Implementation();
+	UFUNCTION()
 	virtual void TurretMoveEnd();
+	UFUNCTION(Server,Reliable)
+	virtual void Server_TurretMoveEnd();
+	virtual void Server_TurretMoveEnd_Implementation();
 	//Damage
 	UFUNCTION()
 	virtual void Dead();
