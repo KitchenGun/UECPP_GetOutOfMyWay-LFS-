@@ -22,16 +22,17 @@ public:
 	
 	FORCEINLINE bool GetIsMainGunCanFire() {return IsMainGunCanFire;}
 
-	UFUNCTION(Server,Reliable,WithValidation)
-	virtual void Server_MainGunFire();
-	virtual bool Server_MainGunFire_Validate();
-	virtual void Server_MainGunFire_Implementation();
+	UFUNCTION(Server,Reliable)	
+	virtual void Server_MainGunFire(FVector SpawnPos,FRotator Direction);
+	virtual void Server_MainGunFire_Implementation(FVector SpawnPos,FRotator Direction);
 protected:
 	virtual void BeginPlay() override;
 private:
 	void ReloadDone();
 	
-protected:	
+protected:
+	class ACPP_Tank_Character* Owner;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Shell")
 	TSubclassOf<class ACPP_Projectile> ProjectileClass;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category=Shell)

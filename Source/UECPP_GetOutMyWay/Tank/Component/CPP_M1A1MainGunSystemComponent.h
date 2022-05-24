@@ -15,11 +15,9 @@ public:
 	UCPP_M1A1MainGunSystemComponent();
 	
 	void MainGunFire() override;
-
-	void Server_MainGunFire_Implementation() override;
+	
 protected:
 	virtual void BeginPlay() override;
 private:
-	class ACPP_Tank_Character* Owner;
 	float M1A1ReloadTime =5.0f;
 };

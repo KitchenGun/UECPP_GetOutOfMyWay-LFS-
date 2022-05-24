@@ -12,21 +12,18 @@ UCPP_TankPawnMovementComponent::UCPP_TankPawnMovementComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	Owner = Cast<APawn>(GetOwner());
+}
 
-	SetIsReplicated(true);
-		
+void UCPP_TankPawnMovementComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
 	if(Owner != nullptr)
 		TankMesh = Cast<USkeletalMeshComponent>(Owner->GetComponentByClass(USkeletalMeshComponent::StaticClass()));
 	if (TankMesh != nullptr)
 	{
 		TankAnimInst = Cast<UCPP_TankAnimInstance>(TankMesh->GetAnimInstance());
 	}
-}
-
-void UCPP_TankPawnMovementComponent::BeginPlay()
-{
-	Super::BeginPlay();
-	EngineTorqueCurve =Cast<UCurveFloat>(UAssetManager::GetStreamableManager().LoadSynchronous(FSoftObjectPath(L"CurveFloat'/Game/Data/Tank/Curve/FCurv_EngineTorque.FCurv_EngineTorque'")));
 }
 
 void UCPP_TankPawnMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType,

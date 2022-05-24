@@ -31,6 +31,8 @@ ACPP_Tank_Character::ACPP_Tank_Character()
 
 void ACPP_Tank_Character::GunDirPosWorldToScreen()
 {
+	if(!IsLocallyControlled())
+		return;
 	FVector start = GetMesh()->GetSocketLocation("gun_1_jntSocket");
 	FRotator Dir = GetMesh()->GetSocketRotation("gun_1_jntSocket");
 	FVector end = start+Dir.Vector()*5e+4f;
@@ -113,29 +115,25 @@ void ACPP_Tank_Character::Multicast_OnHorizontalLook_Implementation(float value)
 
 void ACPP_Tank_Character::CamPitchLimitSmooth()
 {
-	if(IsLocallyControlled())
+	float pitch = GetControlRotation().Quaternion().Rotator().Pitch;
+	float minAngle = PitchLimitMin;
+	float maxAngle = PitchLimitMax;
+	//탱크의 pitch를 구해서 등판각을 받음
+	if(!FMath::IsNearlyZero(Turret->GetComponentRotation().Pitch,0.1f))
 	{
-		float pitch = GetControlRotation().Quaternion().Rotator().Pitch;
-		float minAngle = PitchLimitMin;
-		float maxAngle = PitchLimitMax;
-		//탱크의 pitch를 구해서 등판각을 받음
-		if(!FMath::IsNearlyZero(Turret->GetComponentRotation().Pitch,0.1f))
-		{
-			displacementAngle = FRotator(GunnerSpringArm->GetComponentRotation().Quaternion()).Pitch;
+		displacementAngle = FRotator(GunnerSpringArm->GetComponentRotation().Quaternion()).Pitch;
 		
-			minAngle = PitchLimitMin+displacementAngle;
-			maxAngle = PitchLimitMax+displacementAngle;
-		}
-		else
-		{
-			displacementAngle =0;
-		}
-		pitch = FMath::Clamp(pitch, minAngle, maxAngle);
-
-		FRotator temp = FRotator(pitch, PC->GetControlRotation().Quaternion().Rotator().Yaw, PC->GetControlRotation().Quaternion().Rotator().Roll);
-		PC->SetControlRotation(temp);
+		minAngle = PitchLimitMin+displacementAngle;
+		maxAngle = PitchLimitMax+displacementAngle;
 	}
-	
+	else
+	{
+		displacementAngle =0;
+	}
+	pitch = FMath::Clamp(pitch, minAngle, maxAngle);
+
+	FRotator temp = FRotator(pitch, PC->GetControlRotation().Quaternion().Rotator().Yaw, PC->GetControlRotation().Quaternion().Rotator().Roll);
+	PC->SetControlRotation(temp);
 }
 
 void ACPP_Tank_Character::CamChange()

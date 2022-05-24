@@ -48,7 +48,9 @@ public:
 	virtual void SetCanRecycle(bool value) override;
 	//재활용시 호출되는 함수
 	virtual void OnRecycleStart() override;
+	
 	void OnRecycleStart(FVector pos,FRotator dir);
+	
 	virtual void Disable();
 protected:
 	virtual void BeginPlay() override;
@@ -56,18 +58,21 @@ protected:
 	float GetHitAngle(UPrimitiveComponent* OtherComp, const FHitResult& Hit);
 	
 	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
-
+	
 	void AddParticle();
-
+	
 	void SetParticle();
 	
 	FORCEINLINE void HitEffectSet(EHitEffect value)
 	{
 		ProjectileHitEffect = value;
 	}
-
+	
 	UFUNCTION()
 	void FlyTimeOver();
+	
+	
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 protected:
 	//데미지
 	float Damage = 20.0f;
@@ -107,6 +112,7 @@ private:
 	
 	//Objectpool
 	int32 ObjectPoolID = 0;
+	UPROPERTY(Replicated)
 	bool IsCanRecycle = false;
 
 	//자동 비활성화를 위한 타이머

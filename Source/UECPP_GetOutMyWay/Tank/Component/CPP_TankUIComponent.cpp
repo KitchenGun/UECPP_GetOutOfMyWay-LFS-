@@ -10,16 +10,6 @@
 
 UCPP_TankUIComponent::UCPP_TankUIComponent()
 {
-	if(GetOwner()==nullptr)
-		return;
-
-	(Cast<ACPP_Tank_M1A1>(GetOwner()))? Owner = Cast<ACPP_Tank_M1A1>(GetOwner()) : Owner=nullptr;
-		
-		
-	if(GetOwner()->GetName().Equals("CPP_Tank_M1A1"))
-	{
-		TankUIType = ETankType::M1A1;
-	}
 	
 }
 
@@ -46,8 +36,16 @@ void UCPP_TankUIComponent::UpdateGunSightPos(FVector2D value)
 
 void UCPP_TankUIComponent::BeginPlay()
 {
-	if(!Owner->IsLocallyControlled())
+	if(GetOwner()==nullptr)
 		return;
+
+	(Cast<ACPP_Tank_M1A1>(GetOwner()))? Owner = Cast<ACPP_Tank_M1A1>(GetOwner()) : Owner=nullptr;
+		
+	if(GetOwner()->GetName().Equals("CPP_Tank_M1A1"))
+	{
+		TankUIType = ETankType::M1A1;
+	}
+	
 	Super::BeginPlay();
 	if(PlayerCtrl == nullptr)
 		PlayerCtrl =GEngine->GetFirstLocalPlayerController(GetWorld());
@@ -58,15 +56,16 @@ void UCPP_TankUIComponent::BeginPlay()
 		Owner->FZoomToggleFunc.BindUFunction(this,"ZoomToggle");
 		Owner->FSetRangeTextFunc.BindUFunction(this,"SetRangeText");
 	}
-	TankWidget = CreateWidget<UCPP_UserWidgetTank>(PlayerCtrl,TankUIClass);
-	SetSightUI();
-	TankWidget->AddToViewport();
+	if(Owner->IsLocallyControlled())
+	{
+		TankWidget = CreateWidget<UCPP_UserWidgetTank>(PlayerCtrl,TankUIClass);
+		SetSightUI();
+		TankWidget->AddToViewport();
+	}
 }
 
 void UCPP_TankUIComponent::SetSightUI()
 {
-	if(!Owner->IsLocallyControlled())
-		return;
 	TankSightWidget = CreateWidget<UCPP_UserWidgetTankSight>(PlayerCtrl,TankSightUIClass);
 	TankSightWidget->AddToViewport();
 	TankWidget->MainCanvas->AddChild(TankSightWidget);

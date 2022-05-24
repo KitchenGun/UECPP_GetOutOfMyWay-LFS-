@@ -10,11 +10,6 @@
 void UCPP_M1A1MainGunSystemComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	Owner=Cast<ACPP_Tank_Character>(GetOwner());
-	if(IsValid(Owner))
-	{
-		Owner->FireFunc.BindUFunction(this,"MainGunFire");
-	}
 	//탄약 세팅//현재는 0만 사용할거임
 	Ammunition.SetNum(4);//5개 탄종 넣을 공간 확보
 	Ammunition[0] = (int32)20;
@@ -33,15 +28,14 @@ UCPP_M1A1MainGunSystemComponent::UCPP_M1A1MainGunSystemComponent()
 
 void UCPP_M1A1MainGunSystemComponent::MainGunFire()
 {
-	if(!Owner->IsLocallyControlled())
-		return;
-	
-	if(IsMainGunCanFire)
+	if(IsMainGunCanFire&&IsValid(ProjectileClass))
 	{
-		if(ProjectileClass)
+		FVector SpawnPos	= TankMesh->GetSocketLocation("gun_1_jntSocket");
+		FRotator Direction = TankMesh->GetSocketRotation("gun_1_jntSocket");
+
+		if(Owner->HasAuthority())
 		{
-			FVector SpawnPos	= TankMesh->GetSocketLocation("gun_1_jntSocket");
-			FRotator Direction = TankMesh->GetSocketRotation("gun_1_jntSocket");
+			UE_LOG(LogTemp,Display,L"server call");
 			UCPP_ObjectPoolManager* ObjPoolManager = Cast<UCPP_MultiplayGameInstance>(Owner->GetGameInstance())->GetManagerClass<UCPP_ObjectPoolManager>();
 			ACPP_Projectile* temp;
 			//game inst 에 objpool매니져에 접근
@@ -49,8 +43,6 @@ void UCPP_M1A1MainGunSystemComponent::MainGunFire()
 			if(temp!=nullptr)
 			{//초기화할 객체가 존재하는 경우
 				temp->OnRecycleStart(SpawnPos,Direction);
-				if(!GetWorld()->IsServer())
-					Server_MainGunFire();
 			}
 			else
 			{//없으면 새로 생성
@@ -59,22 +51,21 @@ void UCPP_M1A1MainGunSystemComponent::MainGunFire()
 				temp = GetWorld()->SpawnActor<ACPP_Projectile>(ProjectileClass,SpawnPos,Direction,SpawnParameters);
 				//매니져에 새로 생성한 객체 추가
 				ObjPoolManager->RegisterRecyclableObject<ACPP_Projectile>(temp);
-				if(!GetWorld()->IsServer())
-					Server_MainGunFire();
 			}
 			//포탄에 발사한 사람 이름과 컨트롤러를 던짐
 			temp->SetEventInstigator(FString(GetOwner()->GetName()),Owner->GetController());
 			if(FireEffectFunc.IsBound())
 				FireEffectFunc.Execute();
 		}
+		else
+		{
+			UE_LOG(LogTemp,Display,L"client call");
+			Server_MainGunFire(SpawnPos,Direction);
+			if(FireEffectFunc.IsBound())
+				FireEffectFunc.Execute();
+		}
 	}
 	//재장전관련 메소드는 Super	
 	Super::MainGunFire();
-}
-
-void UCPP_M1A1MainGunSystemComponent::Server_MainGunFire_Implementation()
-{
-	Super::Server_MainGunFire_Implementation();
-	MainGunFire();
 }
 

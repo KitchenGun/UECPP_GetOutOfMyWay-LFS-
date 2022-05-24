@@ -7,12 +7,6 @@
 
 void ACPP_ProjectileAP::BounceCal(float hitAngle, EHitDir hitDir)
 {
-	//debug
-	const UEnum* DirEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("EHitDir"), true);
-	FString EnumToString = DirEnum->GetNameStringByValue((int64)ProjectileHitDir);
-	UE_LOG(LogTemp,Display,L"%s",*EnumToString);
-	UE_LOG(LogTemp,Display,L"%s",*HitPos.ToString());
-	UE_LOG(LogTemp,Display,L"%.2f",hitAngle);
 	//AP탄으로 도탄여부 계산  데미지가 1이면 도탄
 	switch (ProjectileHitDir)
 	{

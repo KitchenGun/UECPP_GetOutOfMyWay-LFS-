@@ -8,6 +8,7 @@
 #include "GameInstance/CPP_MultiplayGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Net/UnrealNetwork.h"
 #include "Particle/CPP_ParticleActor.h"
 #include "Particles/ParticleSystemComponent.h"
 
@@ -113,6 +114,7 @@ void ACPP_Projectile::OnRecycleStart(FVector pos, FRotator dir)
 
 void ACPP_Projectile::Disable()
 {
+	
 	//상태 정지
 	Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Shell->SetVisibility(false);
@@ -127,6 +129,7 @@ void ACPP_Projectile::Disable()
 
 void ACPP_Projectile::BeginPlay()
 {
+	SetReplicateMovement(true);
 	Super::BeginPlay();
 	//물리 충돌을 막기위해서 overlap 사용
 	Capsule->OnComponentBeginOverlap.AddDynamic(this,&ACPP_Projectile::OnBeginOverlap);
@@ -163,14 +166,6 @@ float ACPP_Projectile::GetHitAngle(UPrimitiveComponent* OtherComp,const FHitResu
 				if(Cast<UBoxComponent>(OtherComp)&&OtherComp->GetName()==temp.GetComponent()->GetName())
 				{
 					HitPos = temp.ImpactPoint;
-					UE_LOG(LogTemp,Display,L"%s",*OtherComp->GetName());
-					UE_LOG(LogTemp,Display,L"%s",*temp.GetComponent()->GetName());
-					//if(HitPos==FVector::ZeroVector)
-					//	HitPos = temp.ImpactPoint;
-					//else
-					//{
-					//	HitPos = FVector::Distance(HitPos,start)<FVector::Distance(temp.ImpactPoint,start)?HitPos:temp.ImpactPoint;
-					//}
 				}
 			}
 		}
@@ -282,7 +277,6 @@ void ACPP_Projectile::AddParticle()
 void ACPP_Projectile::SetParticle()
 {
 	ParticleActorClass = ConstructorHelpers::FClassFinder<ACPP_ParticleActor>(L"Blueprint'/Game/BP/Effect/BP_ParticleActor.BP_ParticleActor_C'").Class;
-
 	HitArmor = ConstructorHelpers::FObjectFinder<UParticleSystem>(L"ParticleSystem'/Game/Realistic_Starter_VFX_Pack_Vol2/Particles/Explosion/P_Explosion_Side.P_Explosion_Side'").Object;
 	HitRicochet = ConstructorHelpers::FObjectFinder<UParticleSystem>(L"ParticleSystem'/Game/Realistic_Starter_VFX_Pack_Vol2/Particles/Sparks/P_Sparks_C.P_Sparks_C'").Object;
 	HitGround = ConstructorHelpers::FObjectFinder<UParticleSystem>(L"ParticleSystem'/Game/Realistic_Starter_VFX_Pack_Vol2/Particles/Hit/P_Brick.P_Brick'").Object;
@@ -291,4 +285,11 @@ void ACPP_Projectile::SetParticle()
 void ACPP_Projectile::FlyTimeOver()
 {
 	Disable();
+}
+
+
+void ACPP_Projectile::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ACPP_Projectile,IsCanRecycle);
 }

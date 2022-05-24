@@ -132,6 +132,7 @@ private:
 
 	//Engine 객체 별로 수정할 데이터변수
 	float TurnSpeed = 35;//선회 속도
+	UPROPERTY(EditDefaultsOnly)
 	class UCurveFloat* EngineTorqueCurve;
 	int MaxEngineGear = 4;
 	float IdleRPM = 200;
