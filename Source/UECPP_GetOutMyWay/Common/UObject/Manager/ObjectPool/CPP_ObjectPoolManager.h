@@ -16,10 +16,9 @@ private :
 public :
 	// 새로운 오브젝트를 등록합니다. 
 	template<typename T>
-	T* RegisterRecyclableObject(T* newRecyclableObject)
+	void RegisterRecyclableObject(T* newRecyclableObject)
 	{
 		PoolObjects.Add(static_cast<ICPP_Objectpooling*>(newRecyclableObject));
-		return newRecyclableObject;
 	}
 
 	// 재사용된 객체를 얻습니다.

@@ -231,7 +231,7 @@ protected:
 
 	//sound
 	class USoundCue* EngineStartSound;
-	class USoundCue* EngineLoopSound;
+	class USoundWave* EngineLoopSound;
 	class USoundCue* EngineEndSound;
 	
 	class USoundCue* IdleStartSound;
@@ -259,6 +259,7 @@ protected:
 
 	//Damage
 	float MAX_HP = 100;
+	UPROPERTY()
 	float HP = MAX_HP;
 	bool IsDead=false;
 };

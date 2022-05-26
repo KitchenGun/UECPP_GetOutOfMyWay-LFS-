@@ -261,8 +261,8 @@ void ACPP_Tank_M1A1::SoundSet()
 	ConstructorHelpers::FObjectFinder<USoundCue> EngineStartCue
 	(L"SoundCue'/Game/Sound/Tank/Engine/M1A2_SuperTurbine_Wave_0_0_0_Cue.M1A2_SuperTurbine_Wave_0_0_0_Cue'");
 	EngineStartSound=EngineStartCue.Object;
-	ConstructorHelpers::FObjectFinder<USoundCue> EngineLoopCue
-	(L"SoundCue'/Game/Sound/Tank/Engine/M1A2_SuperTurbine_Wave_0_0_1_Cue.M1A2_SuperTurbine_Wave_0_0_1_Cue'");
+	ConstructorHelpers::FObjectFinder<USoundWave> EngineLoopCue
+	(L"SoundWave'/Game/Sound/Tank/Engine/M1A2_SuperTurbine_Wave_0_0_1.M1A2_SuperTurbine_Wave_0_0_1'");
 	EngineLoopSound=EngineLoopCue.Object;
 	ConstructorHelpers::FObjectFinder<USoundCue> EngineEndCue
 	(L"SoundCue'/Game/Sound/Tank/Engine/M1A2_SuperTurbine_Wave_0_0_2_Cue.M1A2_SuperTurbine_Wave_0_0_2_Cue'");

@@ -523,6 +523,10 @@ float ACPP_Tank_Character::TakeDamage(float DamageAmount, FDamageEvent const& Da
 	AActor* DamageCauser)
 {
 	HP-=DamageAmount;
+	
+	FString temp = HasAuthority()?L"Server : ":L"Client : ";
+	temp.Append(FString::FormatAsNumber(HP));
+	GEngine->AddOnScreenDebugMessage(-1,1.0f,FColor::White,temp);
 
 	if(!IsDead&&HP<=0)
 	{
