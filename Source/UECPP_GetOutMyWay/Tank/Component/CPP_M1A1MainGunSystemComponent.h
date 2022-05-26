@@ -15,6 +15,10 @@ public:
 	UCPP_M1A1MainGunSystemComponent();
 	
 	void MainGunFire() override;
+
+	UFUNCTION(Server,Reliable)	
+	virtual void Server_MainGunFire(FVector SpawnPos,FRotator Direction);
+	virtual void Server_MainGunFire_Implementation(FVector SpawnPos,FRotator Direction);
 	
 protected:
 	virtual void BeginPlay() override;

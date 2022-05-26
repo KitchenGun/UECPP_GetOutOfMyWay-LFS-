@@ -21,10 +21,11 @@ public:
 	FReloadDone GunReloadDoneFunc;
 	
 	FORCEINLINE bool GetIsMainGunCanFire() {return IsMainGunCanFire;}
-
-	UFUNCTION(Server,Reliable)	
-	virtual void Server_MainGunFire(FVector SpawnPos,FRotator Direction);
-	virtual void Server_MainGunFire_Implementation(FVector SpawnPos,FRotator Direction);
+	
+	UFUNCTION()
+	void SetIsMainGunCanFire(bool value);
+	
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 protected:
 	virtual void BeginPlay() override;
 private:
@@ -40,6 +41,7 @@ protected:
 	//reload
 	FTimerHandle ReloadTimerHandle;
 	float ReloadTime = 1.0f;
+	UPROPERTY(ReplicatedUsing=SetIsMainGunCanFire)
 	bool IsMainGunCanFire = true;
 	//mesh
 	class USkeletalMeshComponent* TankMesh;
