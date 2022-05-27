@@ -18,6 +18,10 @@ public:
 	void WheelParticle_Implementation();
 	
 	void OnFireParticle();
+	UFUNCTION(NetMulticast,Reliable)
+	void Server_OnFireParticle();
+	void Server_OnFireParticle_Implementation();
+	
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 

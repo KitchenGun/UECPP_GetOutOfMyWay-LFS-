@@ -99,6 +99,7 @@ void ACPP_ProjectileAP::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	{
 		HitEffectSet(EHitEffect::Ground);
 	}
-	//삭제	
+	//삭제
 	Super::OnBeginOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+	
 }

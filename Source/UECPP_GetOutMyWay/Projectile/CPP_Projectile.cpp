@@ -61,6 +61,7 @@ ACPP_Projectile::ACPP_Projectile()
 	ProjectileMovement->InitialSpeed = 1e+4f;
 	ProjectileMovement->MaxSpeed = 1e+4f;
 	ProjectileMovement->ProjectileGravityScale = 0;
+	ProjectileMovement->SetIsReplicated(true);
 	
 }
 
@@ -87,17 +88,16 @@ void ACPP_Projectile::SetCanRecycle(bool value)
 
 void ACPP_Projectile::OnRecycleStart()
 {
+	SetCanRecycle(false);
 	//상태 킴
 	IsOverlap=false;
 	Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	Shell->SetVisibility(true);
 	WarHead->SetVisibility(true);
 	Effect->SetVisibility(true);
-	SetCanRecycle(false);
 	//capsule이 회전되어 있어서 이렇게 변경해서 사용함 -> -Capsule->GetUpVector()
 	ProjectileMovement->Velocity = Capsule->GetUpVector()*ProjectileMovement->InitialSpeed;
 	StartPos = this->GetActorLocation();
-	InitialLifeSpan = 5.0f;
 	ProjectileMovement->SetComponentTickEnabled(true);
 }
 
@@ -108,37 +108,35 @@ void ACPP_Projectile::OnRecycleStart(FVector pos, FRotator dir)
 	Transform.SetRotation(FQuat(dir));
 	SetActorTransform(Transform);
 	OnRecycleStart();
-	PlayerCtrl->GetWorld()->GetTimerManager().SetTimer(FlyHandler,this,&ACPP_Projectile::FlyTimeOver,FlyTime,false);
+	//PlayerCtrl->GetWorld()->GetTimerManager().SetTimer(FlyHandler,this,&ACPP_Projectile::FlyTimeOver,FlyTime,false);
 }
 
 
 void ACPP_Projectile::Disable()
 {
-	
 	//상태 정지
 	Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Shell->SetVisibility(false);
 	WarHead->SetVisibility(false);
 	Effect->SetVisibility(false);
 	ProjectileMovement->SetComponentTickEnabled(false);
-	SetCanRecycle(true);
 	//타이머 초기화
-	if (GetWorldTimerManager().IsTimerActive(FlyHandler))
-		GetWorldTimerManager().ClearTimer(FlyHandler);
+	//if (GetWorldTimerManager().IsTimerActive(FlyHandler))
+	//	GetWorldTimerManager().ClearTimer(FlyHandler);
+
+	SetCanRecycle(true);
 }
 
 void ACPP_Projectile::BeginPlay()
 {
 	SetReplicateMovement(true);
-	Super::BeginPlay();
 	//물리 충돌을 막기위해서 overlap 사용
 	Capsule->OnComponentBeginOverlap.AddDynamic(this,&ACPP_Projectile::OnBeginOverlap);
 	//capsule이 회전되어 있어서 이렇게 변경해서 사용함 -> -Capsule->GetUpVector()
 	StartPos = this->GetActorLocation();
 	ProjectileMovement->Velocity = Capsule->GetUpVector()*ProjectileMovement->InitialSpeed;
-	InitialLifeSpan = 5.0f;
-
-	GetWorldTimerManager().SetTimer(FlyHandler,this,&ACPP_Projectile::FlyTimeOver,FlyTime,false);
+	Super::BeginPlay();
+	//GetWorldTimerManager().SetTimer(FlyHandler,this,&ACPP_Projectile::FlyTimeOver,FlyTime,false);
 }
 
 float ACPP_Projectile::GetHitAngle(UPrimitiveComponent* OtherComp,const FHitResult& Hit)
@@ -227,6 +225,7 @@ void ACPP_Projectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 	//상속 받은 다음 충돌시 결과를 다르게 보내는 것으로 여러 탄종을 구현할려고 함
 	//충돌시 이펙트 생성
 	AddParticle();
+	
 	//비활성화
 	Disable();
 }
@@ -234,11 +233,7 @@ void ACPP_Projectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 void ACPP_Projectile::AddParticle()
 {
 	UCPP_ObjectPoolManager* ObjPoolManager = Cast<UCPP_MultiplayGameInstance>(GetGameInstance())->GetManagerClass<UCPP_ObjectPoolManager>();
-	if(!IsValid(ObjPoolManager))//오브젝트 풀을 가져오지 못하면 삭제
-	{
-		Destroy();
-		return;
-	}
+	
 	UParticleSystem* EffectType;
 
 	//이펙트 설정
@@ -282,10 +277,10 @@ void ACPP_Projectile::SetParticle()
 	HitGround = ConstructorHelpers::FObjectFinder<UParticleSystem>(L"ParticleSystem'/Game/Realistic_Starter_VFX_Pack_Vol2/Particles/Hit/P_Brick.P_Brick'").Object;
 }
 
-void ACPP_Projectile::FlyTimeOver()
-{
-	Disable();
-}
+//void ACPP_Projectile::FlyTimeOver()
+//{
+//	Disable();
+//}
 
 
 void ACPP_Projectile::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

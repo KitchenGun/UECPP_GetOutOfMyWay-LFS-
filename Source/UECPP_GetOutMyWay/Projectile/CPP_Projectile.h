@@ -68,8 +68,8 @@ protected:
 		ProjectileHitEffect = value;
 	}
 	
-	UFUNCTION()
-	void FlyTimeOver();
+	//UFUNCTION()
+	//void FlyTimeOver();
 	
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -116,6 +116,6 @@ private:
 	bool IsCanRecycle = false;
 
 	//자동 비활성화를 위한 타이머
-	FTimerHandle FlyHandler;
+	//FTimerHandle FlyHandler;
 	float FlyTime = 5.0f;
 };

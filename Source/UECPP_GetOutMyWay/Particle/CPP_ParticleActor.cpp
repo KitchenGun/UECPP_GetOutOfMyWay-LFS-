@@ -48,16 +48,18 @@ void ACPP_ParticleActor::SetCanRecycle(bool value)
 
 void ACPP_ParticleActor::OnRecycleStart()
 {
-	IsCanRecycle = false;
 	Particle->SetVisibility(true);
 	Particle->Activate(true);
+	SetCanRecycle(false);
 }
 
 void ACPP_ParticleActor::OnRecycleStart(FVector pos,class UParticleSystem* particle)
 {
+	UE_LOG(LogTemp,Display,L"ps1");
 	this->SetActorLocation(pos);
 	SetParticle(particle);
 	OnRecycleStart();
+	UE_LOG(LogTemp,Display,L"ps2");
 }
 
 

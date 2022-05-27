@@ -29,16 +29,12 @@ UCPP_M1A1MainGunSystemComponent::UCPP_M1A1MainGunSystemComponent()
 
 void UCPP_M1A1MainGunSystemComponent::MainGunFire()
 {
-	FString temps = Owner->HasAuthority()?L"Server : ":L"Client : ";
-	temps.Append(IsMainGunCanFire?L"IsMainGunCanFire true":L"IsMainGunCanFire false");
-	GEngine->AddOnScreenDebugMessage(-1,1.0f,FColor::White,temps);
 
 	if(IsMainGunCanFire&&IsValid(ProjectileClass))
 	{
 		FVector SpawnPos	= TankMesh->GetSocketLocation("gun_1_jntSocket");
 		FRotator Direction = TankMesh->GetSocketRotation("gun_1_jntSocket");
 
-		UE_LOG(LogTemp,Display,L"server call");
 		UCPP_ObjectPoolManager* ObjPoolManager = Cast<UCPP_MultiplayGameInstance>(Owner->GetGameInstance())->GetManagerClass<UCPP_ObjectPoolManager>();
 		ACPP_Projectile* temp;
 		//game inst 에 objpool매니져에 접근
@@ -59,18 +55,16 @@ void UCPP_M1A1MainGunSystemComponent::MainGunFire()
 		temp->SetEventInstigator(FString(GetOwner()->GetName()),Owner->GetController());
 		if(FireEffectFunc.IsBound())
 			FireEffectFunc.Execute();
-		//재장전관련 메소드는 Super	
-		Super::MainGunFire();
 		
 		if(!Owner->HasAuthority())
 			Server_MainGunFire(SpawnPos,Direction);
+		//재장전관련 메소드는 Super	
+		Super::MainGunFire();
 	}
-	
 }
 
 void UCPP_M1A1MainGunSystemComponent::Server_MainGunFire_Implementation(FVector SpawnPos, FRotator Direction)
 {
-	UE_LOG(LogTemp,Display,L"client call");
 	UCPP_ObjectPoolManager* ObjPoolManager = Cast<UCPP_MultiplayGameInstance>(Owner->GetGameInstance())->GetManagerClass<UCPP_ObjectPoolManager>();
 	ACPP_Projectile* temp;
 	//game inst 에 objpool매니져에 접근
@@ -89,9 +83,11 @@ void UCPP_M1A1MainGunSystemComponent::Server_MainGunFire_Implementation(FVector 
 	}
 	//포탄에 발사한 사람 이름과 컨트롤러를 던짐
 	temp->SetEventInstigator(FString(GetOwner()->GetName()),Owner->GetController());
+	
 	if(FireEffectFunc.IsBound())
 		FireEffectFunc.Execute();
-	
+
 	//재장전관련 메소드는 Super	
 	Super::MainGunFire();
+	
 }

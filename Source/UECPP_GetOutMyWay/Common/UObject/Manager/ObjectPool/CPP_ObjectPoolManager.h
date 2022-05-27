@@ -13,6 +13,7 @@ class UECPP_GETOUTMYWAY_API UCPP_ObjectPoolManager : public UCPP_UManagerClass
 private :
 	// 풀링할 오브젝트들을 저장할 배열
 	TArray<ICPP_Objectpooling*> PoolObjects;
+	
 public :
 	// 새로운 오브젝트를 등록합니다. 
 	template<typename T>

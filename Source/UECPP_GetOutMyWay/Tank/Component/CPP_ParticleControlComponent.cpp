@@ -33,6 +33,54 @@ void UCPP_ParticleControlComponent::BeginPlay()
 
 void UCPP_ParticleControlComponent::OnFireParticle()
 {
+	if(OwnerTank->HasAuthority())
+		Server_OnFireParticle();
+	else
+	{
+		//particle 사용
+		MuzzleFlashEffect->Activate(true);
+		ShockWaveEffect->Activate(true);
+		FVector Start = MuzzleFlashEffect->GetComponentLocation();
+		FVector End = MuzzleFlashEffect->GetComponentLocation();
+		TArray<AActor*> ignore;
+		TArray<FHitResult> HitResults;
+		TArray<AActor*> ImpactArray;
+		float blastRange = 1000;
+		float ShockWaveForce=1e+2;
+		//포 발사에 따른 충격파 구현
+		const bool Hit =
+			UKismetSystemLibrary::SphereTraceMulti(GetWorld(),Start,End,blastRange,
+				ETraceTypeQuery::TraceTypeQuery2,false,ignore,EDrawDebugTrace::None,HitResults,true);
+		if(Hit)
+		{
+			int32 index;
+			for(FHitResult temp:HitResults)
+			{
+				AActor* tempActor=Cast<AActor>(temp.Actor);
+				if(IsValid(tempActor))
+				{
+					ImpactArray.Find(tempActor,index);
+					if(index==INDEX_NONE)
+					{
+						ImpactArray.Add(tempActor);
+						UStaticMeshComponent* MeshComponent = Cast<UStaticMeshComponent>(tempActor->GetRootComponent());
+						if(IsValid(MeshComponent)&&MeshComponent->BodyInstance.bSimulatePhysics)
+						{
+							MeshComponent->AddImpulse(FVector(MeshComponent->GetComponentLocation()-(Start-FVector(0,200,0)))*ShockWaveForce);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void UCPP_ParticleControlComponent::Server_OnFireParticle_Implementation()
+{
+	FString temps = OwnerTank->HasAuthority()?L"Server : ":L"Client : ";
+	temps.Append(L"call");
+	GEngine->AddOnScreenDebugMessage(-1,1.0f,FColor::White,temps);
+	
 	//particle 사용
 	MuzzleFlashEffect->Activate(true);
 	ShockWaveEffect->Activate(true);
@@ -68,7 +116,6 @@ void UCPP_ParticleControlComponent::OnFireParticle()
 			}
 		}
 	}
-	
 }
 
 void UCPP_ParticleControlComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
