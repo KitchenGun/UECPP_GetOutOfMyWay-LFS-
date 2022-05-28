@@ -22,6 +22,9 @@ public:
 
 	//ABP에 전달할 변수 설정 함수
 	void SetWheelSpeed(float WheelSpeed);
+	UFUNCTION(NetMulticast,Reliable)
+	void Server_SetWheelSpeed(float WheelSpeed);
+	void Server_SetWheelSpeed_Implementation(float WheelSpeed);
 	//이동
 	UFUNCTION(Server,Reliable)
 	void Movement();
@@ -127,6 +130,7 @@ private:
 	bool IsAccelerating = false;
 	bool IsTurning = false;
 	float CurrentVelocity = 0;
+	UPROPERTY(Replicated)
 	float Speed = 100;
 	bool isBreak = false;
 

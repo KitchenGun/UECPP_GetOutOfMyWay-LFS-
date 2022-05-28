@@ -51,11 +51,13 @@ void UCPP_TankPawnMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetime
 	DOREPLIFETIME(UCPP_TankPawnMovementComponent,TurretAngle);
 	DOREPLIFETIME(UCPP_TankPawnMovementComponent,IsGunAngleMatch);
 	DOREPLIFETIME(UCPP_TankPawnMovementComponent,GunAngle);
+	DOREPLIFETIME(UCPP_TankPawnMovementComponent,Speed);
 }
 
 
 void UCPP_TankPawnMovementComponent::SetWheelSpeed(float WheelSpeed)
 {
+	
 	if(IsAccelerating)
 	{
 		TrackSpeed = WheelSpeed*0.2f;
@@ -64,6 +66,12 @@ void UCPP_TankPawnMovementComponent::SetWheelSpeed(float WheelSpeed)
 	{
 		TrackSpeed = TurnValue*2.0f;
 	}
+	Server_SetWheelSpeed(TrackSpeed);
+}
+
+void UCPP_TankPawnMovementComponent::Server_SetWheelSpeed_Implementation(float WheelSpeed)
+{
+	TrackSpeed = WheelSpeed;
 }
 
 
@@ -159,14 +167,22 @@ void UCPP_TankPawnMovementComponent::OnMove(float value)
 	{//최종 움직임 전달
 		NextLocation += (dir * (VirtualForwardVal - TankClimbingAnglePercentage));
 		InputVal = VirtualForwardVal - TankClimbingAnglePercentage;
-		CurrentVelocity = (NextLocation * Speed * 0.036f).Size();
+		CurrentVelocity = (Speed);
+		/*출력용*/
+		if(Owner->IsLocallyControlled())
+		{
+			UE_LOG(LogTemp, Display, L"%.2f EngineTorque", EngineTorque);
+			UE_LOG(LogTemp, Display, L"%.2f RPM", RPM);
+			UE_LOG(LogTemp, Display, L"%d gear", EngineGear);
+			UE_LOG(LogTemp, Display, L"%.2f Speed", Speed);
+		}
 		//애니메이션에 전달
-		SetWheelSpeed(CurrentVelocity * VirtualForwardVal);
+		SetWheelSpeed(CurrentVelocity * VirtualForwardVal*GetWorld()->DeltaTimeSeconds);
 	}
 	else
 	{
 		//애니메이션에 전달
-		SetWheelSpeed(10 * value * VirtualForwardVal);
+		SetWheelSpeed(10 * value * VirtualForwardVal*GetWorld()->DeltaTimeSeconds);
 	}
 }
 
@@ -284,11 +300,6 @@ void UCPP_TankPawnMovementComponent::EngineControl_Implementation()
 	EngineTorque = EngineTorqueCurve->GetFloatValue(RPM);
 	//단위 m/s
 	Speed = (RPM * EngineTorque) / ((10 - EngineGear) * 100);
-	/*출력용*/
-	//UE_LOG(LogTemp, Display, L"%.2f MaxWalkSpeed", GetCharacterMovement()->MaxWalkSpeed);//max 1250//max 75
-	//UE_LOG(LogTemp, Display, L"%.2f EngineTorque", EngineTorque);
-	//UE_LOG(LogTemp, Display, L"%.2f RPM", RPM);
-	//UE_LOG(LogTemp, Display, L"%d gear", EngineGear);
 }
 
 void UCPP_TankPawnMovementComponent::RPMControl_Implementation()

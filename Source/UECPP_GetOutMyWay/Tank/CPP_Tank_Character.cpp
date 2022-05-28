@@ -88,27 +88,7 @@ void ACPP_Tank_Character::OnVerticalLook(float value)
 	AddControllerPitchInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
 }
 
-void ACPP_Tank_Character::Server_OnVerticalLook_Implementation(float value)
-{
-	AddControllerPitchInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
-}
-
-void ACPP_Tank_Character::Multicast_OnVerticalLook_Implementation(float value)
-{
-	AddControllerPitchInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
-}
-
 void ACPP_Tank_Character::OnHorizontalLook(float value)
-{
-	AddControllerYawInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
-}
-
-void ACPP_Tank_Character::Server_OnHorizontalLook_Implementation(float value)
-{
-	AddControllerYawInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
-}
-
-void ACPP_Tank_Character::Multicast_OnHorizontalLook_Implementation(float value)
 {
 	AddControllerYawInput(value * BasicCamTurnSpeed * GetWorld()->DeltaTimeSeconds);
 }
