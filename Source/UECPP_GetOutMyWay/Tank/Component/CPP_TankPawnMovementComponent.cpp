@@ -167,7 +167,7 @@ void UCPP_TankPawnMovementComponent::OnMove(float value)
 	{//최종 움직임 전달
 		NextLocation += (dir * (VirtualForwardVal - TankClimbingAnglePercentage));
 		InputVal = VirtualForwardVal - TankClimbingAnglePercentage;
-		CurrentVelocity = (Speed);
+		CurrentVelocity = (Speed*3.14f);
 		/*출력용*/
 		if(Owner->IsLocallyControlled())
 		{
