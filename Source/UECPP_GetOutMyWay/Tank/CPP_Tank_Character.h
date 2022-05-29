@@ -48,14 +48,8 @@ public:
 protected:
 	//sight
 	void OnVerticalLook(float value);
-	//UFUNCTION(Server,Reliable)
-	//void Server_OnVerticalLook(float value);
-	//void Server_OnVerticalLook_Implementation(float value);
 	
 	void OnHorizontalLook(float value);
-	//UFUNCTION(Server,Reliable)
-	//void Server_OnHorizontalLook(float value);
-	//void Server_OnHorizontalLook_Implementation(float value);
 	
 	void CamPitchLimitSmooth();
 	void CamChange();
@@ -134,6 +128,9 @@ protected:
 	UFUNCTION(Server,Reliable)
 	virtual void Server_TurretMoveEnd();
 	virtual void Server_TurretMoveEnd_Implementation();
+
+	UFUNCTION()
+	void OnRep_SetHP(float value);
 	//Damage
 	UFUNCTION()
 	virtual void Dead();
@@ -253,7 +250,7 @@ protected:
 
 	//Damage
 	float MAX_HP = 100;
-	UPROPERTY()
+	UPROPERTY(ReplicatedUsing = OnRep_SetHP)
 	float HP = MAX_HP;
 	bool IsDead=false;
 };

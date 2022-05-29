@@ -461,6 +461,12 @@ void ACPP_Tank_Character::Server_TurretMoveEnd_Implementation()
 	TurretSystemAudio->Play();
 }
 
+void ACPP_Tank_Character::OnRep_SetHP(float value)
+{
+	UE_LOG(LogTemp,Display,L"%.2f",value);
+	HP = value;
+}
+
 void ACPP_Tank_Character::Dead()
 {
 	IsDead =true;
@@ -525,7 +531,6 @@ float ACPP_Tank_Character::TakeDamage(float DamageAmount, FDamageEvent const& Da
 			HitAudio->Play();
 		}
 	}
-	UE_LOG(LogTemp,Display,L"%.2f",HP);
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
@@ -539,6 +544,7 @@ void ACPP_Tank_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(ACPP_Tank_Character,GunSystemAudio);
 	DOREPLIFETIME(ACPP_Tank_Character,TurretSystemAudio);
 	DOREPLIFETIME(ACPP_Tank_Character,HitAudio);
+	DOREPLIFETIME(ACPP_Tank_Character,HP);
 }
 
 void ACPP_Tank_Character::OnRep_UpdateTankTransform(FTransform value)
