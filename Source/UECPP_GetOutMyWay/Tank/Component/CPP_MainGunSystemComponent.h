@@ -22,8 +22,9 @@ public:
 	
 	FORCEINLINE bool GetIsMainGunCanFire() {return IsMainGunCanFire;}
 	
-	UFUNCTION()
+	UFUNCTION(NetMulticast,Reliable)
 	void SetIsMainGunCanFire(bool value);
+	void SetIsMainGunCanFire_Implementation(bool value);
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 protected:
@@ -41,7 +42,7 @@ protected:
 	//reload
 	FTimerHandle ReloadTimerHandle;
 	float ReloadTime = 1.0f;
-	UPROPERTY(ReplicatedUsing=SetIsMainGunCanFire)
+	UPROPERTY(Replicated)
 	bool IsMainGunCanFire = true;
 	//mesh
 	class USkeletalMeshComponent* TankMesh;

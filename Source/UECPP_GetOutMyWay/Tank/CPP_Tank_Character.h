@@ -129,8 +129,9 @@ protected:
 	virtual void Server_TurretMoveEnd();
 	virtual void Server_TurretMoveEnd_Implementation();
 
-	UFUNCTION()
-	void OnRep_SetHP(float value);
+	UFUNCTION(NetMulticast,Reliable)
+	void MultiCast_SetHP(float value);
+	void MultiCast_SetHP_Implementation(float value);
 	//Damage
 	UFUNCTION()
 	virtual void Dead();
@@ -250,7 +251,7 @@ protected:
 
 	//Damage
 	float MAX_HP = 100;
-	UPROPERTY(ReplicatedUsing = OnRep_SetHP)
+	UPROPERTY(Replicated)
 	float HP = MAX_HP;
 	bool IsDead=false;
 };

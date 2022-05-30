@@ -461,9 +461,8 @@ void ACPP_Tank_Character::Server_TurretMoveEnd_Implementation()
 	TurretSystemAudio->Play();
 }
 
-void ACPP_Tank_Character::OnRep_SetHP(float value)
+void ACPP_Tank_Character::MultiCast_SetHP_Implementation(float value)
 {
-	UE_LOG(LogTemp,Display,L"%.2f",value);
 	HP = value;
 }
 
@@ -509,11 +508,8 @@ float ACPP_Tank_Character::TakeDamage(float DamageAmount, FDamageEvent const& Da
 	AActor* DamageCauser)
 {
 	HP-=DamageAmount;
+	MultiCast_SetHP(HP);
 	
-	FString temp = HasAuthority()?L"Server : ":L"Client : ";
-	temp.Append(FString::FormatAsNumber(HP));
-	GEngine->AddOnScreenDebugMessage(-1,1.0f,FColor::White,temp);
-
 	if(!IsDead&&HP<=0)
 	{
 		Dead();

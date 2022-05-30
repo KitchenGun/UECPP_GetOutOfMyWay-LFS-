@@ -47,7 +47,11 @@ public:
 	virtual bool GetCanRecycle(int32 id) const override;
 	virtual void SetCanRecycle(bool value) override;
 	//재활용시 호출되는 함수
+	UFUNCTION()
 	virtual void OnRecycleStart() override;
+	UFUNCTION(Server,Reliable)
+	void Server_OnRecycleStart();
+	void Server_OnRecycleStart_Implementation();
 	
 	void OnRecycleStart(FVector pos,FRotator dir);
 	
@@ -67,10 +71,6 @@ protected:
 	{
 		ProjectileHitEffect = value;
 	}
-	
-	//UFUNCTION()
-	//void FlyTimeOver();
-	
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 protected:

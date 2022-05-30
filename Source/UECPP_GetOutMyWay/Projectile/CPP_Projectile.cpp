@@ -58,8 +58,8 @@ ACPP_Projectile::ACPP_Projectile()
 	ConstructorHelpers::FObjectFinder<UStaticMesh> effectMesh(L"StaticMesh'/Game/VigilanteContent/Shared/Particles/StaticMeshes/SM_RocketBooster_03_SM.SM_RocketBooster_03_SM'");
 	Effect->SetStaticMesh(effectMesh.Object);
 	Effect->BodyInstance.SetCollisionProfileName("NoCollision");
-	ProjectileMovement->InitialSpeed = 1e+4f;
-	ProjectileMovement->MaxSpeed = 1e+4f;
+	ProjectileMovement->InitialSpeed = 1e+1f;//1e+4f;
+	ProjectileMovement->MaxSpeed =1e+1f; //1e+4f;
 	ProjectileMovement->ProjectileGravityScale = 0;
 	ProjectileMovement->SetIsReplicated(true);
 	
@@ -88,6 +88,38 @@ void ACPP_Projectile::SetCanRecycle(bool value)
 
 void ACPP_Projectile::OnRecycleStart()
 {
+	if(HasAuthority())
+	{
+		SetCanRecycle(false);
+		//상태 킴
+		IsOverlap=false;
+		Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		Shell->SetVisibility(true);
+		WarHead->SetVisibility(true);
+		Effect->SetVisibility(true);
+		//capsule이 회전되어 있어서 이렇게 변경해서 사용함 -> -Capsule->GetUpVector()
+		ProjectileMovement->Velocity = Capsule->GetUpVector()*ProjectileMovement->InitialSpeed;
+		StartPos = this->GetActorLocation();
+		ProjectileMovement->SetComponentTickEnabled(true);
+	}
+	else
+	{
+		Server_OnRecycleStart();
+	}
+}
+
+void ACPP_Projectile::OnRecycleStart(FVector pos, FRotator dir)
+{	
+	FTransform Transform;
+	Transform.SetLocation(pos);
+	Transform.SetRotation(FQuat(dir));
+	SetActorTransform(Transform);
+	OnRecycleStart();
+}
+
+
+void ACPP_Projectile::Server_OnRecycleStart_Implementation()
+{
 	SetCanRecycle(false);
 	//상태 킴
 	IsOverlap=false;
@@ -100,17 +132,6 @@ void ACPP_Projectile::OnRecycleStart()
 	StartPos = this->GetActorLocation();
 	ProjectileMovement->SetComponentTickEnabled(true);
 }
-
-void ACPP_Projectile::OnRecycleStart(FVector pos, FRotator dir)
-{
-	FTransform Transform;
-	Transform.SetLocation(pos);
-	Transform.SetRotation(FQuat(dir));
-	SetActorTransform(Transform);
-	OnRecycleStart();
-	//PlayerCtrl->GetWorld()->GetTimerManager().SetTimer(FlyHandler,this,&ACPP_Projectile::FlyTimeOver,FlyTime,false);
-}
-
 
 void ACPP_Projectile::Disable()
 {
@@ -136,7 +157,6 @@ void ACPP_Projectile::BeginPlay()
 	StartPos = this->GetActorLocation();
 	ProjectileMovement->Velocity = Capsule->GetUpVector()*ProjectileMovement->InitialSpeed;
 	Super::BeginPlay();
-	//GetWorldTimerManager().SetTimer(FlyHandler,this,&ACPP_Projectile::FlyTimeOver,FlyTime,false);
 }
 
 float ACPP_Projectile::GetHitAngle(UPrimitiveComponent* OtherComp,const FHitResult& Hit)
@@ -276,11 +296,6 @@ void ACPP_Projectile::SetParticle()
 	HitRicochet = ConstructorHelpers::FObjectFinder<UParticleSystem>(L"ParticleSystem'/Game/Realistic_Starter_VFX_Pack_Vol2/Particles/Sparks/P_Sparks_C.P_Sparks_C'").Object;
 	HitGround = ConstructorHelpers::FObjectFinder<UParticleSystem>(L"ParticleSystem'/Game/Realistic_Starter_VFX_Pack_Vol2/Particles/Hit/P_Brick.P_Brick'").Object;
 }
-
-//void ACPP_Projectile::FlyTimeOver()
-//{
-//	Disable();
-//}
 
 
 void ACPP_Projectile::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

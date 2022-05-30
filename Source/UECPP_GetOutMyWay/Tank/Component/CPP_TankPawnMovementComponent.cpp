@@ -169,13 +169,13 @@ void UCPP_TankPawnMovementComponent::OnMove(float value)
 		InputVal = VirtualForwardVal - TankClimbingAnglePercentage;
 		CurrentVelocity = (Speed*3.14f);
 		/*출력용*/
-		if(Owner->IsLocallyControlled())
-		{
-			UE_LOG(LogTemp, Display, L"%.2f EngineTorque", EngineTorque);
-			UE_LOG(LogTemp, Display, L"%.2f RPM", RPM);
-			UE_LOG(LogTemp, Display, L"%d gear", EngineGear);
-			UE_LOG(LogTemp, Display, L"%.2f Speed", Speed);
-		}
+		//if(Owner->IsLocallyControlled())
+		//{
+		//	UE_LOG(LogTemp, Display, L"%.2f EngineTorque", EngineTorque);
+		//	UE_LOG(LogTemp, Display, L"%.2f RPM", RPM);
+		//	UE_LOG(LogTemp, Display, L"%d gear", EngineGear);
+		//	UE_LOG(LogTemp, Display, L"%.2f Speed", Speed);
+		//}
 		//애니메이션에 전달
 		SetWheelSpeed(CurrentVelocity * VirtualForwardVal*GetWorld()->DeltaTimeSeconds);
 	}

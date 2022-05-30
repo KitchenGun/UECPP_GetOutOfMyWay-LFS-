@@ -16,7 +16,7 @@ UCPP_MainGunSystemComponent::UCPP_MainGunSystemComponent()
 	}
 }
 
-void UCPP_MainGunSystemComponent::SetIsMainGunCanFire(bool value)
+void UCPP_MainGunSystemComponent::SetIsMainGunCanFire_Implementation(bool value)
 {
 	IsMainGunCanFire = value;
 }
@@ -40,8 +40,8 @@ void UCPP_MainGunSystemComponent::ReloadDone()
 {
 	GetOwner()->GetWorldTimerManager().ClearTimer(ReloadTimerHandle);
 	IsMainGunCanFire = true;
-	if(Owner->HasAuthority())
-		SetIsMainGunCanFire(true);
+	SetIsMainGunCanFire(true);
+	
 	if(GunReloadDoneFunc.IsBound())
 		GunReloadDoneFunc.Execute();
 }
@@ -51,8 +51,7 @@ void UCPP_MainGunSystemComponent::MainGunFire()
 	if(IsMainGunCanFire)
 	{
 		IsMainGunCanFire = false;
-		if(Owner->HasAuthority())
-			SetIsMainGunCanFire(false);
+		SetIsMainGunCanFire(false);
 		GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle,this,&UCPP_MainGunSystemComponent::ReloadDone,ReloadTime,false);
 	}
 }

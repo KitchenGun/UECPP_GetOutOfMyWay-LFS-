@@ -13,15 +13,16 @@ class UECPP_GETOUTMYWAY_API UCPP_M1A1MainGunSystemComponent : public UCPP_MainGu
 	
 public:
 	UCPP_M1A1MainGunSystemComponent();
-	
-	void MainGunFire() override;
 
-	UFUNCTION(Server,Reliable)	
-	virtual void Server_MainGunFire(FVector SpawnPos,FRotator Direction);
-	virtual void Server_MainGunFire_Implementation(FVector SpawnPos,FRotator Direction);
-	
+	virtual void MainGunFire() override;
+	UFUNCTION(Server,Reliable)
+	virtual void Server_Fire(FVector SpawnPos,FRotator Direction);
+	virtual void Server_Fire_Implementation(FVector SpawnPos,FRotator Direction);
 protected:
 	virtual void BeginPlay() override;
 private:
 	float M1A1ReloadTime =5.0f;
+
+	class UCPP_ObjectPoolManager* ObjPoolManager;
+	class ACPP_Projectile* tempProjectile;
 };

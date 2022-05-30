@@ -1,11 +1,11 @@
 
 #include "Tank/Component/CPP_M1A1MainGunSystemComponent.h"
-
+#include "Projectile/CPP_Projectile.h"
 #include "Camera/CameraComponent.h"
 #include "Common/UObject/Manager/ObjectPool/CPP_ObjectPoolManager.h"
 #include "GameInstance/CPP_MultiplayGameInstance.h"
-#include "Projectile/CPP_Projectile.h"
 #include "Tank/CPP_Tank_Character.h"
+
 
 
 void UCPP_M1A1MainGunSystemComponent::BeginPlay()
@@ -17,6 +17,7 @@ void UCPP_M1A1MainGunSystemComponent::BeginPlay()
 	Ammunition[1] = (int32)10;
 	Ammunition[2] = (int32)10;
 	
+	ObjPoolManager = Cast<UCPP_MultiplayGameInstance>(Owner->GetGameInstance())->GetManagerClass<UCPP_ObjectPoolManager>();
 }
 
 UCPP_M1A1MainGunSystemComponent::UCPP_M1A1MainGunSystemComponent()
@@ -29,65 +30,56 @@ UCPP_M1A1MainGunSystemComponent::UCPP_M1A1MainGunSystemComponent()
 
 void UCPP_M1A1MainGunSystemComponent::MainGunFire()
 {
-
+	
 	if(IsMainGunCanFire&&IsValid(ProjectileClass))
 	{
 		FVector SpawnPos	= TankMesh->GetSocketLocation("gun_1_jntSocket");
 		FRotator Direction = TankMesh->GetSocketRotation("gun_1_jntSocket");
-
-		UCPP_ObjectPoolManager* ObjPoolManager = Cast<UCPP_MultiplayGameInstance>(Owner->GetGameInstance())->GetManagerClass<UCPP_ObjectPoolManager>();
-		ACPP_Projectile* temp;
-		//game inst 에 objpool매니져에 접근
-		temp=Cast<ACPP_Projectile>(ObjPoolManager->GetRecycledObject(0));
-		if(temp!=nullptr)
-		{//초기화할 객체가 존재하는 경우
-			temp->OnRecycleStart(SpawnPos,Direction);
+		tempProjectile = nullptr;
+		if(Owner->HasAuthority())
+		{
+			//game inst 에 objpool매니져에 접근
+			tempProjectile=Cast<class ACPP_Projectile>(ObjPoolManager->GetRecycledObject(0));
+			if(tempProjectile!=nullptr)
+			{//초기화할 객체가 존재하는 경우
+				tempProjectile->OnRecycleStart(SpawnPos,Direction);
+			}
+			else
+			{//없으면 새로 생성
+				FActorSpawnParameters SpawnParameters;
+				SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+				tempProjectile = GetWorld()->SpawnActor<ACPP_Projectile>(ProjectileClass,SpawnPos,Direction,SpawnParameters);
+				//매니져에 새로 생성한 객체 추가
+				ObjPoolManager->RegisterRecyclableObject<ACPP_Projectile>(tempProjectile);
+			}
 		}
 		else
-		{//없으면 새로 생성
-			FActorSpawnParameters SpawnParameters;
-			SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-			temp = GetWorld()->SpawnActor<ACPP_Projectile>(ProjectileClass,SpawnPos,Direction,SpawnParameters);
-			//매니져에 새로 생성한 객체 추가
-			ObjPoolManager->RegisterRecyclableObject<ACPP_Projectile>(temp);
+		{
+			Server_Fire(SpawnPos,Direction);
 		}
 		//포탄에 발사한 사람 이름과 컨트롤러를 던짐
-		temp->SetEventInstigator(FString(GetOwner()->GetName()),Owner->GetController());
+	
+		
 		if(FireEffectFunc.IsBound())
 			FireEffectFunc.Execute();
-		
-		if(!Owner->HasAuthority())
-			Server_MainGunFire(SpawnPos,Direction);
 		//재장전관련 메소드는 Super	
 		Super::MainGunFire();
 	}
-}
 
-void UCPP_M1A1MainGunSystemComponent::Server_MainGunFire_Implementation(FVector SpawnPos, FRotator Direction)
+}
+void UCPP_M1A1MainGunSystemComponent::Server_Fire_Implementation(FVector SpawnPos, FRotator Direction)
 {
-	UCPP_ObjectPoolManager* ObjPoolManager = Cast<UCPP_MultiplayGameInstance>(Owner->GetGameInstance())->GetManagerClass<UCPP_ObjectPoolManager>();
-	ACPP_Projectile* temp;
-	//game inst 에 objpool매니져에 접근
-	temp=Cast<ACPP_Projectile>(ObjPoolManager->GetRecycledObject(0));
-	if(temp!=nullptr)
+	tempProjectile=Cast<ACPP_Projectile>(ObjPoolManager->GetRecycledObject(0));
+	if(tempProjectile!=nullptr)
 	{//초기화할 객체가 존재하는 경우
-		temp->OnRecycleStart(SpawnPos,Direction);
+		tempProjectile->OnRecycleStart(SpawnPos,Direction);
 	}
 	else
 	{//없으면 새로 생성
 		FActorSpawnParameters SpawnParameters;
 		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-		temp = GetWorld()->SpawnActor<ACPP_Projectile>(ProjectileClass,SpawnPos,Direction,SpawnParameters);
+		tempProjectile = GetWorld()->SpawnActor<ACPP_Projectile>(ProjectileClass,SpawnPos,Direction,SpawnParameters);
 		//매니져에 새로 생성한 객체 추가
-		ObjPoolManager->RegisterRecyclableObject<ACPP_Projectile>(temp);
+		ObjPoolManager->RegisterRecyclableObject<ACPP_Projectile>(tempProjectile);
 	}
-	//포탄에 발사한 사람 이름과 컨트롤러를 던짐
-	temp->SetEventInstigator(FString(GetOwner()->GetName()),Owner->GetController());
-	
-	if(FireEffectFunc.IsBound())
-		FireEffectFunc.Execute();
-
-	//재장전관련 메소드는 Super	
-	Super::MainGunFire();
-	
 }
