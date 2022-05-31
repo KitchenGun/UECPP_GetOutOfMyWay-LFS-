@@ -88,38 +88,44 @@ void ACPP_Projectile::SetCanRecycle(bool value)
 
 void ACPP_Projectile::OnRecycleStart()
 {
-	if(HasAuthority())
-	{
-		SetCanRecycle(false);
-		//상태 킴
-		IsOverlap=false;
-		Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		Shell->SetVisibility(true);
-		WarHead->SetVisibility(true);
-		Effect->SetVisibility(true);
-		//capsule이 회전되어 있어서 이렇게 변경해서 사용함 -> -Capsule->GetUpVector()
-		ProjectileMovement->Velocity = Capsule->GetUpVector()*ProjectileMovement->InitialSpeed;
-		StartPos = this->GetActorLocation();
-		ProjectileMovement->SetComponentTickEnabled(true);
-	}
-	else
-	{
-		Server_OnRecycleStart();
-	}
+	
 }
 
 void ACPP_Projectile::OnRecycleStart(FVector pos, FRotator dir)
-{	
+{
+	
 	FTransform Transform;
 	Transform.SetLocation(pos);
 	Transform.SetRotation(FQuat(dir));
 	SetActorTransform(Transform);
-	OnRecycleStart();
+	
+	SetCanRecycle(false);
+	//상태 킴
+	IsOverlap=false;
+	Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	Shell->SetVisibility(true);
+	WarHead->SetVisibility(true);
+	Effect->SetVisibility(true);
+	//capsule이 회전되어 있어서 이렇게 변경해서 사용함 -> -Capsule->GetUpVector()
+	ProjectileMovement->Velocity = Capsule->GetUpVector()*ProjectileMovement->InitialSpeed;
+	StartPos = this->GetActorLocation();
+	ProjectileMovement->SetComponentTickEnabled(true);
+	
+	if(!HasAuthority())
+		Server_OnRecycleStart(pos,dir);
+	
+	GetWorldTimerManager().SetTimer(FlyHandler,this,&ACPP_Projectile::FlyTimeOver,FlyTime,false);
 }
 
 
-void ACPP_Projectile::Server_OnRecycleStart_Implementation()
+void ACPP_Projectile::Server_OnRecycleStart_Implementation(FVector pos,FRotator dir)
 {
+	GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::White,L"calllllll");
+	FTransform Transform;
+	Transform.SetLocation(pos);
+	Transform.SetRotation(FQuat(dir));
+	SetActorTransform(Transform);
+	
 	SetCanRecycle(false);
 	//상태 킴
 	IsOverlap=false;
@@ -142,8 +148,8 @@ void ACPP_Projectile::Disable()
 	Effect->SetVisibility(false);
 	ProjectileMovement->SetComponentTickEnabled(false);
 	//타이머 초기화
-	//if (GetWorldTimerManager().IsTimerActive(FlyHandler))
-	//	GetWorldTimerManager().ClearTimer(FlyHandler);
+	if (GetWorldTimerManager().IsTimerActive(FlyHandler))
+		GetWorldTimerManager().ClearTimer(FlyHandler);
 
 	SetCanRecycle(true);
 }
@@ -156,6 +162,7 @@ void ACPP_Projectile::BeginPlay()
 	//capsule이 회전되어 있어서 이렇게 변경해서 사용함 -> -Capsule->GetUpVector()
 	StartPos = this->GetActorLocation();
 	ProjectileMovement->Velocity = Capsule->GetUpVector()*ProjectileMovement->InitialSpeed;
+	GetWorldTimerManager().SetTimer(FlyHandler,this,&ACPP_Projectile::FlyTimeOver,FlyTime,false);
 	Super::BeginPlay();
 }
 
@@ -297,6 +304,11 @@ void ACPP_Projectile::SetParticle()
 	HitGround = ConstructorHelpers::FObjectFinder<UParticleSystem>(L"ParticleSystem'/Game/Realistic_Starter_VFX_Pack_Vol2/Particles/Hit/P_Brick.P_Brick'").Object;
 }
 
+
+void ACPP_Projectile::FlyTimeOver()
+{
+	Disable();
+}
 
 void ACPP_Projectile::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {

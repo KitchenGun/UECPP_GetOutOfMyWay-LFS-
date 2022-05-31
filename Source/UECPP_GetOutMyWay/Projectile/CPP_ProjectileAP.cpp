@@ -93,7 +93,8 @@ void ACPP_ProjectileAP::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 		//도탄 판정
 		BounceCal(HitAngle,ProjectileHitDir);
 		//데미지 주기
-		UGameplayStatics::ApplyPointDamage(OtherActor,Damage,SweepResult.Location,SweepResult,PlayerCtrl,this,nullptr);
+		UGameplayStatics::ApplyPointDamage(OtherActor,Damage,SweepResult.Location,SweepResult,nullptr
+			,this,nullptr);
 	}
 	else
 	{

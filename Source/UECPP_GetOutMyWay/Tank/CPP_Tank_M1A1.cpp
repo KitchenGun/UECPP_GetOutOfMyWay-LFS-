@@ -30,7 +30,7 @@ ACPP_Tank_M1A1::ACPP_Tank_M1A1()
 	SoundSet();
 
 	GunSystem = CreateDefaultSubobject<UCPP_M1A1MainGunSystemComponent>(L"GunSystem");
-	
+	GunSystem->SetIsReplicated(true);
 	TankUI = CreateDefaultSubobject<UCPP_TankUIComponent>(L"TankUI");
 }
 

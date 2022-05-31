@@ -2,6 +2,7 @@
 #include "CoreMinimal.h"
 #include "Common/Interface/CPP_Objectpooling.h"
 #include "GameFramework/Actor.h"
+#include "Tank/CPP_Tank_Character.h"
 #include "CPP_Projectile.generated.h"
 
 UENUM()
@@ -33,12 +34,6 @@ class UECPP_GETOUTMYWAY_API ACPP_Projectile : public AActor,public ICPP_Objectpo
 public:	
 	ACPP_Projectile();
 
-	FORCEINLINE	void SetEventInstigator(FString objName,AController* playerCtrl)
-	{
-		ObjName=objName;
-		PlayerCtrl = playerCtrl;
-	}
-
 	//objectpooling 기법
 	//ID를 가지고 객체 구분에 필요한 함수
 	virtual int32 GetID() const override;
@@ -50,8 +45,8 @@ public:
 	UFUNCTION()
 	virtual void OnRecycleStart() override;
 	UFUNCTION(Server,Reliable)
-	void Server_OnRecycleStart();
-	void Server_OnRecycleStart_Implementation();
+	void Server_OnRecycleStart(FVector pos,FRotator dir);
+	void Server_OnRecycleStart_Implementation(FVector pos,FRotator dir);
 	
 	void OnRecycleStart(FVector pos,FRotator dir);
 	
@@ -71,14 +66,15 @@ protected:
 	{
 		ProjectileHitEffect = value;
 	}
+
+	UFUNCTION()
+	void FlyTimeOver();
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 protected:
 	//데미지
 	float Damage = 20.0f;
-	//발사정보
-	FString ObjName;
-	AController* PlayerCtrl = nullptr;
+	
 	//피격 방향
 	EHitDir ProjectileHitDir = EHitDir::Max;
 
@@ -116,6 +112,7 @@ private:
 	bool IsCanRecycle = false;
 
 	//자동 비활성화를 위한 타이머
-	//FTimerHandle FlyHandler;
+	FTimerHandle FlyHandler;
 	float FlyTime = 5.0f;
 };
+
