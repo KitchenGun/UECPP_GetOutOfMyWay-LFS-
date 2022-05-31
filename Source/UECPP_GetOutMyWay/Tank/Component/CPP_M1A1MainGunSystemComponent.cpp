@@ -43,18 +43,20 @@ void UCPP_M1A1MainGunSystemComponent::MainGunFire()
 		//	tempProjectile->OnRecycleStart(SpawnPos,Direction);
 		//}
 		//else
+		
+		if(!Owner->HasAuthority())
+		{
+			Server_Fire(SpawnPos,Direction);
+		}
+		else
 		{//없으면 새로 생성
 			FActorSpawnParameters SpawnParameters;
 			SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 			tempProjectile = GetWorld()->SpawnActor<ACPP_Projectile>(ProjectileClass,SpawnPos,Direction,SpawnParameters);
 			//매니져에 새로 생성한 객체 추가
 			ObjPoolManager->RegisterRecyclableObject<ACPP_Projectile>(tempProjectile);
+			GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::White,tempProjectile->GetName());
 		}
-		if(!Owner->HasAuthority())
-		{
-			Server_Fire(SpawnPos,Direction);
-		}
-		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::White,tempProjectile->GetName());
 
 		if(FireEffectFunc.IsBound())
 			FireEffectFunc.Execute();

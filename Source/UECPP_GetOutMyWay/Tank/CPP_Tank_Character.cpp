@@ -461,13 +461,9 @@ void ACPP_Tank_Character::Server_TurretMoveEnd_Implementation()
 	TurretSystemAudio->Play();
 }
 
-void ACPP_Tank_Character::Server_SetHP_Implementation(float value)
+void ACPP_Tank_Character::OnRep_SetHP(float value)
 {
-	HP = value;
-}
-
-void ACPP_Tank_Character::Client_SetHP_Implementation(float value)
-{
+	GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::White,FString::FormatAsNumber(value));
 	HP = value;
 }
 
@@ -512,9 +508,18 @@ void ACPP_Tank_Character::SetupPlayerInputComponent(UInputComponent* PlayerInput
 float ACPP_Tank_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	AActor* DamageCauser)
 {
+	//중복 충돌 방지용
+	{
+		if(BeforeDamageCauser==DamageCauser)
+			DamageAmount = 0;
+		else
+			BeforeDamageCauser = DamageCauser;
+	}
+	
+	//중복으로 데미지를 까는 이유를 찾아야함
 	HP-=DamageAmount;
-	if(!HasAuthority())
-		Server_SetHP(HP-DamageAmount);
+	if(HasAuthority())
+		OnRep_SetHP(HP);
 	
 	if(FSetHPFunc.IsBound()&&IsLocallyControlled())
 		FSetHPFunc.Execute(HP);

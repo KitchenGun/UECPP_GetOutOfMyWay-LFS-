@@ -86,15 +86,20 @@ void ACPP_ProjectileAP::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 {
 	if(Cast<ACPP_Tank_Character>(OtherActor)&&Cast<UBoxComponent>(OtherComp)&&!IsOverlap)
 	{
-		//중복을 방지하기 위한 overlap 확인 변수
-		IsOverlap = true;
 		//포탄의 입사각 계산
 		float HitAngle = GetHitAngle(OtherComp,SweepResult);
 		//도탄 판정
 		BounceCal(HitAngle,ProjectileHitDir);
 		//데미지 주기
-		UGameplayStatics::ApplyPointDamage(OtherActor,Damage,SweepResult.Location,SweepResult,nullptr
-			,this,nullptr);
+		if(!IsOverlap)
+		{
+			UGameplayStatics::ApplyPointDamage(OtherActor,Damage,SweepResult.Location,SweepResult,nullptr
+			   ,this,nullptr);
+			Disable();
+			//중복을 방지하기 위한 overlap 확인 변수
+			IsOverlap = true;
+		}
+		
 	}
 	else
 	{

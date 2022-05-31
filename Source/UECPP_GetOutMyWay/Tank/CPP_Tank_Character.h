@@ -134,13 +134,8 @@ protected:
 	virtual void Server_TurretMoveEnd();
 	virtual void Server_TurretMoveEnd_Implementation();
 
-	UFUNCTION(Server,Reliable)
-	void Server_SetHP(float value);
-	void Server_SetHP_Implementation(float value);
-
-	UFUNCTION(Client,Reliable)
-	void Client_SetHP(float value);
-	void Client_SetHP_Implementation(float value);
+	UFUNCTION()
+	void OnRep_SetHP(float value);
 	
 	//Damage
 	UFUNCTION()
@@ -261,7 +256,8 @@ protected:
 
 	//Damage
 	float MAX_HP = 100;
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing=OnRep_SetHP)
 	float HP = MAX_HP;
 	bool IsDead=false;
+	AActor* BeforeDamageCauser;
 };
