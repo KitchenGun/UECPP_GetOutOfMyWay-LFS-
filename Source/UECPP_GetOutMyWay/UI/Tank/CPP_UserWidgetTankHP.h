@@ -12,7 +12,7 @@ public:
 	virtual void NativeConstruct() override;
 protected:
 	UPROPERTY(meta=(BindWidget))
-	class UCanvasPanel* CanvasPanel;
+	class UCanvasPanel* Canvas;
 	
 	UPROPERTY(meta=(BindWidget))
 	class UImage* HPBackGround;

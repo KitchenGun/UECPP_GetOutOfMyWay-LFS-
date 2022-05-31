@@ -2,10 +2,12 @@
 
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Engine/Canvas.h"
 #include "Engine/StreamableManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Tank/CPP_Tank_M1A1.h"
 #include "UI/Tank/CPP_UserWidgetTank.h"
+#include "UI/Tank/CPP_UserWidgetTankHP.h"
 #include "UI/Tank/Sight/CPP_UserWidgetTankSight.h"
 
 UCPP_TankUIComponent::UCPP_TankUIComponent()
@@ -31,6 +33,14 @@ void UCPP_TankUIComponent::SetRangeText(int Range)
 void UCPP_TankUIComponent::UpdateGunSightPos(FVector2D value)
 {
 	TankSightWidget->UpdateGunSightPos(value);
+}
+
+void UCPP_TankUIComponent::UpdateTankHP(float HP)
+{
+}
+
+void UCPP_TankUIComponent::SetAmmo(int ammo)
+{
 }
 
 
@@ -60,6 +70,7 @@ void UCPP_TankUIComponent::BeginPlay()
 	{
 		TankWidget = CreateWidget<UCPP_UserWidgetTank>(PlayerCtrl,TankUIClass);
 		SetSightUI();
+		SetHPUI();
 		TankWidget->AddToViewport();
 	}
 }
@@ -76,6 +87,17 @@ void UCPP_TankUIComponent::SetSightUI()
 		TankSightWidgetSlot->SetOffsets(FMargin{0,0,0,0});
 	}
 	TankSightWidget->SetTankType(TankUIType);
+}
+
+void UCPP_TankUIComponent::SetHPUI()
+{
+	TankHPWidget = CreateWidget<UCPP_UserWidgetTankHP>(PlayerCtrl,TankHPUIClass);
+	TankHPWidget->AddToViewport();
+	TankWidget->MainCanvas->AddChild(TankHPWidget);
+	UCanvasPanelSlot* TankHPWidgetSlot = Cast<UCanvasPanelSlot>(TankWidget->MainCanvas->GetSlots()[1]);
+	TankHPWidgetSlot->SetSize(FVector2D(420,220));
+	TankHPWidgetSlot->SetPosition(FVector2D(-420,-220));
+	TankHPWidgetSlot->SetAnchors(FAnchors(1,1,1,1));
 }
 
 
