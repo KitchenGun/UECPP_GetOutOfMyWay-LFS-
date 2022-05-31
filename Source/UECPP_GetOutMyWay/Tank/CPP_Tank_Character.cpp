@@ -461,7 +461,12 @@ void ACPP_Tank_Character::Server_TurretMoveEnd_Implementation()
 	TurretSystemAudio->Play();
 }
 
-void ACPP_Tank_Character::MultiCast_SetHP_Implementation(float value)
+void ACPP_Tank_Character::Server_SetHP_Implementation(float value)
+{
+	HP = value;
+}
+
+void ACPP_Tank_Character::Client_SetHP_Implementation(float value)
 {
 	HP = value;
 }
@@ -508,15 +513,17 @@ float ACPP_Tank_Character::TakeDamage(float DamageAmount, FDamageEvent const& Da
 	AActor* DamageCauser)
 {
 	HP-=DamageAmount;
-	MultiCast_SetHP(HP);
-
-	if(FSetHPFunc.IsBound())
+	if(!HasAuthority())
+		Server_SetHP(HP-DamageAmount);
+	
+	if(FSetHPFunc.IsBound()&&IsLocallyControlled())
 		FSetHPFunc.Execute(HP);
 	
 	if(!IsDead&&HP<=0)
 	{
 		Dead();
 	}
+	
 	else
 	{
 		if(DamageAmount>=20)

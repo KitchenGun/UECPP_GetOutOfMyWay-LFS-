@@ -65,11 +65,6 @@ void UCPP_M1A1MainGunSystemComponent::MainGunFire()
 }
 void UCPP_M1A1MainGunSystemComponent::Server_Fire_Implementation(FVector SpawnPos, FRotator Direction)
 {
-	FString temp = Owner->HasAuthority()?L"Server : ":L"Client : ";
-	temp.Append(SpawnPos.ToString());
-	temp.Append(Direction.ToString());
-	GEngine->AddOnScreenDebugMessage(-1,15.0f,FColor::White,temp);
-
 	//if(tempProjectile!=nullptr)
 	//{//초기화할 객체가 존재하는 경우
 	//	tempProjectile->OnRecycleStart(SpawnPos,Direction);

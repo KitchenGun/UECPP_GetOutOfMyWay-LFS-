@@ -134,9 +134,14 @@ protected:
 	virtual void Server_TurretMoveEnd();
 	virtual void Server_TurretMoveEnd_Implementation();
 
-	UFUNCTION(NetMulticast,Reliable)
-	void MultiCast_SetHP(float value);
-	void MultiCast_SetHP_Implementation(float value);
+	UFUNCTION(Server,Reliable)
+	void Server_SetHP(float value);
+	void Server_SetHP_Implementation(float value);
+
+	UFUNCTION(Client,Reliable)
+	void Client_SetHP(float value);
+	void Client_SetHP_Implementation(float value);
+	
 	//Damage
 	UFUNCTION()
 	virtual void Dead();

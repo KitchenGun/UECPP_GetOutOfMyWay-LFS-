@@ -58,8 +58,8 @@ ACPP_Projectile::ACPP_Projectile()
 	ConstructorHelpers::FObjectFinder<UStaticMesh> effectMesh(L"StaticMesh'/Game/VigilanteContent/Shared/Particles/StaticMeshes/SM_RocketBooster_03_SM.SM_RocketBooster_03_SM'");
 	Effect->SetStaticMesh(effectMesh.Object);
 	Effect->BodyInstance.SetCollisionProfileName("NoCollision");
-	ProjectileMovement->InitialSpeed = 1e+1f;
-	ProjectileMovement->MaxSpeed = 1e+1f;
+	ProjectileMovement->InitialSpeed = 1e+4f;
+	ProjectileMovement->MaxSpeed = 1e+4f;
 	ProjectileMovement->ProjectileGravityScale = 0;
 	ProjectileMovement->SetIsReplicated(true);
 	
