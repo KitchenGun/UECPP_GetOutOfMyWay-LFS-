@@ -10,6 +10,11 @@ class UECPP_GETOUTMYWAY_API UCPP_UserWidgetTankHP : public UUserWidget
 	GENERATED_BODY()
 public:
 	virtual void NativeConstruct() override;
+
+	UFUNCTION()
+	void SetHP(float value);
+	UFUNCTION()
+	void SetAMMO(int value);
 protected:
 	UPROPERTY(meta=(BindWidget))
 	class UCanvasPanel* Canvas;

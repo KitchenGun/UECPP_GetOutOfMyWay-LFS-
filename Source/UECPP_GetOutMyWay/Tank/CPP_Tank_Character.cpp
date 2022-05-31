@@ -78,7 +78,7 @@ void ACPP_Tank_Character::BeginPlay()
 	if(IsValid(GunSystem))
 	{
 		GunSystem->FireEffectFunc.BindUFunction(this,"OnFireParticle");
-		GunSystem->GunReloadDoneFunc.BindUFunction(this,"GunSystemSoundReloadDone");
+		GunSystem->FGunReloadDoneFunc.BindUFunction(this,"GunSystemSoundReloadDone");
 	}
 	GetCharacterMovement()->MaxWalkSpeed = 400;
 }
@@ -509,6 +509,9 @@ float ACPP_Tank_Character::TakeDamage(float DamageAmount, FDamageEvent const& Da
 {
 	HP-=DamageAmount;
 	MultiCast_SetHP(HP);
+
+	if(FSetHPFunc.IsBound())
+		FSetHPFunc.Execute(HP);
 	
 	if(!IsDead&&HP<=0)
 	{

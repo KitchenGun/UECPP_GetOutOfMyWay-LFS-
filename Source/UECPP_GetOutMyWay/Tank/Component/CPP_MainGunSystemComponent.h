@@ -6,6 +6,7 @@
 
 DECLARE_DELEGATE(FFireEffect)
 DECLARE_DELEGATE(FReloadDone)
+DECLARE_DELEGATE_OneParam(FSetAMMO,int32)
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UECPP_GETOUTMYWAY_API UCPP_MainGunSystemComponent : public UActorComponent
@@ -18,7 +19,8 @@ public:
 	virtual void MainGunFire();
 
 	FFireEffect FireEffectFunc;
-	FReloadDone GunReloadDoneFunc;
+	FReloadDone FGunReloadDoneFunc;
+	FSetAMMO FSetAmmoFunc;
 	
 	FORCEINLINE bool GetIsMainGunCanFire() {return IsMainGunCanFire;}
 	

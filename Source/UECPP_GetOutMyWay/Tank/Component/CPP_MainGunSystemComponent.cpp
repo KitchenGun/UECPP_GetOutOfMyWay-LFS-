@@ -19,6 +19,8 @@ UCPP_MainGunSystemComponent::UCPP_MainGunSystemComponent()
 void UCPP_MainGunSystemComponent::SetIsMainGunCanFire_Implementation(bool value)
 {
 	IsMainGunCanFire = value;
+	if(FSetAmmoFunc.IsBound())
+		FSetAmmoFunc.Execute(value?1:0);
 }
 
 void UCPP_MainGunSystemComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -40,10 +42,12 @@ void UCPP_MainGunSystemComponent::ReloadDone()
 {
 	GetOwner()->GetWorldTimerManager().ClearTimer(ReloadTimerHandle);
 	IsMainGunCanFire = true;
+	if(FSetAmmoFunc.IsBound())
+		FSetAmmoFunc.Execute(1);
 	SetIsMainGunCanFire(true);
 	
-	if(GunReloadDoneFunc.IsBound())
-		GunReloadDoneFunc.Execute();
+	if(FGunReloadDoneFunc.IsBound())
+		FGunReloadDoneFunc.Execute();
 }
 
 void UCPP_MainGunSystemComponent::MainGunFire()
@@ -51,6 +55,8 @@ void UCPP_MainGunSystemComponent::MainGunFire()
 	if(IsMainGunCanFire)
 	{
 		IsMainGunCanFire = false;
+		if(FSetAmmoFunc.IsBound())
+			FSetAmmoFunc.Execute(0);
 		SetIsMainGunCanFire(false);
 		GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle,this,&UCPP_MainGunSystemComponent::ReloadDone,ReloadTime,false);
 	}

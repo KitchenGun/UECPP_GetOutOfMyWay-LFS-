@@ -46,6 +46,7 @@ void ACPP_Tank_M1A1::BeginPlay()
 	IdleAudio->OnAudioFinished.AddDynamic(this,&ACPP_Tank_M1A1::IdleSoundPlay);
 	EngineAudio->OnAudioFinished.AddDynamic(this,&ACPP_Tank_M1A1::EngineSoundStop);
 	GunSystemAudio->OnAudioFinished.AddDynamic(this,&ACPP_Tank_M1A1::GunSystemSoundStop);
+
 	//Damage
 	HP = MAX_HP;
 }

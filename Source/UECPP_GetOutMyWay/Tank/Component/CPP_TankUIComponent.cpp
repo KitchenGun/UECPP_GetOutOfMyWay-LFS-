@@ -37,10 +37,12 @@ void UCPP_TankUIComponent::UpdateGunSightPos(FVector2D value)
 
 void UCPP_TankUIComponent::UpdateTankHP(float HP)
 {
+	TankHPWidget->SetHP(HP);
 }
 
-void UCPP_TankUIComponent::SetAmmo(int ammo)
+void UCPP_TankUIComponent::SetAmmo(int Ammo)
 {
+	TankHPWidget->SetAMMO(Ammo);
 }
 
 
@@ -65,6 +67,8 @@ void UCPP_TankUIComponent::BeginPlay()
 		Owner->FGunSightPosFunc.BindUFunction(this,"UpdateGunSightPos");
 		Owner->FZoomToggleFunc.BindUFunction(this,"ZoomToggle");
 		Owner->FSetRangeTextFunc.BindUFunction(this,"SetRangeText");
+		Owner->FSetHPFunc.BindUFunction(this,"UpdateTankHP");
+		Owner->GetGunSystem()->FSetAmmoFunc.BindUFunction(this,"SetAmmo");
 	}
 	if(Owner->IsLocallyControlled())
 	{

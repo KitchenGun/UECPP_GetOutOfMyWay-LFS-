@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Component/CPP_MainGunSystemComponent.h"
 #include "GameFramework/Character.h"
 #include "CPP_Tank_Character.generated.h"
 
@@ -9,6 +10,7 @@ DECLARE_DELEGATE(FFPViewEffect);
 DECLARE_DELEGATE_OneParam(FGunSightWidgetPosFunc,FVector2D)
 DECLARE_DELEGATE(FZoomToggleFunc)
 DECLARE_DELEGATE_OneParam(FSetRangeText,int32)
+DECLARE_DELEGATE_OneParam(FSetHP,float)
 
 UENUM(BlueprintType)
 enum class ECameraType : uint8
@@ -39,12 +41,15 @@ public:
 	FORCEINLINE APlayerController* GetPlayerController() {return PC;}
 	FORCEINLINE float GetGunAngleOffset() {return displacementAngle;}
 	FORCEINLINE FTransform GetTankTransform() {return TankTransform;}
+	FORCEINLINE UCPP_MainGunSystemComponent* GetGunSystem() {return GunSystem;}
 	//Delegate
 	FFire FireFunc;
 	FFPViewEffect FpViewToggleFunc;
 	FZoomToggleFunc FZoomToggleFunc;
 	FSetRangeText FSetRangeTextFunc;
 	FGunSightWidgetPosFunc FGunSightPosFunc;
+	FSetHP FSetHPFunc;
+	
 protected:
 	//sight
 	void OnVerticalLook(float value);
