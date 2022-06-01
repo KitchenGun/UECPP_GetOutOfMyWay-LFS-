@@ -28,6 +28,7 @@ void UCPP_ParticleControlComponent::BeginPlay()
 	MuzzleFlashEffect = OwnerTank->GetMuzzleFlashEffect();
 	ShockWaveEffect = OwnerTank->GetShockWaveEffect();
 	WheelsEffect = OwnerTank->GetWheelsEffect();
+	TankDestroyEffect = OwnerTank->GetTankDestroyEffect();
 }
 
 
@@ -77,10 +78,6 @@ void UCPP_ParticleControlComponent::OnFireParticle()
 
 void UCPP_ParticleControlComponent::Server_OnFireParticle_Implementation()
 {
-	FString temps = OwnerTank->HasAuthority()?L"Server : ":L"Client : ";
-	temps.Append(L"call");
-	GEngine->AddOnScreenDebugMessage(-1,1.0f,FColor::White,temps);
-	
 	//particle »ç¿ë
 	MuzzleFlashEffect->Activate(true);
 	ShockWaveEffect->Activate(true);
@@ -116,6 +113,19 @@ void UCPP_ParticleControlComponent::Server_OnFireParticle_Implementation()
 			}
 		}
 	}
+}
+
+void UCPP_ParticleControlComponent::OnDestroyParticle()
+{
+	if(OwnerTank->HasAuthority())
+		Server_OnDestroy();
+	else
+		TankDestroyEffect->Activate(true);
+}
+
+void UCPP_ParticleControlComponent::Server_OnDestroy_Implementation()
+{
+	TankDestroyEffect->Activate(true);
 }
 
 void UCPP_ParticleControlComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

@@ -37,6 +37,7 @@ public:
 	//get&set
 	FORCEINLINE UParticleSystemComponent* GetMuzzleFlashEffect() {return MuzzleFlashEffect;}
 	FORCEINLINE UParticleSystemComponent* GetShockWaveEffect() {return ShockWaveEffect;}
+	FORCEINLINE UParticleSystemComponent* GetTankDestroyEffect() {return TankDestroyEffect;}
 	FORCEINLINE TArray<class UParticleSystemComponent*> GetWheelsEffect() {return WheelsEffect;}
 	FORCEINLINE APlayerController* GetPlayerController() {return PC;}
 	FORCEINLINE float GetGunAngleOffset() {return displacementAngle;}
@@ -192,7 +193,9 @@ protected:
 	class UParticleSystemComponent* ShockWaveEffect;
 	UPROPERTY(EditDefaultsOnly)
 	TArray<class UParticleSystemComponent*> WheelsEffect;
-
+	UPROPERTY(EditDefaultsOnly)
+	class UParticleSystemComponent* TankDestroyEffect;
+	
 	//sound
 	UPROPERTY(VisibleDefaultsOnly,Replicated)
 	class UAudioComponent* EngineAudio;

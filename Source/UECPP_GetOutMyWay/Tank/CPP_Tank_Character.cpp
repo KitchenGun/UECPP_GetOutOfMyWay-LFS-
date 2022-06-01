@@ -470,6 +470,7 @@ void ACPP_Tank_Character::OnRep_SetHP(float value)
 void ACPP_Tank_Character::Dead()
 {
 	IsDead =true;
+	ParticleSystem->OnDestroyParticle();
 }
 
 void ACPP_Tank_Character::Tick(float DeltaTime)

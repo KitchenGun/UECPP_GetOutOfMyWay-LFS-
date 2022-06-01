@@ -13,6 +13,7 @@ class UECPP_GETOUTMYWAY_API UCPP_ParticleControlComponent : public UActorCompone
 
 public:
 	UCPP_ParticleControlComponent();
+	
 	UFUNCTION(NetMulticast,Reliable)
 	void WheelParticle();
 	void WheelParticle_Implementation();
@@ -21,7 +22,11 @@ public:
 	UFUNCTION(NetMulticast,Reliable)
 	void Server_OnFireParticle();
 	void Server_OnFireParticle_Implementation();
-	
+
+	void OnDestroyParticle();
+	UFUNCTION(Server,Reliable)
+	void Server_OnDestroy();
+	void Server_OnDestroy_Implementation();
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 
@@ -41,6 +46,7 @@ private:
 	//Particle
 	class UParticleSystemComponent* MuzzleFlashEffect;
 	class UParticleSystemComponent* ShockWaveEffect;
+	class UParticleSystemComponent* TankDestroyEffect;
 	UPROPERTY(EditAnywhere,Category="Effects")
 	TArray<class UParticleSystemComponent*> WheelsEffect;
 

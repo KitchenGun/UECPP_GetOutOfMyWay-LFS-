@@ -181,9 +181,8 @@ void ACPP_Tank_M1A1::ParticleSet()
 {
 	//particle
 	MuzzleFlashEffect = CreateDefaultSubobject<UParticleSystemComponent>(L"MuzzleFlash");
-	MuzzleFlashEffect->SetupAttachment(GetMesh());
 	ShockWaveEffect = CreateDefaultSubobject<UParticleSystemComponent>(L"ShockWave");
-	ShockWaveEffect->SetupAttachment(GetMesh());
+	TankDestroyEffect = CreateDefaultSubobject<UParticleSystemComponent>(L"DestroyFire");
 	WheelsEffect.SetNum(8);
 	for(int i =0;i<WheelsEffect.Num();i++)
 	{
@@ -191,6 +190,7 @@ void ACPP_Tank_M1A1::ParticleSet()
 		WheelsEffect[i] = CreateDefaultSubobject<UParticleSystemComponent>(FName(name));
 		WheelsEffect[i]->bAutoDestroy=false;
 	}
+	
 	/*∞¥√º √ ±‚»≠*/
 	//particle
 	ConstructorHelpers::FObjectFinder<UParticleSystem> MuzzleParticle
@@ -205,6 +205,14 @@ void ACPP_Tank_M1A1::ParticleSet()
 	ShockWaveEffect->SetupAttachment(GetMesh(),"root_jnt");
 	ShockWaveEffect->bAutoActivate = false;
 	ShockWaveEffect->bAutoDestroy = false;
+	ConstructorHelpers::FObjectFinder<UParticleSystem> TankDestroyParticle
+	(L"ParticleSystem'/Game/Realistic_Starter_VFX_Pack_Vol2/Particles/Fire/P_Fire_Big.P_Fire_Big'");
+	TankDestroyEffect->Template = TankDestroyParticle.Object;
+	TankDestroyEffect->SetupAttachment(Engine);
+	TankDestroyEffect->SetRelativeLocation(FVector(170,30,90));
+	TankDestroyEffect->bAutoActivate = false;
+	TankDestroyEffect->bAutoDestroy = false;
+	
 	ConstructorHelpers::FObjectFinder<UParticleSystem> WheelParticle
 	(L"ParticleSystem'/Game/VigilanteContent/Shared/Particles/ParticleSystems/PS_Dust_WheelTrack_03.PS_Dust_WheelTrack_03'");
 	for(int i =0;i<WheelsEffect.Num();i++)
