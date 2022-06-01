@@ -5,7 +5,6 @@
 #include "CPP_M1A1MainGunSystemComponent.generated.h"
 
 
-
 UCLASS()
 class UECPP_GETOUTMYWAY_API UCPP_M1A1MainGunSystemComponent : public UCPP_MainGunSystemComponent
 {
@@ -18,8 +17,11 @@ public:
 	UFUNCTION(Server,Reliable)
 	virtual void Server_Fire(FVector SpawnPos,FRotator Direction);
 	virtual void Server_Fire_Implementation(FVector SpawnPos,FRotator Direction);
+
+	
 protected:
 	virtual void BeginPlay() override;
+	
 private:
 	float M1A1ReloadTime =5.0f;
 

@@ -1,5 +1,4 @@
 #include "Tank/CPP_Tank_Character.h"
-
 #include "Camera/CameraComponent.h"
 #include "Component/CPP_MainGunSystemComponent.h"
 #include "Component/CPP_ParticleControlComponent.h"
@@ -79,6 +78,7 @@ void ACPP_Tank_Character::BeginPlay()
 	{
 		GunSystem->FireEffectFunc.BindUFunction(this,"OnFireParticle");
 		GunSystem->FGunReloadDoneFunc.BindUFunction(this,"GunSystemSoundReloadDone");
+		GunSystem->FCamShakeFunc.BindUFunction(this,"CamShake");
 	}
 	GetCharacterMovement()->MaxWalkSpeed = 400;
 }
@@ -520,6 +520,8 @@ float ACPP_Tank_Character::TakeDamage(float DamageAmount, FDamageEvent const& Da
 	HP-=DamageAmount;
 	if(HasAuthority())
 		OnRep_SetHP(HP);
+	//카메라 쉐이크
+	CamShake(DamageAmount);
 	
 	if(FSetHPFunc.IsBound()&&IsLocallyControlled())
 		FSetHPFunc.Execute(HP);
@@ -543,6 +545,15 @@ float ACPP_Tank_Character::TakeDamage(float DamageAmount, FDamageEvent const& Da
 		}
 	}
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+}
+
+void ACPP_Tank_Character::CamShake(float value)
+{
+	if(IsLocallyControlled())
+	{
+		value/=20;
+		PC->PlayerCameraManager->StartCameraShake(CameraShake,FMath::Clamp(value,0.0f,1.0f));
+	}
 }
 
 void ACPP_Tank_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

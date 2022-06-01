@@ -2,9 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "Component/CPP_MainGunSystemComponent.h"
+#include "Camera/CameraShakeBase.h"
 #include "GameFramework/Character.h"
 #include "CPP_Tank_Character.generated.h"
-
 DECLARE_DELEGATE(FFire);
 DECLARE_DELEGATE(FFPViewEffect);
 DECLARE_DELEGATE_OneParam(FGunSightWidgetPosFunc,FVector2D)
@@ -42,6 +42,7 @@ public:
 	FORCEINLINE float GetGunAngleOffset() {return displacementAngle;}
 	FORCEINLINE FTransform GetTankTransform() {return TankTransform;}
 	FORCEINLINE UCPP_MainGunSystemComponent* GetGunSystem() {return GunSystem;}
+
 	//Delegate
 	FFire FireFunc;
 	FFPViewEffect FpViewToggleFunc;
@@ -148,6 +149,9 @@ public:
 	UFUNCTION()
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	UFUNCTION()
+	void CamShake(float value);
+	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 protected:
 	//mesh rotation
@@ -226,6 +230,10 @@ protected:
 	bool IsZoom = false;
 	FRotator ControllerRotation = FRotator::ZeroRotator;
 
+	//CameraShake
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UCameraShakeBase> CameraShake;
+	
 	//sound
 	class USoundCue* EngineStartSound;
 	class USoundWave* EngineLoopSound;

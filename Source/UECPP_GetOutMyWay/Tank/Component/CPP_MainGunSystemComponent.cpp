@@ -60,6 +60,9 @@ void UCPP_MainGunSystemComponent::MainGunFire()
 			FSetAmmoFunc.Execute(0);
 		SetIsMainGunCanFire(false);
 		GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle,this,&UCPP_MainGunSystemComponent::ReloadDone,ReloadTime,false);
+		//카메라 쉐이크
+		if(FCamShakeFunc.IsBound())
+			FCamShakeFunc.Execute(10);
 	}
 }
 

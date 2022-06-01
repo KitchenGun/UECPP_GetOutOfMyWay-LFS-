@@ -57,7 +57,7 @@ void UCPP_M1A1MainGunSystemComponent::MainGunFire()
 			ObjPoolManager->RegisterRecyclableObject<ACPP_Projectile>(tempProjectile);
 			GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::White,tempProjectile->GetName());
 		}
-
+		//발사 이펙트
 		if(FireEffectFunc.IsBound())
 			FireEffectFunc.Execute();
 		//재장전관련 메소드는 Super	
