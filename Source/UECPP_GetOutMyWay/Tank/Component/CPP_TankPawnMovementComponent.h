@@ -104,7 +104,7 @@ private:
 	void GunMove(float DeltaTime);
 private:
 	class APawn* Owner = nullptr;
-	
+	bool IsDead;
 	//mesh&ani
 	class USkeletalMeshComponent* TankMesh = nullptr;
 	class UCPP_TankAnimInstance* TankAnimInst = nullptr;

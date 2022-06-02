@@ -142,6 +142,8 @@ void ACPP_Tank_Character::CamChange()
 
 void ACPP_Tank_Character::OnMoveForward(float value)
 {
+	if(IsDead)//사망시 입력 전달 0으로 고정
+		value=0;
 	if (TankMovement != nullptr)
 	{
 		TankMovement->OnMove(value);
@@ -159,6 +161,8 @@ void ACPP_Tank_Character::Server_OnMoveForward_Implementation(float value)
 
 void ACPP_Tank_Character::OnMoveTurn(float value)
 {
+	if(IsDead)//사망시 입력 전달 0으로 고정
+		value=0;
 	if (TankMovement != nullptr)
 	{
 		TankMovement->OnTurn(value);
@@ -463,7 +467,6 @@ void ACPP_Tank_Character::Server_TurretMoveEnd_Implementation()
 
 void ACPP_Tank_Character::OnRep_SetHP(float value)
 {
-	GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::White,FString::FormatAsNumber(value));
 	HP = value;
 }
 
@@ -519,6 +522,10 @@ float ACPP_Tank_Character::TakeDamage(float DamageAmount, FDamageEvent const& Da
 	
 	//중복으로 데미지를 까는 이유를 찾아야함
 	HP-=DamageAmount;
+	//마이너스 출력안되게 변경
+	if(HP<=0)
+		HP=0;
+	
 	if(HasAuthority())
 		OnRep_SetHP(HP);
 	//카메라 쉐이크

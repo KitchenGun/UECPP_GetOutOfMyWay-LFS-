@@ -35,10 +35,15 @@ void UCPP_TankPawnMovementComponent::TickComponent(float DeltaTime, ELevelTick T
 	//Engine
 	EngineControl();
 	Movement();
-	//Turret
-	UpdateTurretState(DeltaTime);
-	//Gun
-	UpdateGunState(DeltaTime);
+	if(!IsDead)
+	{
+		//Turret
+		UpdateTurretState(DeltaTime);
+		//Gun
+		UpdateGunState(DeltaTime);
+	}
+	//dead
+	IsDead = Cast<ACPP_Tank_Character>(Owner)->GetIsDead();
 }
 
 

@@ -43,7 +43,8 @@ public:
 	FORCEINLINE float GetGunAngleOffset() {return displacementAngle;}
 	FORCEINLINE FTransform GetTankTransform() {return TankTransform;}
 	FORCEINLINE UCPP_MainGunSystemComponent* GetGunSystem() {return GunSystem;}
-
+	FORCEINLINE bool GetIsDead() {return IsDead;}
+	
 	//Delegate
 	FFire FireFunc;
 	FFPViewEffect FpViewToggleFunc;
