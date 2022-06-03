@@ -109,7 +109,6 @@ void UCPP_MultiplayGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoi
 
 void UCPP_MultiplayGameInstance::CreateServer()
 {
-	UE_LOG(LogTemp,Display,L"OnCreate Server");
 	FOnlineSessionSettings SessionSettings;
     SessionSettings.bAllowJoinInProgress = false;///수정함
 	SessionSettings.bUseLobbiesIfAvailable = true;//수정함
@@ -161,5 +160,4 @@ void UCPP_MultiplayGameInstance::RegisterManagerClass(TSubclassOf<UCPP_UManagerC
 	managerClassInst->InitManagerClass();
 	//TMap에 저장
 	ManagerClasses.Add(managerClass->GetName(), managerClassInst);
-	UE_LOG(LogTemp,Display,L"%s",*managerClass->GetName());
 }
