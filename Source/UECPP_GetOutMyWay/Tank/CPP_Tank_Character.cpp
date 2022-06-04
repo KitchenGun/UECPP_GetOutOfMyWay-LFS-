@@ -204,6 +204,8 @@ void ACPP_Tank_Character::Server_OffEngineBreak_Implementation()
 
 void ACPP_Tank_Character::OnMainGunFire()
 {
+	if(IsDead)
+		return;
 	if(FireFunc.IsBound())
 		FireFunc.Execute();
 }

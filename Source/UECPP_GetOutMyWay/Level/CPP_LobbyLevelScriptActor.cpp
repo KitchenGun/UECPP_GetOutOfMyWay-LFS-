@@ -13,6 +13,7 @@ void ACPP_LobbyLevelScriptActor::BeginPlay()
 {
 	Super::BeginPlay();
 	CreateWidget<UCPP_UserWidget_Lobby>(GetWorld(),BP_LobbyWidget)->AddToViewport();
+	
 	UGameplayStatics::GetPlayerController(GetWorld(),0)->SetInputMode(FInputModeUIOnly());
 	UGameplayStatics::GetPlayerController(GetWorld(),0)->bShowMouseCursor = true;
 }

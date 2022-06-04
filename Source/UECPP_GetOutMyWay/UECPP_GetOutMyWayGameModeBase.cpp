@@ -11,3 +11,17 @@ AUECPP_GetOutMyWayGameModeBase::AUECPP_GetOutMyWayGameModeBase()
 		DefaultPawnClass = player.Class;
 	}
 }
+
+void AUECPP_GetOutMyWayGameModeBase::Spawn_Implementation(const FString& Team, ACPP_Tank_PC* PC)
+{
+	if(Team.Equals("Red"))
+	{//»¡°£ÆÀ
+		
+	}
+	else
+	{//ÆÄ¶õÆÀ
+		
+	}
+	
+	
+}
