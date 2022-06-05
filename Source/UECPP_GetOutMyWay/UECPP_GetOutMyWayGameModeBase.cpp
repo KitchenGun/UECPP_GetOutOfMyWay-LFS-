@@ -63,6 +63,7 @@ void AUECPP_GetOutMyWayGameModeBase::Spawn_Implementation(const FString& Team, A
 			PC->Possess(myTank);
 		}
 	}
+	PC->SetOwnPawn(myTank);
 	//게임 인풋 전용
 	UGameplayStatics::GetPlayerController(GetWorld(),0)->SetInputMode(FInputModeGameOnly());
 	UGameplayStatics::GetPlayerController(GetWorld(),0)->bShowMouseCursor = false;

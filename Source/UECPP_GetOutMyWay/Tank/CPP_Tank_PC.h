@@ -19,11 +19,19 @@ public:
 	void SelectRedTeam();
 	UFUNCTION()
 	void SelectBlueTeam();
+
+	void SetOwnPawn(class ACPP_Tank_Character* value)
+	{
+		OwnPawn = value;
+	}
+	
 		
 private:
 	class AUECPP_GetOutMyWayGameModeBase* GM;
 	
 	FString Team;
+
+	class ACPP_Tank_Character* OwnPawn;
 	
 	TSubclassOf<UUserWidget> BP_SelectWidget;
 };

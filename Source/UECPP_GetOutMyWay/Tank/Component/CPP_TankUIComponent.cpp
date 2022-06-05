@@ -6,43 +6,52 @@
 #include "Engine/StreamableManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Tank/CPP_Tank_M1A1.h"
+#include "Tank/CPP_Tank_PC.h"
 #include "UI/Tank/CPP_UserWidgetTank.h"
 #include "UI/Tank/CPP_UserWidgetTankHP.h"
 #include "UI/Tank/Sight/CPP_UserWidgetTankSight.h"
 
 UCPP_TankUIComponent::UCPP_TankUIComponent()
 {
-	
+	TankUIClass=ConstructorHelpers::FClassFinder<UCPP_UserWidgetTank>(L"WidgetBlueprint'/Game/BP/UI/Tank/WB_WidgetTank.WB_WidgetTank_C'").Class;
+	TankSightUIClass=ConstructorHelpers::FClassFinder<UCPP_UserWidgetTankSight>(L"WidgetBlueprint'/Game/BP/UI/Tank/WB_WidgetTankSight.WB_WidgetTankSight_C'").Class;
+	TankHPUIClass=ConstructorHelpers::FClassFinder<UCPP_UserWidgetTankHP>(L"WidgetBlueprint'/Game/BP/UI/Tank/WB_WidgetTankHP.WB_WidgetTankHP_C'").Class;
 }
 
 void UCPP_TankUIComponent::FPViewEffectToggle()
 {
-	TankSightWidget->OnFPViewEffectToggle();
+	if(IsValid(TankSightWidget))
+		TankSightWidget->OnFPViewEffectToggle();
 }
 
 void UCPP_TankUIComponent::ZoomToggle()
 {
-	TankSightWidget->OnOpticalChange();
+	if(IsValid(TankSightWidget))
+		TankSightWidget->OnOpticalChange();
 }
 
 void UCPP_TankUIComponent::SetRangeText(int Range)
 {
-	TankSightWidget->SetRangeText(Range);
+	if(IsValid(TankSightWidget))
+		TankSightWidget->SetRangeText(Range);
 }
 
 void UCPP_TankUIComponent::UpdateGunSightPos(FVector2D value)
 {
-	//TankSightWidget->UpdateGunSightPos(value);
+	if(IsValid(TankSightWidget))
+		TankSightWidget->UpdateGunSightPos(value);
 }
 
 void UCPP_TankUIComponent::UpdateTankHP(float HP)
 {
-	TankHPWidget->SetHP(HP);
+	if(IsValid(TankHPWidget))
+		TankHPWidget->SetHP(HP);
 }
 
 void UCPP_TankUIComponent::SetAmmo(int Ammo)
 {
-	TankHPWidget->SetAMMO(Ammo);
+	if(IsValid(TankHPWidget))
+		TankHPWidget->SetAMMO(Ammo);
 }
 
 
@@ -60,7 +69,7 @@ void UCPP_TankUIComponent::BeginPlay()
 	
 	Super::BeginPlay();
 	if(PlayerCtrl == nullptr)
-		PlayerCtrl =GEngine->GetFirstLocalPlayerController(GetWorld());
+		PlayerCtrl =Cast<ACPP_Tank_PC>(GEngine->GetFirstLocalPlayerController(GetWorld()));
 	if(IsValid(Owner))
 	{
 		Owner->FpViewToggleFunc.BindUFunction(this,"FPViewEffectToggle");
@@ -70,7 +79,7 @@ void UCPP_TankUIComponent::BeginPlay()
 		Owner->FSetHPFunc.BindUFunction(this,"UpdateTankHP");
 		Owner->GetGunSystem()->FSetAmmoFunc.BindUFunction(this,"SetAmmo");
 	}
-	if(Owner->IsLocallyControlled())
+	if(PlayerCtrl->IsLocalController())
 	{
 		TankWidget = CreateWidget<UCPP_UserWidgetTank>(PlayerCtrl,TankUIClass);
 		SetSightUI();

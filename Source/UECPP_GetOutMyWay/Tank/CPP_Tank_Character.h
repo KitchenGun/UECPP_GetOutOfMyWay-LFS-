@@ -5,12 +5,14 @@
 #include "Camera/CameraShakeBase.h"
 #include "GameFramework/Character.h"
 #include "CPP_Tank_Character.generated.h"
+
 DECLARE_DELEGATE(FFire);
 DECLARE_DELEGATE(FFPViewEffect);
 DECLARE_DELEGATE_OneParam(FGunSightWidgetPosFunc,FVector2D)
 DECLARE_DELEGATE(FZoomToggleFunc)
 DECLARE_DELEGATE_OneParam(FSetRangeText,int32)
 DECLARE_DELEGATE_OneParam(FSetHP,float)
+
 class ACPP_Tank_PC;
 
 UENUM(BlueprintType)

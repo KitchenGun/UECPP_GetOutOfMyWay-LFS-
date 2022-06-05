@@ -1,7 +1,6 @@
 
 #include "UI/Lobby/CPP_UserWidget_TeamSelect.h"
 
-#include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/Button.h"
 #include "Components/CanvasPanel.h"
 #include "Kismet/GameplayStatics.h"
@@ -20,8 +19,9 @@ void UCPP_UserWidget_TeamSelect::OnClickRed()
 	TeamInfo = TEXT("Red");
 	PC->SelectRedTeam();
 	//선택이후
-	//Canvas->SetVisibility(ESlateVisibility::Hidden);
-	UWidgetLayoutLibrary::RemoveAllWidgets(this);
+	if(PC->IsLocalController())
+		Canvas->SetVisibility(ESlateVisibility::Hidden);
+	
 }
 
 void UCPP_UserWidget_TeamSelect::OnClickBlue()
@@ -29,8 +29,8 @@ void UCPP_UserWidget_TeamSelect::OnClickBlue()
 	TeamInfo = TEXT("Blue");
 	PC->SelectBlueTeam();
 	//선택이후
-	//Canvas->SetVisibility(ESlateVisibility::Hidden);
-	UWidgetLayoutLibrary::RemoveAllWidgets(this);
+	if(PC->IsLocalController())
+		Canvas->SetVisibility(ESlateVisibility::Hidden);
 }
 
 

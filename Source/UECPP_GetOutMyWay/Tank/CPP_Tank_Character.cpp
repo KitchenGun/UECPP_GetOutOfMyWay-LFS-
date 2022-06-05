@@ -48,18 +48,18 @@ void ACPP_Tank_Character::GunDirPosWorldToScreen()
 	if(isHit)
 	{
 		UGameplayStatics::ProjectWorldToScreen(PC,hit.ImpactPoint,pos,true);
-		//if(FGunSightPosFunc.IsBound())
-		//	FGunSightPosFunc.Execute(pos);
-		//if(FSetRangeTextFunc.IsBound())
-		//	FSetRangeTextFunc.Execute(static_cast<int>(FVector::Dist(start,hit.ImpactPoint)/80.0f));
+		if(FGunSightPosFunc.IsBound())
+			FGunSightPosFunc.Execute(pos);
+		if(FSetRangeTextFunc.IsBound())
+			FSetRangeTextFunc.Execute(static_cast<int>(FVector::Dist(start,hit.ImpactPoint)/80.0f));
 	}
 	else
 	{
 		UGameplayStatics::ProjectWorldToScreen(PC,end,pos);
-		//if(FGunSightPosFunc.IsBound())
-		//	FGunSightPosFunc.Execute(pos);
-		//if(FSetRangeTextFunc.IsBound())
-		//	FSetRangeTextFunc.Execute(0);
+		if(FGunSightPosFunc.IsBound())
+			FGunSightPosFunc.Execute(pos);
+		if(FSetRangeTextFunc.IsBound())
+			FSetRangeTextFunc.Execute(0);
 	}
 }
 

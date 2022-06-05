@@ -4,8 +4,6 @@
 #include "Components/ActorComponent.h"
 #include "CPP_TankUIComponent.generated.h"
 
-
-
 UENUM(BlueprintType)
 enum class ETankType : uint8
 {
@@ -58,5 +56,5 @@ private:
 	ETankType TankUIType;
 	
 	class ACPP_Tank_Character* Owner;
-	APlayerController* PlayerCtrl;
+	class ACPP_Tank_PC* PlayerCtrl;
 };
