@@ -11,6 +11,7 @@ DECLARE_DELEGATE_OneParam(FGunSightWidgetPosFunc,FVector2D)
 DECLARE_DELEGATE(FZoomToggleFunc)
 DECLARE_DELEGATE_OneParam(FSetRangeText,int32)
 DECLARE_DELEGATE_OneParam(FSetHP,float)
+class ACPP_Tank_PC;
 
 UENUM(BlueprintType)
 enum class ECameraType : uint8
@@ -39,7 +40,7 @@ public:
 	FORCEINLINE UParticleSystemComponent* GetShockWaveEffect() {return ShockWaveEffect;}
 	FORCEINLINE UParticleSystemComponent* GetTankDestroyEffect() {return TankDestroyEffect;}
 	FORCEINLINE TArray<class UParticleSystemComponent*> GetWheelsEffect() {return WheelsEffect;}
-	FORCEINLINE APlayerController* GetPlayerController() {return PC;}
+	FORCEINLINE ACPP_Tank_PC* GetPlayerController() {return PC;}
 	FORCEINLINE float GetGunAngleOffset() {return displacementAngle;}
 	FORCEINLINE FTransform GetTankTransform() {return TankTransform;}
 	FORCEINLINE UCPP_MainGunSystemComponent* GetGunSystem() {return GunSystem;}
@@ -222,7 +223,7 @@ protected:
 	class UCPP_TankUIComponent* TankUI;
 
 	//APlayerController
-	APlayerController* PC;
+	ACPP_Tank_PC* PC;
 
 	//sight
 	float CamRange = 800;

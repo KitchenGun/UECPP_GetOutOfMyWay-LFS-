@@ -1,4 +1,6 @@
 #include "Tank/CPP_Tank_Character.h"
+
+#include "CPP_Tank_PC.h"
 #include "Camera/CameraComponent.h"
 #include "Component/CPP_MainGunSystemComponent.h"
 #include "Component/CPP_ParticleControlComponent.h"
@@ -46,18 +48,18 @@ void ACPP_Tank_Character::GunDirPosWorldToScreen()
 	if(isHit)
 	{
 		UGameplayStatics::ProjectWorldToScreen(PC,hit.ImpactPoint,pos,true);
-		if(FGunSightPosFunc.IsBound())
-			FGunSightPosFunc.Execute(pos);
-		if(FSetRangeTextFunc.IsBound())
-			FSetRangeTextFunc.Execute(static_cast<int>(FVector::Dist(start,hit.ImpactPoint)/80.0f));
+		//if(FGunSightPosFunc.IsBound())
+		//	FGunSightPosFunc.Execute(pos);
+		//if(FSetRangeTextFunc.IsBound())
+		//	FSetRangeTextFunc.Execute(static_cast<int>(FVector::Dist(start,hit.ImpactPoint)/80.0f));
 	}
 	else
 	{
 		UGameplayStatics::ProjectWorldToScreen(PC,end,pos);
-		if(FGunSightPosFunc.IsBound())
-			FGunSightPosFunc.Execute(pos);
-		if(FSetRangeTextFunc.IsBound())
-			FSetRangeTextFunc.Execute(0);
+		//if(FGunSightPosFunc.IsBound())
+		//	FGunSightPosFunc.Execute(pos);
+		//if(FSetRangeTextFunc.IsBound())
+		//	FSetRangeTextFunc.Execute(0);
 	}
 }
 
@@ -66,7 +68,7 @@ void ACPP_Tank_Character::BeginPlay()
 	Super::BeginPlay();
 	if(PC==nullptr)
 	{
-		PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		PC = Cast<ACPP_Tank_PC>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 	}
 	//¹ÙÀÎµù
 	if(IsValid(TankMovement))

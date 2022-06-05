@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Tank/CPP_Tank_PC.h"
 #include "CPP_UserWidget_TeamSelect.generated.h"
 
 UCLASS()
@@ -15,7 +16,6 @@ protected:
 	void OnClickRed();
 	UFUNCTION()
 	void OnClickBlue();
-	
 private:
 	UPROPERTY(meta=(BindWidget))
 	class UCanvasPanel* Canvas;
@@ -26,5 +26,6 @@ private:
 	UPROPERTY(meta=(BindWidget))
 	class UButton* Blue;
 
+	ACPP_Tank_PC* PC;
 	FString TeamInfo = "";
 };

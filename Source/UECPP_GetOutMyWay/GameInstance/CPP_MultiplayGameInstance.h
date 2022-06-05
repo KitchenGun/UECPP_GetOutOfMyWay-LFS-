@@ -6,6 +6,7 @@
 #include "Common/UObject/Manager/CPP_UManagerClass.h"
 #include "Engine/GameInstance.h"
 #include "Interfaces/OnlineSessionInterface.h"
+#include "Level/PlayerStart/CPP_TeamPlayerSpawn.h"
 #include "CPP_MultiplayGameInstance.generated.h"
 
 USTRUCT(BlueprintType)
@@ -41,6 +42,11 @@ public:
 	void JoinServer(FServerInfo Info);
 	UFUNCTION(BlueprintCallable)
 	void FindServer();
+	
+	//spawn
+	UFUNCTION()
+	void FindSpawnPoint();
+	
 	//델리게이트
 	UPROPERTY(BlueprintAssignable)
 	FServerDel FServerListDel;
@@ -48,6 +54,9 @@ public:
 	template<typename ManagerClassType>
 	FORCEINLINE ManagerClassType* GetManagerClass()
 	{return Cast<ManagerClassType>(ManagerClasses[ManagerClassType::StaticClass()->GetName()]);}
+	
+	FORCEINLINE TArray<ACPP_TeamPlayerSpawn*> GetRedTeamSpawnPoints(){return RedSpawnPoints;}
+	FORCEINLINE TArray<ACPP_TeamPlayerSpawn*> GetBlueTeamSpawnPoints(){return BlueSpawnPoints;}
 protected:
 	virtual void Init() override;
 	virtual void Shutdown() override;
@@ -55,6 +64,7 @@ protected:
 	virtual void OnCreateSessionComplete(FName ServerName, bool Succeeded);
 	virtual void OnFindSessionComplete(bool Succeeded);
 	virtual void OnJoinSessionComplete(FName SessionName,EOnJoinSessionCompleteResult::Type Result);
+
 	//Manager 관리
 	void RegisterManagerClass(TSubclassOf<UCPP_UManagerClass> managerClass);
 
@@ -63,5 +73,9 @@ protected:
 	IOnlineSessionPtr SessionInterface;
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
 	TArray<FOnlineSessionSearchResult> SearchResults;
-	
+
+	//SpawnPoint
+	TArray<AActor*> SpawnPoints;
+	TArray<ACPP_TeamPlayerSpawn*> RedSpawnPoints;
+	TArray<ACPP_TeamPlayerSpawn*> BlueSpawnPoints; 
 };

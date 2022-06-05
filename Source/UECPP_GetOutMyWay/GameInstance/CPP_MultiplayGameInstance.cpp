@@ -107,6 +107,25 @@ void UCPP_MultiplayGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoi
 	}
 }
 
+void UCPP_MultiplayGameInstance::FindSpawnPoint()
+{
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(),ACPP_TeamPlayerSpawn::StaticClass(),SpawnPoints);
+	ACPP_TeamPlayerSpawn* tempPoint;
+	for(AActor* temp : SpawnPoints)
+	{
+		tempPoint = Cast<ACPP_TeamPlayerSpawn>(temp);
+
+		if(tempPoint->GetTeamInfo().Equals(TEXT("Red")))
+		{
+			RedSpawnPoints.AddUnique(tempPoint);
+		}
+		else
+		{
+			BlueSpawnPoints.AddUnique(tempPoint);
+		}
+	}
+}
+
 void UCPP_MultiplayGameInstance::CreateServer()
 {
 	FOnlineSessionSettings SessionSettings;

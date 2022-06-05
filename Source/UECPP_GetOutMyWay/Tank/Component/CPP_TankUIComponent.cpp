@@ -32,7 +32,7 @@ void UCPP_TankUIComponent::SetRangeText(int Range)
 
 void UCPP_TankUIComponent::UpdateGunSightPos(FVector2D value)
 {
-	TankSightWidget->UpdateGunSightPos(value);
+	//TankSightWidget->UpdateGunSightPos(value);
 }
 
 void UCPP_TankUIComponent::UpdateTankHP(float HP)

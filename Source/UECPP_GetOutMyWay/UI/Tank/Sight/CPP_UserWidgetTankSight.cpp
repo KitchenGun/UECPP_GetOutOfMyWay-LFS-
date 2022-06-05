@@ -5,6 +5,7 @@
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "Engine/AssetManager.h"
+#include "Kismet/GameplayStatics.h"
 
 void UCPP_UserWidgetTankSight::NativeConstruct()
 {
@@ -90,7 +91,7 @@ void UCPP_UserWidgetTankSight::SetRangeText(int Range)
 void UCPP_UserWidgetTankSight::UpdateGunSightPos(FVector2D value)
 {
 		int32 X,Y;
-		GetOwningPlayer()->GetViewportSize(X,Y);
+		UGameplayStatics::GetPlayerController(GetWorld(),0)->GetViewportSize(X,Y);
 		FVector2D pos = FVector2D{X*0.5f,Y*0.5f};
 		value=value-pos;
 	
