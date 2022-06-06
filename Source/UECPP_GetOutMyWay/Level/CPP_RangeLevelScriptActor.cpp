@@ -13,3 +13,5 @@ void ACPP_RangeLevelScriptActor::BeginPlay()
 	GI = Cast<UCPP_MultiplayGameInstance>(GetGameInstance());
 	GI->FindSpawnPoint();
 }
+
+

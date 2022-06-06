@@ -11,6 +11,8 @@ class UECPP_GETOUTMYWAY_API ACPP_RangeLevelScriptActor : public ALevelScriptActo
 	GENERATED_BODY()
 protected:
 	virtual void BeginPlay() override;
+
+
 private:
 	//GameInstance
 	class UCPP_MultiplayGameInstance* GI;

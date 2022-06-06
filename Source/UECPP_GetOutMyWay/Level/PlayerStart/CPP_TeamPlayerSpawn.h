@@ -6,7 +6,7 @@
 #include "CPP_TeamPlayerSpawn.generated.h"
 
 UCLASS()
-class UECPP_GETOUTMYWAY_API ACPP_TeamPlayerSpawn : public APlayerStart
+class UECPP_GETOUTMYWAY_API ACPP_TeamPlayerSpawn : public AActor
 {
 	GENERATED_BODY()
 public:
@@ -17,4 +17,6 @@ public:
 private:
 	UPROPERTY(EditAnywhere,Category=TeamName)
 	FString TeamInfo;
+
+	
 };

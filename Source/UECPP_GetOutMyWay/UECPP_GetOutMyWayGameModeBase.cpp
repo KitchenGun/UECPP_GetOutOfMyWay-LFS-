@@ -18,11 +18,13 @@ void AUECPP_GetOutMyWayGameModeBase::BeginPlay()
 	GI = Cast<UCPP_MultiplayGameInstance>(GetGameInstance());
 }
 
+//_Implementation
 void AUECPP_GetOutMyWayGameModeBase::Spawn_Implementation(const FString& Team, ACPP_Tank_PC* PC)
 {
 	class ACPP_Tank_Character* myTank;
-	DefaultPawnClass = Player;
 	FTransform SpawnTrans;
+	
+	DefaultPawnClass = Player;
 	if(Team.Equals("Red"))
 	{
 		//»¡°£ÆÀ
@@ -30,8 +32,9 @@ void AUECPP_GetOutMyWayGameModeBase::Spawn_Implementation(const FString& Team, A
 		if(SpawnTrans.IsValid())
 		{
 			myTank = GetWorld()->SpawnActor<ACPP_Tank_Character>(DefaultPawnClass,SpawnTrans.GetLocation(),SpawnTrans.Rotator());
+			GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::White,L"ownerchange");
+			PC->SetOwner(myTank);
 			PC->Possess(myTank);
-			
 		}
 		else
 		{
@@ -41,6 +44,8 @@ void AUECPP_GetOutMyWayGameModeBase::Spawn_Implementation(const FString& Team, A
 				SpawnTrans = GI->GetRedTeamSpawnPoints()[0]->GetTransform();
 			}
 			myTank = GetWorld()->SpawnActor<ACPP_Tank_Character>(DefaultPawnClass,SpawnTrans.GetLocation(),SpawnTrans.Rotator());
+			GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::White,L"ownerchange");
+			PC->SetOwner(myTank);
 			PC->Possess(myTank);
 		}
 	}
@@ -50,6 +55,8 @@ void AUECPP_GetOutMyWayGameModeBase::Spawn_Implementation(const FString& Team, A
 		if(SpawnTrans.IsValid())
 		{
 			myTank = GetWorld()->SpawnActor<ACPP_Tank_Character>(DefaultPawnClass,SpawnTrans.GetLocation(),SpawnTrans.Rotator());
+			GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::White,L"ownerchange");
+			PC->SetOwner(myTank);
 			PC->Possess(myTank);
 		}
 		else
@@ -60,11 +67,10 @@ void AUECPP_GetOutMyWayGameModeBase::Spawn_Implementation(const FString& Team, A
 				SpawnTrans = GI->GetBlueTeamSpawnPoints()[0]->GetTransform();
 			}
 			myTank = GetWorld()->SpawnActor<ACPP_Tank_Character>(DefaultPawnClass,SpawnTrans.GetLocation(),SpawnTrans.Rotator());
+			GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::White,L"ownerchange");
+			PC->SetOwner(myTank);
 			PC->Possess(myTank);
 		}
 	}
-	PC->SetOwnPawn(myTank);
-	//°ÔÀÓ ÀÎÇ² Àü¿ë
-	UGameplayStatics::GetPlayerController(GetWorld(),0)->SetInputMode(FInputModeGameOnly());
-	UGameplayStatics::GetPlayerController(GetWorld(),0)->bShowMouseCursor = false;
 }
+

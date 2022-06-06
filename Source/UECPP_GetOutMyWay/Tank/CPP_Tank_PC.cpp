@@ -13,15 +13,30 @@ ACPP_Tank_PC::ACPP_Tank_PC()
 void ACPP_Tank_PC::BeginPlay()
 {
 	Super::BeginPlay();
-	GM = Cast<AUECPP_GetOutMyWayGameModeBase>(GetWorld()->GetAuthGameMode());
-	//∆¿º±≈√	
-	CreateWidget<UCPP_UserWidget_TeamSelect>(GetWorld()->GetFirstPlayerController(),BP_SelectWidget)->AddToViewport();
-	//UI ¿Œ«≤ ¿¸øÎ
-	UGameplayStatics::GetPlayerController(GetWorld(),0)->SetInputMode(FInputModeUIOnly());
-	UGameplayStatics::GetPlayerController(GetWorld(),0)->bShowMouseCursor = true;
+	GM = Cast<AUECPP_GetOutMyWayGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+	if(IsLocalController())
+	{
+		//∆¿º±≈√	
+		CreateWidget<UCPP_UserWidget_TeamSelect>(GetWorld()->GetFirstPlayerController(),BP_SelectWidget)->AddToViewport();
+		//UI ¿Œ«≤ ¿¸øÎ
+		UGameplayStatics::GetPlayerController(GetWorld(),0)->SetInputMode(FInputModeUIOnly());
+		UGameplayStatics::GetPlayerController(GetWorld(),0)->bShowMouseCursor = true;
+	}
 }
 
 void ACPP_Tank_PC::TeamSelect()
+{
+	if(HasAuthority())
+	{
+		GM->Spawn(Team,this);
+	}
+	else
+	{
+		Server_TeamSelect();
+	}
+}
+
+void ACPP_Tank_PC::Server_TeamSelect_Implementation()
 {
 	GM->Spawn(Team,this);
 }

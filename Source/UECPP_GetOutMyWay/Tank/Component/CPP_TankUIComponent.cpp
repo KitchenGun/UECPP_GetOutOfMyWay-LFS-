@@ -60,6 +60,8 @@ void UCPP_TankUIComponent::BeginPlay()
 	if(GetOwner()==nullptr)
 		return;
 
+	PlayerCtrl =Cast<ACPP_Tank_PC>(GEngine->GetFirstLocalPlayerController(GetWorld()));
+	
 	(Cast<ACPP_Tank_M1A1>(GetOwner()))? Owner = Cast<ACPP_Tank_M1A1>(GetOwner()) : Owner=nullptr;
 		
 	if(GetOwner()->GetName().Equals("CPP_Tank_M1A1"))
@@ -68,8 +70,7 @@ void UCPP_TankUIComponent::BeginPlay()
 	}
 	
 	Super::BeginPlay();
-	if(PlayerCtrl == nullptr)
-		PlayerCtrl =Cast<ACPP_Tank_PC>(GEngine->GetFirstLocalPlayerController(GetWorld()));
+	
 	if(IsValid(Owner))
 	{
 		Owner->FpViewToggleFunc.BindUFunction(this,"FPViewEffectToggle");
@@ -79,6 +80,7 @@ void UCPP_TankUIComponent::BeginPlay()
 		Owner->FSetHPFunc.BindUFunction(this,"UpdateTankHP");
 		Owner->GetGunSystem()->FSetAmmoFunc.BindUFunction(this,"SetAmmo");
 	}
+	
 	if(PlayerCtrl->IsLocalController())
 	{
 		TankWidget = CreateWidget<UCPP_UserWidgetTank>(PlayerCtrl,TankUIClass);

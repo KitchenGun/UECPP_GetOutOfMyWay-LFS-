@@ -11,10 +11,10 @@ class UECPP_GETOUTMYWAY_API ACPP_Tank_PC : public APlayerController
 public:
 	ACPP_Tank_PC();
 	virtual void BeginPlay() override;
-	
-	UFUNCTION()
 	void TeamSelect();
-
+	UFUNCTION(Server,Reliable)
+	void Server_TeamSelect();
+	void Server_TeamSelect_Implementation();
 	UFUNCTION()
 	void SelectRedTeam();
 	UFUNCTION()
@@ -23,6 +23,10 @@ public:
 	void SetOwnPawn(class ACPP_Tank_Character* value)
 	{
 		OwnPawn = value;
+	}
+	ACPP_Tank_Character* GetOwnPawn()
+	{
+		return OwnPawn;
 	}
 	
 		
