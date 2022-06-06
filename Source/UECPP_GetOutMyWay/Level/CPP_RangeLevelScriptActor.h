@@ -9,11 +9,7 @@ UCLASS()
 class UECPP_GETOUTMYWAY_API ACPP_RangeLevelScriptActor : public ALevelScriptActor
 {
 	GENERATED_BODY()
-protected:
+	
+public:
 	virtual void BeginPlay() override;
-
-
-private:
-	//GameInstance
-	class UCPP_MultiplayGameInstance* GI;
 };

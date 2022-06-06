@@ -16,6 +16,8 @@ protected:
 	void OnClickRed();
 	UFUNCTION()
 	void OnClickBlue();
+public:
+	ACPP_Tank_PC* PC;
 private:
 	UPROPERTY(meta=(BindWidget))
 	class UCanvasPanel* Canvas;
@@ -26,6 +28,5 @@ private:
 	UPROPERTY(meta=(BindWidget))
 	class UButton* Blue;
 
-	ACPP_Tank_PC* PC;
 	FString TeamInfo = "";
 };

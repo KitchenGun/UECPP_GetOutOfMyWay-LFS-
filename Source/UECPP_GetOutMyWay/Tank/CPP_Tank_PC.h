@@ -38,4 +38,6 @@ private:
 	class ACPP_Tank_Character* OwnPawn;
 	
 	TSubclassOf<UUserWidget> BP_SelectWidget;
+
+	class UCPP_UserWidget_TeamSelect* SelectWidget;
 };

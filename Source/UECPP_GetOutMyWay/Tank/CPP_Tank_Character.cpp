@@ -16,6 +16,12 @@
 
 ACPP_Tank_Character::ACPP_Tank_Character()
 {
+	if(PC==nullptr)
+	{
+		PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		UE_LOG(LogTemp,Display,L"reset");
+	}
+	
 	bReplicates = true;
 	GetMesh()->bIsAutonomousTickPose =true;
 	PrimaryActorTick.bCanEverTick = true;
@@ -65,11 +71,6 @@ void ACPP_Tank_Character::GunDirPosWorldToScreen()
 
 void ACPP_Tank_Character::BeginPlay()
 {
-	Super::BeginPlay();
-	if(PC==nullptr)
-	{
-		PC = Cast<ACPP_Tank_PC>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	}
 	//¹ÙÀÎµù
 	if(IsValid(TankMovement))
 	{
@@ -83,6 +84,7 @@ void ACPP_Tank_Character::BeginPlay()
 		GunSystem->FCamShakeFunc.BindUFunction(this,"CamShake");
 	}
 	GetCharacterMovement()->MaxWalkSpeed = 400;
+	Super::BeginPlay();
 }
 
 void ACPP_Tank_Character::OnVerticalLook(float value)
@@ -302,9 +304,6 @@ void ACPP_Tank_Character::Server_IdleSoundPlay_Implementation()
 {
 	IdleAudio->SetSound(IdleLoopSound);
 	IdleAudio->Play();
-	FString temp = HasAuthority()?L"Server : ":L"Client : ";
-	temp.Append(IdleAudio->Sound->GetName());
-	GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::White,temp);
 }
 
 void ACPP_Tank_Character::EngineSoundPlay()

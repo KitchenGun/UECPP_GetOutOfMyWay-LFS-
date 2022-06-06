@@ -16,6 +16,7 @@ UCPP_TankUIComponent::UCPP_TankUIComponent()
 	TankUIClass=ConstructorHelpers::FClassFinder<UCPP_UserWidgetTank>(L"WidgetBlueprint'/Game/BP/UI/Tank/WB_WidgetTank.WB_WidgetTank_C'").Class;
 	TankSightUIClass=ConstructorHelpers::FClassFinder<UCPP_UserWidgetTankSight>(L"WidgetBlueprint'/Game/BP/UI/Tank/WB_WidgetTankSight.WB_WidgetTankSight_C'").Class;
 	TankHPUIClass=ConstructorHelpers::FClassFinder<UCPP_UserWidgetTankHP>(L"WidgetBlueprint'/Game/BP/UI/Tank/WB_WidgetTankHP.WB_WidgetTankHP_C'").Class;
+	
 }
 
 void UCPP_TankUIComponent::FPViewEffectToggle()
@@ -57,19 +58,17 @@ void UCPP_TankUIComponent::SetAmmo(int Ammo)
 
 void UCPP_TankUIComponent::BeginPlay()
 {
+	Super::BeginPlay();
+	Owner=(Cast<ACPP_Tank_M1A1>(GetOwner()))? Cast<ACPP_Tank_M1A1>(GetOwner()) : Owner=nullptr;
+	
 	if(GetOwner()==nullptr)
 		return;
-
-	PlayerCtrl =Cast<ACPP_Tank_PC>(GEngine->GetFirstLocalPlayerController(GetWorld()));
-	
-	(Cast<ACPP_Tank_M1A1>(GetOwner()))? Owner = Cast<ACPP_Tank_M1A1>(GetOwner()) : Owner=nullptr;
-		
+	PC = Owner->GetPC();
 	if(GetOwner()->GetName().Equals("CPP_Tank_M1A1"))
 	{
 		TankUIType = ETankType::M1A1;
 	}
 	
-	Super::BeginPlay();
 	
 	if(IsValid(Owner))
 	{
@@ -81,9 +80,10 @@ void UCPP_TankUIComponent::BeginPlay()
 		Owner->GetGunSystem()->FSetAmmoFunc.BindUFunction(this,"SetAmmo");
 	}
 	
-	if(PlayerCtrl->IsLocalController())
+	/////////////////////////////////////GEngine->AddOnScreenDebugMessage(-1,1.0f,FColor::White,PC->GetName());
+	if(Owner->IsLocallyControlled())
 	{
-		TankWidget = CreateWidget<UCPP_UserWidgetTank>(PlayerCtrl,TankUIClass);
+		TankWidget = CreateWidget<UCPP_UserWidgetTank>(PC,TankUIClass);
 		SetSightUI();
 		SetHPUI();
 		TankWidget->AddToViewport();
@@ -92,7 +92,7 @@ void UCPP_TankUIComponent::BeginPlay()
 
 void UCPP_TankUIComponent::SetSightUI()
 {
-	TankSightWidget = CreateWidget<UCPP_UserWidgetTankSight>(PlayerCtrl,TankSightUIClass);
+	TankSightWidget = CreateWidget<UCPP_UserWidgetTankSight>(PC,TankSightUIClass);
 	TankSightWidget->AddToViewport();
 	TankWidget->MainCanvas->AddChild(TankSightWidget);
 	UCanvasPanelSlot* TankSightWidgetSlot = Cast<UCanvasPanelSlot>(TankWidget->MainCanvas->GetSlots()[0]);
@@ -106,7 +106,7 @@ void UCPP_TankUIComponent::SetSightUI()
 
 void UCPP_TankUIComponent::SetHPUI()
 {
-	TankHPWidget = CreateWidget<UCPP_UserWidgetTankHP>(PlayerCtrl,TankHPUIClass);
+	TankHPWidget = CreateWidget<UCPP_UserWidgetTankHP>(PC,TankHPUIClass);
 	TankHPWidget->AddToViewport();
 	TankWidget->MainCanvas->AddChild(TankHPWidget);
 	UCanvasPanelSlot* TankHPWidgetSlot = Cast<UCanvasPanelSlot>(TankWidget->MainCanvas->GetSlots()[1]);

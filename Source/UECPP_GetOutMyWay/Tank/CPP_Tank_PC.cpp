@@ -1,4 +1,5 @@
 #include "Tank/CPP_Tank_PC.h"
+
 #include "UECPP_GetOutMyWayGameModeBase.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
@@ -13,19 +14,24 @@ ACPP_Tank_PC::ACPP_Tank_PC()
 void ACPP_Tank_PC::BeginPlay()
 {
 	Super::BeginPlay();
-	GM = Cast<AUECPP_GetOutMyWayGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
-	if(IsLocalController())
+	GM = Cast<AUECPP_GetOutMyWayGameModeBase>(GetWorld()->GetAuthGameMode());
+
+	//∆¿º±≈√
+	if(IsLocalPlayerController())
 	{
-		//∆¿º±≈√	
-		CreateWidget<UCPP_UserWidget_TeamSelect>(GetWorld()->GetFirstPlayerController(),BP_SelectWidget)->AddToViewport();
+		SelectWidget = CreateWidget<UCPP_UserWidget_TeamSelect>(this,BP_SelectWidget);
+		SelectWidget->PC = this;
+		SelectWidget->AddToViewport();
 		//UI ¿Œ«≤ ¿¸øÎ
-		UGameplayStatics::GetPlayerController(GetWorld(),0)->SetInputMode(FInputModeUIOnly());
-		UGameplayStatics::GetPlayerController(GetWorld(),0)->bShowMouseCursor = true;
+		SetInputMode(FInputModeUIOnly());
+		bShowMouseCursor = true;
 	}
 }
 
 void ACPP_Tank_PC::TeamSelect()
 {
+	if(!IsLocalController())
+		return;
 	if(HasAuthority())
 	{
 		GM->Spawn(Team,this);
@@ -34,6 +40,9 @@ void ACPP_Tank_PC::TeamSelect()
 	{
 		Server_TeamSelect();
 	}
+	//∞‘¿” ¿Œ«≤ ¿¸øÎ
+	bShowMouseCursor = false;
+	SetInputMode(FInputModeGameOnly());
 }
 
 void ACPP_Tank_PC::Server_TeamSelect_Implementation()

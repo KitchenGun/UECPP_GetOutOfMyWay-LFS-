@@ -14,31 +14,25 @@ void UCPP_UserWidget_TeamSelect::NativeConstruct()
 
 void UCPP_UserWidget_TeamSelect::OnClickRed()
 {
-	PC = Cast<ACPP_Tank_PC>(GetWorld()->GetFirstPlayerController());
-	TeamInfo = TEXT("Red");
-	PC->SelectRedTeam();
-	//선택이후
+	PC = Cast<ACPP_Tank_PC>(GetOwningLocalPlayer()->GetPlayerController(GetWorld()));
+	GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::White,PC->GetName());
 	if(PC->IsLocalController())
 	{
+		TeamInfo = TEXT("Red");
+		PC->SelectRedTeam();
+		//선택이후
 		Canvas->SetVisibility(ESlateVisibility::Hidden);
-		//게임 인풋 전용
-		UGameplayStatics::GetPlayerController(GetWorld(),0)->bShowMouseCursor = false;
-		UGameplayStatics::GetPlayerController(GetWorld(),0)->SetInputMode(FInputModeGameOnly());
 	}
 }
 
 void UCPP_UserWidget_TeamSelect::OnClickBlue()
 {
-	PC = Cast<ACPP_Tank_PC>(GetWorld()->GetFirstPlayerController());
-	TeamInfo = TEXT("Blue");
-	PC->SelectBlueTeam();
-	//선택이후
-	if(PC==UGameplayStatics::GetPlayerController(GetWorld(),0)&&PC->IsLocalPlayerController())
+	if (PC->IsLocalController())
 	{
+		TeamInfo = TEXT("Blue");
+		PC->SelectBlueTeam();
+		//선택이후
 		Canvas->SetVisibility(ESlateVisibility::Hidden);
-		//게임 인풋 전용
-		UGameplayStatics::GetPlayerController(GetWorld(),0)->bShowMouseCursor = false;
-		UGameplayStatics::GetPlayerController(GetWorld(),0)->SetInputMode(FInputModeGameOnly());
 	}
 }
 

@@ -36,7 +36,6 @@ ACPP_Tank_M1A1::ACPP_Tank_M1A1()
 
 void ACPP_Tank_M1A1::BeginPlay()
 {
-	Super::BeginPlay();
 	//Ä«¸Þ¶ó
 	Camera->SetActive(true);
 	GunnerCam->SetActive(false);
@@ -49,6 +48,7 @@ void ACPP_Tank_M1A1::BeginPlay()
 
 	//Damage
 	HP = MAX_HP;
+	Super::BeginPlay();
 }
 
 void ACPP_Tank_M1A1::Tick(float DeltaTime)
