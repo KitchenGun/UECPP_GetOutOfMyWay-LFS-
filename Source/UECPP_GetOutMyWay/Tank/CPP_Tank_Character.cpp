@@ -16,11 +16,6 @@
 
 ACPP_Tank_Character::ACPP_Tank_Character()
 {
-	if(PC==nullptr)
-	{
-		PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-		UE_LOG(LogTemp,Display,L"reset");
-	}
 	
 	bReplicates = true;
 	GetMesh()->bIsAutonomousTickPose =true;
@@ -71,6 +66,7 @@ void ACPP_Tank_Character::GunDirPosWorldToScreen()
 
 void ACPP_Tank_Character::BeginPlay()
 {
+	PC = GetWorld()->GetFirstPlayerController();
 	//¹ÙÀÎµù
 	if(IsValid(TankMovement))
 	{

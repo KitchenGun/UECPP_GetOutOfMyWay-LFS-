@@ -1,5 +1,6 @@
 #include "Tank/CPP_Tank_PC.h"
 
+#include "CPP_Tank_Character.h"
 #include "UECPP_GetOutMyWayGameModeBase.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
@@ -61,4 +62,12 @@ void ACPP_Tank_PC::SelectBlueTeam()
 {
 	Team = TEXT("Blue");
 	TeamSelect(Team);
+}
+
+void ACPP_Tank_PC::SetOwnPawn(APawn* value)
+{
+	OwnPawn = Cast<ACPP_Tank_Character>(value);
+	OwnPawn->SetPC(this);
+	SetOwner(value);
+	Possess(value);
 }

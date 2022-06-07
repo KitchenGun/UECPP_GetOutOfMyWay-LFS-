@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Component/CPP_MainGunSystemComponent.h"
 #include "Camera/CameraShakeBase.h"
+#include "Component/CPP_TankUIComponent.h"
 #include "GameFramework/Character.h"
 #include "CPP_Tank_Character.generated.h"
 
@@ -31,6 +32,8 @@ class UECPP_GETOUTMYWAY_API ACPP_Tank_Character : public ACharacter
 public:
 	ACPP_Tank_Character();
 
+	
+	
 	virtual void BeginPlay() override;
 	
 	UFUNCTION()
@@ -48,7 +51,7 @@ public:
 	FORCEINLINE class APlayerController* GetPC() {return PC;}
 	FORCEINLINE void SetPC(class APlayerController* value)
 	{
-		PC=value;
+		PC = value;
 	}
 	//Delegate
 	FFire FireFunc;

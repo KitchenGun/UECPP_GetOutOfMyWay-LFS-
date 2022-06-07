@@ -55,7 +55,6 @@ void UCPP_M1A1MainGunSystemComponent::MainGunFire()
 			tempProjectile = GetWorld()->SpawnActor<ACPP_Projectile>(ProjectileClass,SpawnPos,Direction,SpawnParameters);
 			//매니져에 새로 생성한 객체 추가
 			ObjPoolManager->RegisterRecyclableObject<ACPP_Projectile>(tempProjectile);
-			GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::White,tempProjectile->GetName());
 		}
 		//발사 이펙트
 		if(FireEffectFunc.IsBound())

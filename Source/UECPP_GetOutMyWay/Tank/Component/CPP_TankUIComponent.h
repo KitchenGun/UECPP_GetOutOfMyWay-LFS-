@@ -34,11 +34,11 @@ public:
 	UFUNCTION()
 	void SetAmmo(int ammo);
 	
+	void SetBasicUI();
 	
 protected:
 	virtual void BeginPlay() override;
 	void SetSightUI();
-	
 	void SetHPUI();
 	
 private:

@@ -3,6 +3,8 @@
 #include "GameFramework/PlayerController.h"
 #include "CPP_Tank_PC.generated.h"
 
+class ACPP_Tank_Character;
+
 UCLASS()
 class UECPP_GETOUTMYWAY_API ACPP_Tank_PC : public APlayerController
 {
@@ -20,10 +22,8 @@ public:
 	UFUNCTION()
 	void SelectBlueTeam();
 
-	void SetOwnPawn(class ACPP_Tank_Character* value)
-	{
-		OwnPawn = value;
-	}
+	void SetOwnPawn(APawn* value);
+	
 	ACPP_Tank_Character* GetOwnPawn()
 	{
 		return OwnPawn;
