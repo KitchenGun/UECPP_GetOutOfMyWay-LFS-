@@ -15,7 +15,6 @@ void UCPP_UserWidget_TeamSelect::NativeConstruct()
 void UCPP_UserWidget_TeamSelect::OnClickRed()
 {
 	PC = Cast<ACPP_Tank_PC>(GetOwningLocalPlayer()->GetPlayerController(GetWorld()));
-	GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::White,PC->GetName());
 	if(PC->IsLocalController())
 	{
 		TeamInfo = TEXT("Red");

@@ -79,11 +79,17 @@ void UCPP_TankUIComponent::BeginPlay()
 		Owner->FSetHPFunc.BindUFunction(this,"UpdateTankHP");
 		Owner->GetGunSystem()->FSetAmmoFunc.BindUFunction(this,"SetAmmo");
 	}
-	
-	/////////////////////////////////////GEngine->AddOnScreenDebugMessage(-1,1.0f,FColor::White,PC->GetName());
+	//FString temp = Owner->HasAuthority()?L"Server : ":L"Client : ";
+	//temp.Append(L"OwnerpcName ");
+	//temp.Append(Owner->GetPC()->GetName());
+	//GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::White,temp);
 	if(Owner->IsLocallyControlled())
 	{
 		TankWidget = CreateWidget<UCPP_UserWidgetTank>(PC,TankUIClass);
+		//temp = Owner->HasAuthority()?L"Server : ":L"Client : ";
+		//temp.Append(L"PCName ");
+		//temp.Append(PC->GetName());
+		//GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::White,temp);
 		SetSightUI();
 		SetHPUI();
 		TankWidget->AddToViewport();

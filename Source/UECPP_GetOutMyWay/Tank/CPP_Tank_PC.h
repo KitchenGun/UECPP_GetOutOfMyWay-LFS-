@@ -11,7 +11,7 @@ class UECPP_GETOUTMYWAY_API ACPP_Tank_PC : public APlayerController
 public:
 	ACPP_Tank_PC();
 	virtual void BeginPlay() override;
-	void TeamSelect();
+	void TeamSelect(FString TeamName);
 	UFUNCTION(Server,Reliable)
 	void Server_TeamSelect();
 	void Server_TeamSelect_Implementation();

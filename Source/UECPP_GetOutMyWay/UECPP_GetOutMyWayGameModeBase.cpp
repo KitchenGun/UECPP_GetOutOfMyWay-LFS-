@@ -27,8 +27,8 @@ void AUECPP_GetOutMyWayGameModeBase::Spawn_Implementation(const FString& Team, A
 		SpawnTrans = GI->GetRedTeamSpawnPoints()[0]->GetTransform();
 		if(SpawnTrans.IsValid())
 		{
+			PC->UnPossess();
 			myTank = GetWorld()->SpawnActor<ACPP_Tank_Character>(Player,SpawnTrans.GetLocation(),SpawnTrans.Rotator());
-			myTank->SetPC(PC);
 			PC->SetOwner(myTank);
 			PC->Possess(myTank);
 		}
@@ -38,8 +38,8 @@ void AUECPP_GetOutMyWayGameModeBase::Spawn_Implementation(const FString& Team, A
 		SpawnTrans = GI->GetBlueTeamSpawnPoints()[0]->GetTransform();
 		if(SpawnTrans.IsValid())
 		{
+			PC->UnPossess();
 			myTank = GetWorld()->SpawnActor<ACPP_Tank_Character>(Player,SpawnTrans.GetLocation(),SpawnTrans.Rotator());
-			myTank->SetPC(PC);
 			PC->SetOwner(myTank);
 			PC->Possess(myTank);
 		}

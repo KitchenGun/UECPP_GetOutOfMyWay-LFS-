@@ -28,10 +28,11 @@ void ACPP_Tank_PC::BeginPlay()
 	}
 }
 
-void ACPP_Tank_PC::TeamSelect()
+void ACPP_Tank_PC::TeamSelect(FString TeamName)
 {
 	if(!IsLocalController())
 		return;
+	Team = TeamName;
 	if(HasAuthority())
 	{
 		GM->Spawn(Team,this);
@@ -53,11 +54,11 @@ void ACPP_Tank_PC::Server_TeamSelect_Implementation()
 void ACPP_Tank_PC::SelectRedTeam()
 {
 	Team = TEXT("Red");
-	TeamSelect();
+	TeamSelect(Team);
 }
 
 void ACPP_Tank_PC::SelectBlueTeam()
 {
 	Team = TEXT("Blue");
-	TeamSelect();
+	TeamSelect(Team);
 }
