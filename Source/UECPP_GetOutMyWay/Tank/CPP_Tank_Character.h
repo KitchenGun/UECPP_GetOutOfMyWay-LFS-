@@ -33,7 +33,6 @@ public:
 	ACPP_Tank_Character();
 
 	
-	
 	virtual void BeginPlay() override;
 	
 	UFUNCTION()
