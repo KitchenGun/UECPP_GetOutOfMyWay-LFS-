@@ -83,7 +83,7 @@ void UCPP_TankUIComponent::BeginPlay()
 
 void UCPP_TankUIComponent::SetBasicUI()
 {
-	if(PC->GetPawn() == Owner)
+	//if(PC->GetPawn() == Owner)
 	{
 		TankWidget = CreateWidget<UCPP_UserWidgetTank>(PC,TankUIClass);
 		SetSightUI();
