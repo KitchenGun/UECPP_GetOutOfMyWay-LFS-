@@ -11,11 +11,6 @@
 void UCPP_M1A1MainGunSystemComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	//탄약 세팅//현재는 0만 사용할거임
-	Ammunition.SetNum(4);//5개 탄종 넣을 공간 확보
-	Ammunition[0] = (int32)20;
-	Ammunition[1] = (int32)10;
-	Ammunition[2] = (int32)10;
 	Owner= Cast<ACPP_Tank_Character>(GetOwner());
 	ObjPoolManager = Cast<UCPP_MultiplayGameInstance>(Owner->GetGameInstance())->GetManagerClass<UCPP_ObjectPoolManager>();
 }
@@ -36,29 +31,30 @@ void UCPP_M1A1MainGunSystemComponent::MainGunFire()
 		FVector SpawnPos	= TankMesh->GetSocketLocation("gun_1_jntSocket");
 		FRotator Direction = TankMesh->GetSocketRotation("gun_1_jntSocket");
 		tempProjectile = nullptr;
-		//game inst 에 objpool매니져에 접근
-		tempProjectile=Cast<class ACPP_Projectile>(ObjPoolManager->GetRecycledObject(0));
-		//if(tempProjectile!=nullptr)
-		//{//초기화할 객체가 존재하는 경우
-		//	tempProjectile->OnRecycleStart(SpawnPos,Direction);
-		//}
-		//else
-		
 		if(!Owner->HasAuthority())
 		{
 			Server_Fire(SpawnPos,Direction);
 		}
 		else
-		{//없으면 새로 생성
-			FActorSpawnParameters SpawnParameters;
-			SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-			tempProjectile = GetWorld()->SpawnActor<ACPP_Projectile>(ProjectileClass,SpawnPos,Direction,SpawnParameters);
-			//매니져에 새로 생성한 객체 추가
-			ObjPoolManager->RegisterRecyclableObject<ACPP_Projectile>(tempProjectile);
+		{
+			//game inst 에 objpool매니져에 접근
+			tempProjectile=Cast<class ACPP_Projectile>(ObjPoolManager->GetRecycledObject(0));
+			if(tempProjectile!=nullptr)
+			{//초기화할 객체가 존재하는 경우
+				tempProjectile->OnRecycleStart(SpawnPos,Direction);
+			}
+			else
+			{//없으면 새로 생성
+				FActorSpawnParameters SpawnParameters;
+				SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+				tempProjectile = GetWorld()->SpawnActor<ACPP_Projectile>(ProjectileClass,SpawnPos,Direction,SpawnParameters);
+				//매니져에 새로 생성한 객체 추가
+				ObjPoolManager->RegisterRecyclableObject<ACPP_Projectile>(tempProjectile);
+			}
+			//발사 이펙트
+			if(FireEffectFunc.IsBound())
+				FireEffectFunc.Execute();
 		}
-		//발사 이펙트
-		if(FireEffectFunc.IsBound())
-			FireEffectFunc.Execute();
 		//재장전관련 메소드는 Super	
 		Super::MainGunFire();
 	}
@@ -66,11 +62,13 @@ void UCPP_M1A1MainGunSystemComponent::MainGunFire()
 }
 void UCPP_M1A1MainGunSystemComponent::Server_Fire_Implementation(FVector SpawnPos, FRotator Direction)
 {
-	//if(tempProjectile!=nullptr)
-	//{//초기화할 객체가 존재하는 경우
-	//	tempProjectile->OnRecycleStart(SpawnPos,Direction);
-	//}
-	//else
+	//game inst 에 objpool매니져에 접근
+	tempProjectile=Cast<class ACPP_Projectile>(ObjPoolManager->GetRecycledObject(0));
+	if(tempProjectile!=nullptr)
+	{//초기화할 객체가 존재하는 경우
+		tempProjectile->OnRecycleStart(SpawnPos,Direction);
+	}
+	else
 	{//없으면 새로 생성
 		FActorSpawnParameters SpawnParameters;
 		SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;

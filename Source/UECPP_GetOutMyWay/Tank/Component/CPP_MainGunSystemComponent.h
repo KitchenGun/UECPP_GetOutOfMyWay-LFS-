@@ -41,8 +41,7 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Shell")
 	TSubclassOf<class ACPP_Projectile> ProjectileClass;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category=Shell)
-	TArray<int32>Ammunition;
+
 	//reload
 	FTimerHandle ReloadTimerHandle;
 	float ReloadTime = 1.0f;

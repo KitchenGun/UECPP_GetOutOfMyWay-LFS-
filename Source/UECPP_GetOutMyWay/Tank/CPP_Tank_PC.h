@@ -22,21 +22,13 @@ public:
 	UFUNCTION()
 	void SelectBlueTeam();
 
-	void SetOwnPawn(APawn* value);
-	
-	ACPP_Tank_Character* GetOwnPawn()
-	{
-		return OwnPawn;
-	}
-	
-		
+	virtual void OnPossess(APawn* InPawn) override;
+	virtual void OnUnPossess() override;
 private:
 	class AUECPP_GetOutMyWayGameModeBase* GM;
 	
 	FString Team;
 
-	class ACPP_Tank_Character* OwnPawn;
-	
 	TSubclassOf<UUserWidget> BP_SelectWidget;
 
 	class UCPP_UserWidget_TeamSelect* SelectWidget;

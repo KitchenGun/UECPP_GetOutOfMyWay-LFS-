@@ -47,8 +47,8 @@ public:
 	FORCEINLINE FTransform GetTankTransform() {return TankTransform;}
 	FORCEINLINE UCPP_MainGunSystemComponent* GetGunSystem() {return GunSystem;}
 	FORCEINLINE bool GetIsDead() {return IsDead;}
-	FORCEINLINE class APlayerController* GetPC() {return PC;}
-	FORCEINLINE void SetPC(class APlayerController* value)
+	FORCEINLINE class ACPP_Tank_PC* GetPC() {return PC;}
+	FORCEINLINE void SetPC(class ACPP_Tank_PC* value)
 	{
 		PC = value;
 	}
@@ -160,6 +160,8 @@ public:
 
 	UFUNCTION()
 	void CamShake(float value);
+	UFUNCTION()
+	void SetUI();
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 protected:
@@ -229,7 +231,7 @@ protected:
 	class UCPP_TankUIComponent* TankUI;
 
 	//APlayerController
-	class APlayerController* PC;
+	class ACPP_Tank_PC* PC;
 
 	//sight
 	float CamRange = 800;
@@ -280,3 +282,4 @@ protected:
 	bool IsDead=false;
 	AActor* BeforeDamageCauser;
 };
+

@@ -1,4 +1,6 @@
 #include "Tank/CPP_Tank_M1A1.h"
+
+#include "CPP_Tank_PC.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Component/CPP_M1A1MainGunSystemComponent.h"
@@ -49,6 +51,7 @@ void ACPP_Tank_M1A1::BeginPlay()
 
 	//Damage
 	HP = MAX_HP;
+
 }
 
 void ACPP_Tank_M1A1::Tick(float DeltaTime)

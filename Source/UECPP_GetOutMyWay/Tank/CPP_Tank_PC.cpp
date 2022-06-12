@@ -64,10 +64,13 @@ void ACPP_Tank_PC::SelectBlueTeam()
 	TeamSelect(Team);
 }
 
-void ACPP_Tank_PC::SetOwnPawn(APawn* value)
+void ACPP_Tank_PC::OnPossess(APawn* InPawn)
 {
-	OwnPawn = Cast<ACPP_Tank_Character>(value);
-	OwnPawn->SetPC(this);
-	SetOwner(value);
-	Possess(value);
+	Super::OnPossess(InPawn);
 }
+
+void ACPP_Tank_PC::OnUnPossess()
+{
+	Super::OnUnPossess();
+}
+

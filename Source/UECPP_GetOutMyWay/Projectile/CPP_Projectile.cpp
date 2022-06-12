@@ -88,7 +88,22 @@ void ACPP_Projectile::SetCanRecycle(bool value)
 
 void ACPP_Projectile::OnRecycleStart()
 {
-	
+	//if(HasAuthority())
+	//{
+	//	SetCanRecycle(false);
+	//	IsOverlap=false;
+	//	Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	//	Shell->SetVisibility(true);
+	//	WarHead->SetVisibility(true);
+	//	Effect->SetVisibility(true);
+	//	ProjectileMovement->Velocity = Capsule->GetUpVector()*ProjectileMovement->InitialSpeed;
+	//	StartPos = this->GetActorLocation();
+	//	ProjectileMovement->SetComponentTickEnabled(true);
+	//}
+	//else
+	//{
+	//	Server_OnRecycleStart();
+	//}
 }
 
 void ACPP_Projectile::OnRecycleStart(FVector pos, FRotator dir)
@@ -120,7 +135,6 @@ void ACPP_Projectile::OnRecycleStart(FVector pos, FRotator dir)
 
 void ACPP_Projectile::Server_OnRecycleStart_Implementation(FVector pos,FRotator dir)
 {
-	GEngine->AddOnScreenDebugMessage(-1,5.0f,FColor::White,L"calllllll");
 	FTransform Transform;
 	Transform.SetLocation(pos);
 	Transform.SetRotation(FQuat(dir));

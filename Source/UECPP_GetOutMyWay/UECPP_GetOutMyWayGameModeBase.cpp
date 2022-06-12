@@ -3,6 +3,7 @@
 #include "Blueprint/UserWidget.h"
 #include "GameInstance/CPP_MultiplayGameInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "Level/CPP_RangeLevelScriptActor.h"
 #include "Tank/CPP_Tank_Character.h"
 
 void AUECPP_GetOutMyWayGameModeBase::BeginPlay()
@@ -17,11 +18,12 @@ AUECPP_GetOutMyWayGameModeBase::AUECPP_GetOutMyWayGameModeBase()
 	PlayerControllerClass = ConstructorHelpers::FClassFinder<ACPP_Tank_PC>(L"Blueprint'/Game/BP/BP_Tank_PC.BP_Tank_PC_C'").Class;
 	Player = ConstructorHelpers::FClassFinder<APawn>(L"Blueprint'/Game/BP/Tank/BP_M1A1_Character.BP_M1A1_Character_C'").Class;
 }
-void AUECPP_GetOutMyWayGameModeBase::Spawn_Implementation(const FString& Team, APlayerController* PC)
+void AUECPP_GetOutMyWayGameModeBase::Spawn_Implementation(const FString& Team, ACPP_Tank_PC* PC)
 {
 	ACPP_Tank_Character* myTank = nullptr;
 	FTransform SpawnTrans;
-	PC->UnPossess();
+	PC->OnUnPossess();
+	GL =Cast<ACPP_RangeLevelScriptActor>(GetWorld()->GetLevelScriptActor());
 	if(Team.Equals("Red"))
 	{
 		//»¡°£ÆÀ
@@ -30,7 +32,7 @@ void AUECPP_GetOutMyWayGameModeBase::Spawn_Implementation(const FString& Team, A
 		{
 			myTank = GetWorld()->SpawnActor<ACPP_Tank_Character>(Player,SpawnTrans.GetLocation(),SpawnTrans.Rotator());
 			myTank->SetPC(PC);
-			Cast<ACPP_Tank_PC>(PC)->SetOwnPawn(Cast<APawn>(myTank));
+			GL->SpawnPlayer(myTank,PC);
 		}
 	}
 	else
@@ -39,7 +41,8 @@ void AUECPP_GetOutMyWayGameModeBase::Spawn_Implementation(const FString& Team, A
 		if(SpawnTrans.IsValid())
 		{
 			myTank = GetWorld()->SpawnActor<ACPP_Tank_Character>(Player,SpawnTrans.GetLocation(),SpawnTrans.Rotator());
-			Cast<ACPP_Tank_PC>(PC)->SetOwnPawn(myTank);
+			myTank->SetPC(PC);
+			GL->SpawnPlayer(myTank,PC);
 		}
 	}
 }

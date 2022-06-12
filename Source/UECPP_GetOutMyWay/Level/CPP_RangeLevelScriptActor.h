@@ -12,4 +12,7 @@ class UECPP_GETOUTMYWAY_API ACPP_RangeLevelScriptActor : public ALevelScriptActo
 	
 public:
 	virtual void BeginPlay() override;
+
+	virtual void SpawnPlayer(class ACPP_Tank_Character* Tank,class ACPP_Tank_PC* PC);
+	
 };

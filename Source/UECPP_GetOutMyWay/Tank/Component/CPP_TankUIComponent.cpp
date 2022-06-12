@@ -6,6 +6,7 @@
 #include "Engine/StreamableManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Tank/CPP_Tank_M1A1.h"
+#include  "Tank/CPP_Tank_PC.h"
 #include "UI/Tank/CPP_UserWidgetTank.h"
 #include "UI/Tank/CPP_UserWidgetTankHP.h"
 #include "UI/Tank/Sight/CPP_UserWidgetTankSight.h"
@@ -60,7 +61,7 @@ void UCPP_TankUIComponent::BeginPlay()
 	Owner=(Cast<ACPP_Tank_M1A1>(GetOwner()))? Cast<ACPP_Tank_M1A1>(GetOwner()) : Owner=nullptr;
 	if(GetOwner()==nullptr)
 		return;
-	PC = GetWorld()->GetFirstPlayerController();
+	PC = Owner->GetPC();
 	
 	if(GetOwner()->GetName().Equals("CPP_Tank_M1A1"))
 	{
@@ -77,23 +78,21 @@ void UCPP_TankUIComponent::BeginPlay()
 		Owner->GetGunSystem()->FSetAmmoFunc.BindUFunction(this,"SetAmmo");
 	}
 	
-	if(IsValid(PC))
-		SetBasicUI();
+
 }
 
 void UCPP_TankUIComponent::SetBasicUI()
 {
-	//if(PC->GetPawn() == Owner)
-	{
-		TankWidget = CreateWidget<UCPP_UserWidgetTank>(PC,TankUIClass);
-		SetSightUI();
-		SetHPUI();
-		TankWidget->AddToViewport();
-	}
+	PC = Owner->GetPC();
+	TankWidget = CreateWidget<UCPP_UserWidgetTank>(PC,TankUIClass);
+	SetSightUI();
+	SetHPUI();
+	TankWidget->AddToViewport();
 }
 
 void UCPP_TankUIComponent::SetSightUI()
 {
+	
 	TankSightWidget = CreateWidget<UCPP_UserWidgetTankSight>(PC,TankSightUIClass);
 	TankSightWidget->AddToViewport();
 	TankWidget->MainCanvas->AddChild(TankSightWidget);
@@ -104,10 +103,12 @@ void UCPP_TankUIComponent::SetSightUI()
 		TankSightWidgetSlot->SetOffsets(FMargin{0,0,0,0});
 	}
 	TankSightWidget->SetTankType(TankUIType);
+	
 }
 
 void UCPP_TankUIComponent::SetHPUI()
 {
+	
 	TankHPWidget = CreateWidget<UCPP_UserWidgetTankHP>(PC,TankHPUIClass);
 	TankHPWidget->AddToViewport();
 	TankWidget->MainCanvas->AddChild(TankHPWidget);
@@ -115,6 +116,7 @@ void UCPP_TankUIComponent::SetHPUI()
 	TankHPWidgetSlot->SetSize(FVector2D(420,220));
 	TankHPWidgetSlot->SetPosition(FVector2D(-420,-220));
 	TankHPWidgetSlot->SetAnchors(FAnchors(1,1,1,1));
+	
 }
 
 

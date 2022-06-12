@@ -16,7 +16,6 @@
 
 ACPP_Tank_Character::ACPP_Tank_Character()
 {
-	
 	bReplicates = true;
 	GetMesh()->bIsAutonomousTickPose =true;
 	PrimaryActorTick.bCanEverTick = true;
@@ -66,8 +65,11 @@ void ACPP_Tank_Character::GunDirPosWorldToScreen()
 
 void ACPP_Tank_Character::BeginPlay()
 {
-	PC = GetWorld()->GetFirstPlayerController();
 	//¹ÙÀÎµù
+	PC=Cast<ACPP_Tank_PC>(GetWorld()->GetFirstPlayerController());
+
+	
+	
 	if(IsValid(TankMovement))
 	{
 		TankMovement->TurretMoveStartFunc.BindUFunction(this,"TurretMoveLoop");
@@ -560,6 +562,15 @@ void ACPP_Tank_Character::CamShake(float value)
 	{
 		value/=20;
 		PC->PlayerCameraManager->StartCameraShake(CameraShake,FMath::Clamp(value,0.0f,1.0f));
+	}
+}
+
+void ACPP_Tank_Character::SetUI()
+{
+	//uiset
+	if(IsLocallyControlled())//PC->GetPawn() == this)     this==PC->GetPawn()
+	{
+		TankUI->SetBasicUI();
 	}
 }
 

@@ -56,5 +56,5 @@ private:
 	ETankType TankUIType;
 	
 	class ACPP_Tank_Character* Owner;
-	class APlayerController* PC;
+	class ACPP_Tank_PC* PC;
 };
