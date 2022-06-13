@@ -20,6 +20,9 @@ AUECPP_GetOutMyWayGameModeBase::AUECPP_GetOutMyWayGameModeBase()
 }
 void AUECPP_GetOutMyWayGameModeBase::Spawn_Implementation(const FString& Team, ACPP_Tank_PC* PC)
 {
+	GEngine->AddOnScreenDebugMessage(-1,1.0f,FColor::White,PC->GetName());
+
+	
 	ACPP_Tank_Character* myTank = nullptr;
 	FTransform SpawnTrans;
 	PC->OnUnPossess();

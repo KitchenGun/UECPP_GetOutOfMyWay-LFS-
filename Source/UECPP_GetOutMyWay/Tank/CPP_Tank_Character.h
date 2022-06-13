@@ -162,6 +162,7 @@ public:
 	void CamShake(float value);
 	UFUNCTION()
 	void SetUI();
+	bool isSetUp = false;
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps)const override;
 protected:

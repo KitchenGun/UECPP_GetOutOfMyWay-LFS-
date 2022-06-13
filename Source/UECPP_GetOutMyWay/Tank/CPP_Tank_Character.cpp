@@ -493,6 +493,9 @@ void ACPP_Tank_Character::Tick(float DeltaTime)
 	
 	//ui¿¡ Àü´Þ
 	GunDirPosWorldToScreen();
+
+	if(!isSetUp&&IsLocallyControlled())
+		SetUI();
 }
 
 void ACPP_Tank_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -568,10 +571,8 @@ void ACPP_Tank_Character::CamShake(float value)
 void ACPP_Tank_Character::SetUI()
 {
 	//uiset
-	if(IsLocallyControlled())//PC->GetPawn() == this)     this==PC->GetPawn()
-	{
-		TankUI->SetBasicUI();
-	}
+	TankUI->SetBasicUI();
+	isSetUp = true;
 }
 
 void ACPP_Tank_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

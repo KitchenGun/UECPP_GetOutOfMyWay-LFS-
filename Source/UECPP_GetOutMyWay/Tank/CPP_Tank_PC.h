@@ -15,8 +15,8 @@ public:
 	virtual void BeginPlay() override;
 	void TeamSelect(FString TeamName);
 	UFUNCTION(Server,Reliable)
-	void Server_TeamSelect();
-	void Server_TeamSelect_Implementation();
+	void Server_TeamSelect(const FString& NewTeam,class ACPP_Tank_PC* PC);
+	void Server_TeamSelect_Implementation(const FString& NewTeam,class ACPP_Tank_PC* NewPC);
 	UFUNCTION()
 	void SelectRedTeam();
 	UFUNCTION()

@@ -31,25 +31,24 @@ void ACPP_Tank_PC::BeginPlay()
 
 void ACPP_Tank_PC::TeamSelect(FString TeamName)
 {
-	if(!IsLocalController())
-		return;
 	Team = TeamName;
 	if(HasAuthority())
 	{
 		GM->Spawn(Team,this);
+		
 	}
 	else
 	{
-		Server_TeamSelect();
+		Server_TeamSelect(Team,this);
 	}
 	//게임 인풋 전용
 	bShowMouseCursor = false;
 	SetInputMode(FInputModeGameOnly());
 }
 
-void ACPP_Tank_PC::Server_TeamSelect_Implementation()
+void ACPP_Tank_PC::Server_TeamSelect_Implementation(const FString& NewTeam,class ACPP_Tank_PC* NewPC)
 {
-	GM->Spawn(Team,this);
+	GM->Spawn(NewTeam,NewPC);
 }
 
 void ACPP_Tank_PC::SelectRedTeam()
