@@ -44,11 +44,10 @@ public:
 	//재활용시 호출되는 함수
 	UFUNCTION()
 	virtual void OnRecycleStart() override;
+	void OnRecycleStart(FVector pos,FRotator dir);
 	UFUNCTION(Server,Reliable)
 	void Server_OnRecycleStart(FVector pos,FRotator dir);
 	void Server_OnRecycleStart_Implementation(FVector pos,FRotator dir);
-	
-	void OnRecycleStart(FVector pos,FRotator dir);
 	
 	virtual void Disable();
 protected:

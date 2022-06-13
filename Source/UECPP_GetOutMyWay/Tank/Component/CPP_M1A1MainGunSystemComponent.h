@@ -15,9 +15,8 @@ public:
 
 	virtual void MainGunFire() override;
 	UFUNCTION(Server,Reliable)
-	virtual void Server_Fire(FVector SpawnPos,FRotator Direction);
-	virtual void Server_Fire_Implementation(FVector SpawnPos,FRotator Direction);
-
+	void Server_MainGunFire();
+	void Server_MainGunFire_Implementation();
 	
 protected:
 	virtual void BeginPlay() override;

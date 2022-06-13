@@ -58,8 +58,8 @@ ACPP_Projectile::ACPP_Projectile()
 	ConstructorHelpers::FObjectFinder<UStaticMesh> effectMesh(L"StaticMesh'/Game/VigilanteContent/Shared/Particles/StaticMeshes/SM_RocketBooster_03_SM.SM_RocketBooster_03_SM'");
 	Effect->SetStaticMesh(effectMesh.Object);
 	Effect->BodyInstance.SetCollisionProfileName("NoCollision");
-	ProjectileMovement->InitialSpeed = 1e+4f;
-	ProjectileMovement->MaxSpeed = 1e+4f;
+	ProjectileMovement->InitialSpeed = 1e+1f;
+	ProjectileMovement->MaxSpeed = 1e+1f;
 	ProjectileMovement->ProjectileGravityScale = 0;
 	ProjectileMovement->SetIsReplicated(true);
 	
@@ -88,47 +88,32 @@ void ACPP_Projectile::SetCanRecycle(bool value)
 
 void ACPP_Projectile::OnRecycleStart()
 {
-	//if(HasAuthority())
-	//{
-	//	SetCanRecycle(false);
-	//	IsOverlap=false;
-	//	Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	//	Shell->SetVisibility(true);
-	//	WarHead->SetVisibility(true);
-	//	Effect->SetVisibility(true);
-	//	ProjectileMovement->Velocity = Capsule->GetUpVector()*ProjectileMovement->InitialSpeed;
-	//	StartPos = this->GetActorLocation();
-	//	ProjectileMovement->SetComponentTickEnabled(true);
-	//}
-	//else
-	//{
-	//	Server_OnRecycleStart();
-	//}
+	ICPP_Objectpooling::OnRecycleStart();
 }
 
 void ACPP_Projectile::OnRecycleStart(FVector pos, FRotator dir)
 {
-	
-	FTransform Transform;
-	Transform.SetLocation(pos);
-	Transform.SetRotation(FQuat(dir));
-	SetActorTransform(Transform);
-	
-	SetCanRecycle(false);
-	//상태 킴
-	IsOverlap=false;
-	Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	Shell->SetVisibility(true);
-	WarHead->SetVisibility(true);
-	Effect->SetVisibility(true);
-	//capsule이 회전되어 있어서 이렇게 변경해서 사용함 -> -Capsule->GetUpVector()
-	ProjectileMovement->Velocity = Capsule->GetUpVector()*ProjectileMovement->InitialSpeed;
-	StartPos = this->GetActorLocation();
-	ProjectileMovement->SetComponentTickEnabled(true);
-	
 	if(!HasAuthority())
 		Server_OnRecycleStart(pos,dir);
+	else
+	{
+		FTransform Transform;
+		Transform.SetLocation(pos);
+		Transform.SetRotation(FQuat(dir));
+		SetActorTransform(Transform);
 	
+		SetCanRecycle(false);
+		//상태 킴
+		IsOverlap=false;
+		Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		Shell->SetVisibility(true);
+		WarHead->SetVisibility(true);
+		Effect->SetVisibility(true);
+		//capsule이 회전되어 있어서 이렇게 변경해서 사용함 -> -Capsule->GetUpVector()
+		ProjectileMovement->Velocity = Capsule->GetUpVector()*ProjectileMovement->InitialSpeed;
+		StartPos = this->GetActorLocation();
+		ProjectileMovement->SetComponentTickEnabled(true);
+	}
 	GetWorldTimerManager().SetTimer(FlyHandler,this,&ACPP_Projectile::FlyTimeOver,FlyTime,false);
 }
 

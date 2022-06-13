@@ -516,13 +516,13 @@ void ACPP_Tank_Character::SetupPlayerInputComponent(UInputComponent* PlayerInput
 float ACPP_Tank_Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	AActor* DamageCauser)
 {
-	//중복 충돌 방지용
-	{
-		if(BeforeDamageCauser==DamageCauser)
-			DamageAmount = 0;
-		else
-			BeforeDamageCauser = DamageCauser;
-	}
+	////중복 충돌 방지용
+	//{
+	//	if(BeforeDamageCauser==DamageCauser)
+	//		DamageAmount = 0;
+	//	else
+	//		BeforeDamageCauser = DamageCauser;
+	//}
 	
 	//중복으로 데미지를 까는 이유를 찾아야함
 	HP-=DamageAmount;
