@@ -45,7 +45,7 @@ public:
 	UFUNCTION()
 	virtual void OnRecycleStart() override;
 	void OnRecycleStart(FVector pos,FRotator dir);
-	UFUNCTION(Server,Reliable)
+	UFUNCTION(NetMulticast,Reliable)
 	void Server_OnRecycleStart(FVector pos,FRotator dir);
 	void Server_OnRecycleStart_Implementation(FVector pos,FRotator dir);
 	
