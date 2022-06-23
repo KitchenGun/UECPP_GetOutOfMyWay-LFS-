@@ -16,7 +16,7 @@ OnlineSubSystem Steam API를 사용하여서 Listener 서버 구현이 목표
 
 
 YouTube Link
-https://youtu.be/3r3Iq3yD_GE
+https://youtu.be/stn8HGfLq80
 
 Google Spread Sheet Link
 https://docs.google.com/spreadsheets/d/1gXQ5kyxapbA36t3Q-Oi4bWvIGeDicbdTHD2FtUIztnk/edit?usp=sharing
