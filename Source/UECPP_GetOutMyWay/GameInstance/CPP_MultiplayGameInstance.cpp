@@ -139,14 +139,11 @@ void UCPP_MultiplayGameInstance::CreateServer()
 	
 	SessionSettings.bShouldAdvertise = true;
 	SessionSettings.bUsesPresence = true;
-	SessionSettings.NumPublicConnections = 8;
+	SessionSettings.NumPublicConnections = 6;
 	SessionSettings.Set(FName("SESSION_NAME"),
 		UGameplayStatics::GetPlayerController(GetWorld(),0)->PlayerState->GetPlayerName(),
 		EOnlineDataAdvertisementType::ViaOnlineService);
 
-	//SessionSettings.Settings.Add(FName("SESSION_NAME"),
-	//	UGameplayStatics::GetPlayerController(GetWorld(),0)->PlayerState->GetPlayerName());
-	
 	SessionInterface->CreateSession(0,
 		FName(UGameplayStatics::GetPlayerController(GetWorld(),0)->PlayerState->GetPlayerName()),SessionSettings);
 }   

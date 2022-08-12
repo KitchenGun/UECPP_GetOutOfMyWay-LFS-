@@ -172,7 +172,7 @@ void UCPP_TankPawnMovementComponent::OnMove(float value)
 	{//최종 움직임 전달
 		NextLocation += (dir * (VirtualForwardVal - TankClimbingAnglePercentage));
 		InputVal = VirtualForwardVal - TankClimbingAnglePercentage;
-		CurrentVelocity = (Speed*3.14f);
+		CurrentVelocity = (Speed*3.14f);//바퀴의 회전속도에 맞게 적용
 		/*출력용*/
 		//if(Owner->IsLocallyControlled())
 		//{
@@ -269,7 +269,7 @@ void UCPP_TankPawnMovementComponent::EngineControl_Implementation()
 
 	RPMControl();
 
-	//엑셀레이션에 따른 RPM 변화량 적용
+	//1.엑셀레이션에 따른 RPM 변화량 적용
 	if (IsAccelerating)
 	{
 		//가속시 RPM증가
@@ -301,9 +301,10 @@ void UCPP_TankPawnMovementComponent::EngineControl_Implementation()
 		}
 	}
 
-	//구한 rpm 값으로 엔진토크 설정
+	//2.구한 rpm 값으로 엔진토크 설정
 	EngineTorque = EngineTorqueCurve->GetFloatValue(RPM);
-	//단위 m/s
+	//3.단위 m/s
+	//속도는 (rpm*토크)/(임의의 상수 - 엔진 기어)*임의의 상수
 	Speed = (RPM * EngineTorque) / ((10 - EngineGear) * 100);
 }
 
