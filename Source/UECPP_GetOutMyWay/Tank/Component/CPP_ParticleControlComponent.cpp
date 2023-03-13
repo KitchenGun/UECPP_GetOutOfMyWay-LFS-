@@ -57,7 +57,7 @@ void UCPP_ParticleControlComponent::OnFireParticle()
 			int32 index;
 			for(FHitResult temp:HitResults)
 			{
-				AActor* tempActor=Cast<AActor>(temp.Actor);
+				AActor* tempActor=Cast<AActor>(temp.GetActor());
 				if(IsValid(tempActor))
 				{
 					ImpactArray.Find(tempActor,index);
@@ -97,7 +97,7 @@ void UCPP_ParticleControlComponent::Server_OnFireParticle_Implementation()
 		int32 index;
 		for(FHitResult temp:HitResults)
 		{
-			AActor* tempActor=Cast<AActor>(temp.Actor);
+			AActor* tempActor=Cast<AActor>(temp.GetActor());
 			if(IsValid(tempActor))
 			{
 				ImpactArray.Find(tempActor,index);

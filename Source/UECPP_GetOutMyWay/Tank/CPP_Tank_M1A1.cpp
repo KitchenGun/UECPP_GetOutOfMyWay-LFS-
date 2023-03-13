@@ -87,7 +87,7 @@ void ACPP_Tank_M1A1::RootSet()
 {
 	/*∞¥√º √ ±‚»≠*/
 	//capsule
-	class UCapsuleComponent* root = dynamic_cast<UCapsuleComponent*>(RootComponent);
+	class UCapsuleComponent* root = Cast<UCapsuleComponent>(RootComponent);
 	root->SetSimulatePhysics(true);
 	root->SetGenerateOverlapEvents(true);
 	root->SetCollisionProfileName("PhysicsActor");
