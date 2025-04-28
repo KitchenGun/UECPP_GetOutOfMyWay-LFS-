@@ -14,6 +14,8 @@ OnlineSubSystem Steam API를 사용하여서 Listener 서버 구현이 목표
 클라이언트 최종 목표:
 탱크의 움직임은 리얼하지만 조작은 캐주얼하여서 몰입을 느낄 수 있는 탱크 조작감 구현이 목표
 
+프로젝트 설명
+https://github.com/KitchenGun/UECPP_GetOutOfMyWay-LFS-/blob/master/GetOutOfMyWay_%EA%B0%95%EA%B1%B4_%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4.pdf
 
 YouTube Link
 https://youtu.be/stn8HGfLq80
